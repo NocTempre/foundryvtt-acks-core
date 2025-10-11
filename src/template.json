@@ -152,8 +152,12 @@
         "healingrate": "1d3",
         "mortalwounds": 0,
         "cleaves": 0,
-        "weaponstyles": "",
-        "weaponproficiencies": ""
+        "combat": {
+          "tier": "restricted",
+          "categories": [],
+          "weapons": [],
+          "styles": []
+        }
       },
       "exploration": {
         "ld": 18,
