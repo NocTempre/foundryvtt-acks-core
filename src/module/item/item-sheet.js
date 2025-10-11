@@ -1,5 +1,5 @@
 import { AcksUtility } from "../utility.js";
-import { templatePath } from "../config.js";
+import { templatePath, TextEditorRef } from "../config.js";
 /**
  * Extend the basic ItemSheet with some very simple modifications
  */
@@ -51,7 +51,7 @@ export class AcksItemSheet extends ItemSheet {
     data.effects = await AcksUtility.prepareActiveEffectCategories(this.item.effects);
     data.isGM = game.user.isGM;
 
-    data.description = await TextEditor.enrichHTML(this.object.system.description, { async: true });
+    data.description = await TextEditorRef.enrichHTML(this.object.system.description, { async: true });
 
     return data;
   }

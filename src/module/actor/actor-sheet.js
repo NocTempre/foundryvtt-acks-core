@@ -2,6 +2,7 @@ import { AcksEntityTweaks } from "../dialog/entity-tweaks.js";
 import { AcksUtility } from "../utility.js";
 import { AcksMortalWoundsDialog } from "../dialog/mortal-wounds.js";
 import { AcksTamperingDialog } from "../dialog/tampering-mortality.js";
+import { TextEditorRef } from "../config.js";
 export class AcksActorSheet extends ActorSheet {
   /* -------------------------------------------- */
   async getData() {
@@ -18,8 +19,8 @@ export class AcksActorSheet extends ActorSheet {
     this._prepareItems(data);
     data.henchmen = this.actor.getHenchmen();
     data.languages = this.actor.getLanguages();
-    data.description = await TextEditor.enrichHTML(this.object.system.details.description, { async: true });
-    data.notes = await TextEditor.enrichHTML(this.object.system.details.notes, { async: true });
+    data.description = await TextEditorRef.enrichHTML(this.object.system.details.description, { async: true });
+    data.notes = await TextEditorRef.enrichHTML(this.object.system.details.notes, { async: true });
     data.totalWages = this.actor.getTotalWages();
     data.totalMoneyGC = this.actor.getTotalMoneyGC();
     data.moneyEncumbrance = this.actor.getTotalMoneyEncumbrance();
@@ -118,7 +119,7 @@ export class AcksActorSheet extends ActorSheet {
     event.preventDefault();
     let li = $(event.currentTarget).parents(".item"),
       item = this.actor.items.get(li.data("item-id")),
-      description = await TextEditor.enrichHTML(item.system.description, { async: true });
+      description = await TextEditorRef.enrichHTML(item.system.description, { async: true });
     // Toggle summary
     if (li.hasClass("expanded")) {
       let summary = li.parents(".item-entry").children(".item-summary");

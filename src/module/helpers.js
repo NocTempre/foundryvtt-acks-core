@@ -1,3 +1,5 @@
+import { templatePath, assetPath } from "./config.js";
+
 export const registerHelpers = async function () {
   // Handlebars template helpers
   Handlebars.registerHelper("eq", function (a, b) {
@@ -110,4 +112,7 @@ export const registerHelpers = async function () {
   Handlebars.registerHelper("isDefined", function (value) {
     return typeof value !== typeof void 0;
   });
+
+  Handlebars.registerHelper("acksPartial", (relativePath) => templatePath(relativePath));
+  Handlebars.registerHelper("acksAsset", (relativePath) => assetPath(relativePath));
 };

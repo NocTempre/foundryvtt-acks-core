@@ -1,4 +1,4 @@
-import { templatePath, assetPath } from "./config.js";
+import { templatePath, assetPath, TextEditorRef } from "./config.js";
 
 export const augmentTable = (table, html, data) => {
   // Treasure Toggle
@@ -41,7 +41,7 @@ async function drawTreasure(table, data) {
         const text = result.getChatText();
         data.treasure[result.id] = {
           img: result.img,
-          text: await TextEditor.enrichHTML(text),
+          text: await TextEditorRef.enrichHTML(text),
         };
 
         if (result.type === CONST.TABLE_RESULT_TYPES.DOCUMENT && result.collection === "RollTable") {
@@ -53,7 +53,7 @@ async function drawTreasure(table, data) {
   } else {
     const results = await table.roll().results;
     results.forEach((result) => {
-      const text = TextEditor.enrichHTML(result.getChatText());
+      const text = TextEditorRef.enrichHTML(result.getChatText());
       data.treasure[result.id] = { img: result.img, text: text };
     });
   }

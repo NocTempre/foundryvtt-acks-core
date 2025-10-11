@@ -1,7 +1,7 @@
 <form class="{{cssClass}}" autocomplete="off">
   {{! Sheet Header }}
   <header class="sheet-header flexrow">
-    {{> "systems/acks/templates/actors/partials/character-header.html"}}
+    {{> (acksPartial "actors/partials/character-header.html")}}
   </header>
 
   {{! Sheet Tab Navigation }}
@@ -34,30 +34,30 @@
   <section class="sheet-body">
     {{! Attributes Tab }}
     <div class="tab" data-group="primary" data-tab="attributes">
-      {{> "systems/acks/templates/actors/partials/character-attributes-tab.html"}}
+      {{> (acksPartial "actors/partials/character-attributes-tab.html")}}
     </div>
     <div class="tab" data-group="primary" data-tab="abilities">
-      {{> "systems/acks/templates/actors/partials/character-abilities-tab.html"}}
+      {{> (acksPartial "actors/partials/character-abilities-tab.html")}}
     </div>
     {{#if system.spells.enabled}}
     <div class="tab" data-group="primary" data-tab="spells">
-      {{> "systems/acks/templates/actors/partials/character-spells-tab.html"}}
+      {{> (acksPartial "actors/partials/character-spells-tab.html")}}
     </div>
     {{/if}}
     <div class="tab" data-group="primary" data-tab="inventory">
-      {{> "systems/acks/templates/actors/partials/character-inventory-tab.html"}}
+      {{> (acksPartial "actors/partials/character-inventory-tab.html")}}
     </div>
     <div class="tab" data-group="primary" data-tab="hirelings">
-      {{> "systems/acks/templates/actors/partials/character-hirelings-tab.html"}}
+      {{> (acksPartial "actors/partials/character-hirelings-tab.html")}}
     </div>
     <div class="tab" data-group="primary" data-tab="bonuses">
-      {{> "systems/acks/templates/actors/partials/character-bonuses-tab.html"}}
+      {{> (acksPartial "actors/partials/character-bonuses-tab.html")}}
     </div>
     <div class="tab" data-group="primary" data-tab="notes">
-      {{> "systems/acks/templates/actors/partials/character-notes-tab.html"}}
+      {{> (acksPartial "actors/partials/character-notes-tab.html")}}
     </div>
     <div class="tab" data-group="primary" data-tab="effects">
-      {{> "systems/acks/templates/actors/partials/character-effects-tab.html"}}
+      {{> (acksPartial "actors/partials/character-effects-tab.html")}}
     </div>
   </section>
 </form>

@@ -1,6 +1,6 @@
 import { AcksDice } from "../dice.js";
 import { AcksUtility } from "../utility.js";
-import { assetPath, templatePath } from "../config.js";
+import { assetPath, templatePath, TextEditorRef } from "../config.js";
 
 /**
  * Override and extend the basic :class:`Item` implementation
@@ -45,7 +45,7 @@ export class AcksItem extends Item {
     const data = foundry.utils.duplicate(this);
 
     // Rich text description
-    data.description = await TextEditor.enrichHTML(this.system.description, { ...{ async: true }, ...htmlOptions });
+    data.description = await TextEditorRef.enrichHTML(this.system.description, { ...{ async: true }, ...htmlOptions });
     data.system = this.system;
 
     // Item properties

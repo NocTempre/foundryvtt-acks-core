@@ -1,7 +1,7 @@
 <form class="{{cssClass}}" autocomplete="off">
   {{! Sheet Header }}
   <header class="sheet-header flexrow">
-    {{> "systems/acks/templates/actors/partials/monster-header.html"}}
+    {{> (acksPartial "actors/partials/monster-header.html")}}
   </header>
 
   {{! Sheet Tab Navigation }}
@@ -22,11 +22,11 @@
   <section class="sheet-body">
     {{! Attributes Tab }}
     <div class="tab" data-group="primary" data-tab="attributes">
-      {{> "systems/acks/templates/actors/partials/monster-attributes-tab.html"}}
+      {{> (acksPartial "actors/partials/monster-attributes-tab.html")}}
     </div>
     {{#if system.spells.enabled}}
     <div class="tab" data-group="primary" data-tab="spells">
-      {{> "systems/acks/templates/actors/partials/character-spells-tab.html"}}
+      {{> (acksPartial "actors/partials/character-spells-tab.html")}}
     </div>
     {{/if}}
     <div class="tab" data-group="primary" data-tab="notes">

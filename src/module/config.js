@@ -8,6 +8,7 @@ export const ASSETS_PATH = `${SYSTEM_PATH}/assets`;
 export const templatePath = (relativePath) => `${TEMPLATE_PATH}/${relativePath}`;
 export const assetPath = (relativePath) => `${ASSETS_PATH}/${relativePath}`;
 export const modulePath = (relativePath) => `${MODULE_PATH}/${relativePath}`;
+export const TextEditorRef = foundry?.applications?.ux?.TextEditor?.implementation ?? globalThis.TextEditor;
 
 export const ACKS = {
   hitDiceModifiers: {

@@ -1,9 +1,9 @@
 <section class="tab {{ tab.cssClass }} description" data-group="primary" data-tab="description">
   <div class="content">
     {{! getDetailsPartialPath will return partial based on item's type }}
-    {{! systems/acks/templates/items/v2/details/details-ITEM_TYPE.hbs }}
+    {{! templatePath("items/v2/details/details-ITEM_TYPE.hbs") }}
     {{! See AcksItemSheetV2 _prepareDescriptionContext }}
     {{> (getDetailsPartialPath) }}
-    {{> "systems/acks/templates/items/v2/common/item-description.hbs" }}
+    {{> (acksPartial "items/v2/common/item-description.hbs") }}
   </div>
 </section>

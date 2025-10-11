@@ -1,5 +1,5 @@
 import { AcksActorSheet } from "./actor-sheet.js";
-import { templatePath } from "../config.js";
+import { templatePath, TextEditorRef } from "../config.js";
 
 // Define the Item sheet default options
 const __DEFAULT_ITEM_TYPES = [
@@ -87,8 +87,8 @@ export class AcksActorSheetMonster extends AcksActorSheet {
     // Settings
     data.config.morale = game.settings.get("acks", "morale");
     data.system = this.object.system;
-    data.treasureLink = await TextEditor.enrichHTML(this.object.system.details.treasure.table);
-    data.biography = await TextEditor.enrichHTML(this.object.system.details.biography);
+    data.treasureLink = await TextEditorRef.enrichHTML(this.object.system.details.treasure.table);
+    data.biography = await TextEditorRef.enrichHTML(this.object.system.details.biography);
 
     data.isNew = this.actor.isNew();
     return data;
@@ -271,3 +271,4 @@ export class AcksActorSheetMonster extends AcksActorSheet {
     html.find('button[data-action="generate-saves"]').click(() => this.generateSave());
   }
 }
+
