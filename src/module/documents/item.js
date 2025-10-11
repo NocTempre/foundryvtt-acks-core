@@ -1,6 +1,6 @@
 import { AcksDice } from "../dice.js";
 import { AcksUtility } from "../utility.js";
-import { assetPath, templatePath, TextEditorRef, renderTemplate } from "../config.js";
+import { assetPath, templatePath, TextEditorRef, renderTemplate, normalizeAssetPath } from "../config.js";
 
 /**
  * Override and extend the basic :class:`Item` implementation
@@ -8,6 +8,14 @@ import { assetPath, templatePath, TextEditorRef, renderTemplate } from "../confi
 export class AcksItem extends Item {
   constructor(data, context) {
     super(data, context);
+  }
+
+  prepareData() {
+    super.prepareData();
+    const normalized = normalizeAssetPath(this.img);
+    if (normalized !== this.img) {
+      this.updateSource({ img: normalized });
+    }
   }
 
   /**

@@ -11,6 +11,20 @@ export const modulePath = (relativePath) => `${MODULE_PATH}/${relativePath}`;
 export const TextEditorRef = foundry?.applications?.ux?.TextEditor?.implementation ?? globalThis.TextEditor;
 export const SOCKET_NAMESPACE = `system.${SYSTEM_ID}`;
 export const renderTemplate = foundry?.applications?.handlebars?.renderTemplate ?? globalThis.renderTemplate;
+const LEGACY_SYSTEM_PATHS = ["systems/acks", "acks"];
+export const normalizeAssetPath = (path) => {
+  if (typeof path !== "string") return path;
+  const cleaned = path.trim();
+  for (const legacy of LEGACY_SYSTEM_PATHS) {
+    if (cleaned.startsWith(`${legacy}/`)) {
+      return cleaned.replace(legacy, SYSTEM_PATH);
+    }
+    if (cleaned.startsWith(`/${legacy}/`)) {
+      return cleaned.replace(`/${legacy}/`, `/${SYSTEM_PATH}/`);
+    }
+  }
+  return cleaned;
+};
 
 export const ACKS = {
   hitDiceModifiers: {
