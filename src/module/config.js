@@ -1,5 +1,5 @@
 const SYSTEM_PATH_MATCH = /(systems\/[^/]+)/.exec(import.meta.url);
-export const SYSTEM_PATH = SYSTEM_PATH_MATCH?.[1] ?? "systems/acks";
+export const SYSTEM_PATH = SYSTEM_PATH_MATCH?.[1] ?? "systems/acks-dev";
 export const SYSTEM_ID = SYSTEM_PATH.split("/")[1];
 export const TEMPLATE_PATH = `${SYSTEM_PATH}/templates`;
 export const MODULE_PATH = `${SYSTEM_PATH}/module`;
@@ -9,6 +9,7 @@ export const templatePath = (relativePath) => `${TEMPLATE_PATH}/${relativePath}`
 export const assetPath = (relativePath) => `${ASSETS_PATH}/${relativePath}`;
 export const modulePath = (relativePath) => `${MODULE_PATH}/${relativePath}`;
 export const TextEditorRef = foundry?.applications?.ux?.TextEditor?.implementation ?? globalThis.TextEditor;
+export const SOCKET_NAMESPACE = `system.${SYSTEM_ID}`;
 
 export const ACKS = {
   hitDiceModifiers: {

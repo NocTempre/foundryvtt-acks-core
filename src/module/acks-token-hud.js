@@ -1,6 +1,6 @@
 /* -------------------------------------------- */
 import { AcksUtility } from "./utility.js";
-import { templatePath } from "./config.js";
+import { templatePath, SYSTEM_ID } from "./config.js";
 
 /* -------------------------------------------- */
 export class AcksTokenHud {
@@ -74,7 +74,7 @@ export class AcksTokenHud {
     const hud = $(await renderTemplate(template, hudData));
     const list = hud.find("div.acks-hud-list");
 
-    if (hudData.token.document.getFlag("acks", "hud-" + hudData.mode)) {
+    if (hudData.token.document.getFlag(SYSTEM_ID, "hud-" + hudData.mode)) {
       hud.addClass("active");
       list.show();
     } else {
@@ -93,10 +93,10 @@ export class AcksTokenHud {
   static _showControlWhen(control, condition, hudData) {
     if (condition) {
       control.show();
-      hudData.token.document.setFlag("acks", "hud-" + hudData.mode, true);
+      hudData.token.document.setFlag(SYSTEM_ID, "hud-" + hudData.mode, true);
     } else {
       control.hide();
-      hudData.token.document.setFlag("acks", "hud-" + hudData.mode, false);
+      hudData.token.document.setFlag(SYSTEM_ID, "hud-" + hudData.mode, false);
     }
   }
 

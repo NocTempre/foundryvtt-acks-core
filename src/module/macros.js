@@ -1,3 +1,4 @@
+import { SYSTEM_ID } from "./config.js";
 /* -------------------------------------------- */
 /*  Hotbar Macros                               */
 /* -------------------------------------------- */
@@ -18,12 +19,13 @@ export async function createAcksMacro(data, slot) {
   const command = `game.acks.rollItemMacro("${item.name}");`;
   let macro = game.macros.find((m) => m.name === item.name && m.command === command);
   if (!macro) {
+    const flags = { [`${SYSTEM_ID}.itemMacro`]: true };
     macro = await Macro.create({
       name: item.name,
       type: "script",
       img: item.img,
       command: command,
-      flags: { "acks.itemMacro": true },
+      flags,
     });
   }
   game.user.assignHotbarMacro(macro, slot);
@@ -58,3 +60,4 @@ export function rollItemMacro(itemName) {
   // Trigger the item roll
   return item.roll();
 }
+

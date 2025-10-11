@@ -1,15 +1,15 @@
-import { templatePath, assetPath, TextEditorRef } from "./config.js";
+import { templatePath, assetPath, TextEditorRef, SYSTEM_ID } from "./config.js";
 
 export const augmentTable = (table, html, data) => {
   // Treasure Toggle
   let head = html.find(".sheet-header");
-  const flag = table.object.getFlag("acks", "treasure");
+  const flag = table.object.getFlag(SYSTEM_ID, "treasure");
   const treasure = flag ? "<div class='toggle-treasure active'></div>" : "<div class='toggle-treasure'></div>";
   head.append(treasure);
 
   html.find(".toggle-treasure").click((ev) => {
-    let isTreasure = table.object.getFlag("acks", "treasure");
-    table.object.setFlag("acks", "treasure", !isTreasure);
+    let isTreasure = table.object.getFlag(SYSTEM_ID, "treasure");
+    table.object.setFlag(SYSTEM_ID, "treasure", !isTreasure);
   });
 
   // Treasure table formatting
@@ -32,7 +32,7 @@ export const augmentTable = (table, html, data) => {
 
 async function drawTreasure(table, data) {
   data.treasure = {};
-  if (table.getFlag("acks", "treasure")) {
+  if (table.getFlag(SYSTEM_ID, "treasure")) {
     for (const result of table.results) {
       const roll = new Roll("1d100");
       await roll.evaluate({ async: true });

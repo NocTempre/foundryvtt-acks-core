@@ -1,4 +1,5 @@
 import { AcksPartySheet } from "./dialog/party-sheet.js";
+import { SYSTEM_ID } from "./config.js";
 
 export const showPartySheet = (object) => {
   new AcksPartySheet(object, {
@@ -8,7 +9,7 @@ export const showPartySheet = (object) => {
 };
 
 export const update = (actor, data) => {
-  if (actor.getFlag("acks", "party")) {
+  if (actor.getFlag(SYSTEM_ID, "party")) {
     Object.values(ui.windows).forEach((w) => {
       if (w instanceof AcksPartySheet) {
         w.render(true);

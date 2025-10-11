@@ -1,5 +1,6 @@
 import { AcksMortalWoundsDialog } from "./dialog/mortal-wounds.js";
 import { AcksTamperingDialog } from "./dialog/tampering-mortality.js";
+import { SYSTEM_ID, SOCKET_NAMESPACE } from "./config.js";
 
 export class AcksUtility {
   /**
@@ -62,7 +63,7 @@ export class AcksUtility {
 
   /* -------------------------------------------- */
   static setupSocket() {
-    game.socket.on("system.acks", async (data) => {
+    game.socket.on(SOCKET_NAMESPACE, async (data) => {
       console.log("ACKS SOCKET", data);
       if (data.type === "rollInitiative" && game.user.isGM) {
         let combat = game.combats.get(data.combatId);
@@ -73,10 +74,10 @@ export class AcksUtility {
 
   /* -------------------------------------------- */
   static displayWelcomeMessage() {
-    let welcomeMessage = game.settings.get("acks", "welcome-message-13-0");
+    let welcomeMessage = game.settings.get(SYSTEM_ID, "welcome-message-13-0");
     console.log("WELCOME", welcomeMessage);
     if (!welcomeMessage) {
-      game.settings.set("acks", "welcome-message-13-0", true);
+      game.settings.set(SYSTEM_ID, "welcome-message-13-0", true);
       // New dialog with full message
       let d = new Dialog(
         {

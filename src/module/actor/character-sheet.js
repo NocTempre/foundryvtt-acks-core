@@ -1,7 +1,7 @@
 import { AcksActorSheet } from "./actor-sheet.js";
 import { AcksCharacterModifiers } from "../dialog/character-modifiers.js";
 import { AcksCharacterCreator } from "../dialog/character-creation.js";
-import { templatePath } from "../config.js";
+import { templatePath, SYSTEM_ID } from "../config.js";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -50,9 +50,9 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
   async getData() {
     const data = await super.getData();
 
-    data.config.initiative = true; // game.settings.get("acks", "initiative") != "group";
-    data.config.BHR = game.settings.get("acks", "bhr");
-    data.config.removeMagicBonus = game.settings.get("acks", "removeMagicBonus");
+    data.config.initiative = true; // game.settings.get(SYSTEM_ID, "initiative") != "group";
+    data.config.BHR = game.settings.get(SYSTEM_ID, "bhr");
+    data.config.removeMagicBonus = game.settings.get(SYSTEM_ID, "removeMagicBonus");
     data.isGM = game.user.isGM;
 
     data.isNew = this.actor.isNew();

@@ -1,4 +1,4 @@
-import { templatePath } from "../config.js";
+import { templatePath, SYSTEM_ID } from "../config.js";
 
 export class AcksPartySheet extends FormApplication {
   static get defaultOptions() {
@@ -61,7 +61,7 @@ export class AcksPartySheet extends FormApplication {
     `;
 
     let pcs = game.actors.contents.filter((actor) => {
-      return actor.getFlag("acks", "party") && actor.type === "character";
+      return actor.getFlag(SYSTEM_ID, "party") && actor.type === "character";
     });
 
     new Dialog({
@@ -114,7 +114,7 @@ export class AcksPartySheet extends FormApplication {
                 const actorId = c.dataset.actorId;
                 const actor = game.actors.contents.find((actor) => actor.id === actorId);
                 if (actor) {
-                  await actor.setFlag("acks", "party", c.checked);
+                  await actor.setFlag(SYSTEM_ID, "party", c.checked);
                 } else {
                   ui.notifications.error(`Something went wrong. Can't find ${actor.name}.`);
                 }

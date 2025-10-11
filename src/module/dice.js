@@ -1,4 +1,4 @@
-import { templatePath } from "./config.js";
+import { templatePath, SYSTEM_ID } from "./config.js";
 
 export class AcksDice {
   static digestResult(data, roll) {
@@ -131,7 +131,7 @@ export class AcksDice {
     const targetAac = data.roll.target ? data.roll.target.actor.system.aac.value : 0;
     result.victim = data.roll.target ? data.roll.target.name : null;
 
-    const hfh = game.settings.get("acks", "exploding20s");
+    const hfh = game.settings.get(SYSTEM_ID, "exploding20s");
     const die = roll.dice[0].total;
 
     if (die == 1 && !hfh) {
@@ -277,7 +277,7 @@ export class AcksDice {
     if (skipDialog) {
       return AcksDice.sendRoll(rollData);
     }
-    if (game.settings.get("acks", "removeMagicBonus") == false) {
+    if (game.settings.get(SYSTEM_ID, "removeMagicBonus") == false) {
       buttons = {
         ok: {
           label: game.i18n.localize("ACKS.Roll"),

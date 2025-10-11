@@ -1,5 +1,7 @@
+import { SYSTEM_ID } from "./config.js";
+
 export const registerMainSettings = async () => {
-  game.settings.register("acks", "enable-combatant-color", {
+  game.settings.register(SYSTEM_ID, "enable-combatant-color", {
     name: game.i18n.localize("ACKS.Setting.enableCombatantColor"),
     hint: game.i18n.localize("ACKS.Setting.enableCombatantColorHint"),
     default: true,
@@ -9,14 +11,14 @@ export const registerMainSettings = async () => {
     onChange: (_) => window.location.reload(),
   });
 
-  game.settings.register("acks", "welcome-message-12-2", {
+  game.settings.register(SYSTEM_ID, "welcome-message-12-2", {
     name: "welcome-message-12-2",
     default: false,
     scope: "world",
     type: Boolean,
     config: false,
   });
-  game.settings.register("acks", "welcome-message-13-0", {
+  game.settings.register(SYSTEM_ID, "welcome-message-13-0", {
     name: "welcome-message-13-0",
     default: false,
     scope: "world",
@@ -24,7 +26,7 @@ export const registerMainSettings = async () => {
     config: false,
   });
 
-  game.settings.register("acks", "skip-dialog-key", {
+  game.settings.register(SYSTEM_ID, "skip-dialog-key", {
     name: "Key used to skip roll dialog ",
     hint: "When pressed while clicking on a rollable item, the dialog will be skipped and the roll will be made with the default options",
     default: "shiftKey",
@@ -34,7 +36,7 @@ export const registerMainSettings = async () => {
     config: true,
   });
 
-  await game.settings.register("acks", "color-friendlies", {
+  await game.settings.register(SYSTEM_ID, "color-friendlies", {
     name: game.i18n.localize("ACKS.Setting.colorFriendlies"), // The name of the setting in the settings menu
     hint: game.i18n.localize("ACKS.Setting.colorFriendlies"), // A description of the registered setting and its behavior
     scope: "world", // "world" = sync to db, "client" = local storage
@@ -47,7 +49,7 @@ export const registerMainSettings = async () => {
     },
   });
 
-  await game.settings.register("acks", "color-hostiles", {
+  await game.settings.register(SYSTEM_ID, "color-hostiles", {
     name: game.i18n.localize("ACKS.Setting.colorHostiles"), // The name of the setting in the settings menu
     hint: game.i18n.localize("ACKS.Setting.colorHostiles"), // A description of the registered setting and its behavior
     scope: "world", // "world" = sync to db, "client" = local storage
@@ -60,7 +62,7 @@ export const registerMainSettings = async () => {
     },
   });
 
-  /*game.settings.register("acks", "initiative", {
+  /*game.settings.register(SYSTEM_ID, "initiative", {
       name: game.i18n.localize("ACKS.Setting.Initiative"),
       hint: game.i18n.localize("ACKS.Setting.InitiativeHint"),
       default: "individual",
@@ -73,7 +75,7 @@ export const registerMainSettings = async () => {
       },
     });
   */
-  game.settings.register("acks", "initiativePersistence", {
+  game.settings.register(SYSTEM_ID, "initiativePersistence", {
     name: game.i18n.localize("ACKS.Setting.RerollInitiative"),
     hint: game.i18n.localize("ACKS.Setting.RerollInitiativeHint"),
     default: "reset",
@@ -87,7 +89,7 @@ export const registerMainSettings = async () => {
     },
   });
 
-  game.settings.register("acks", "encumbranceOption", {
+  game.settings.register(SYSTEM_ID, "encumbranceOption", {
     name: game.i18n.localize("ACKS.Setting.Encumbrance"),
     hint: game.i18n.localize("ACKS.Setting.EncumbranceHint"),
     default: "detailed",
@@ -101,7 +103,7 @@ export const registerMainSettings = async () => {
     onChange: (_) => window.location.reload(),
   });
 
-  game.settings.register("acks", "morale", {
+  game.settings.register(SYSTEM_ID, "morale", {
     name: game.i18n.localize("ACKS.Setting.Morale"),
     hint: game.i18n.localize("ACKS.Setting.MoraleHint"),
     default: true,
@@ -110,7 +112,7 @@ export const registerMainSettings = async () => {
     config: true,
   });
 
-  game.settings.register("acks", "removeMagicBonus", {
+  game.settings.register(SYSTEM_ID, "removeMagicBonus", {
     name: game.i18n.localize("ACKS.Setting.RemoveMagicBonus"),
     hint: game.i18n.localize("ACKS.Setting.RemoveMagicBonusHint"),
     default: false,
@@ -120,7 +122,7 @@ export const registerMainSettings = async () => {
     onChange: (_) => window.location.reload(),
   });
 
-  game.settings.register("acks", "exploding20s", {
+  game.settings.register(SYSTEM_ID, "exploding20s", {
     name: game.i18n.localize("ACKS.Setting.Explode20"),
     hint: game.i18n.localize("ACKS.Setting.Explode20Hint"),
     default: false,
@@ -130,7 +132,7 @@ export const registerMainSettings = async () => {
     onChange: (_) => window.location.reload(),
   });
 
-  game.settings.register("acks", "bhr", {
+  game.settings.register(SYSTEM_ID, "bhr", {
     name: game.i18n.localize("ACKS.Setting.BHR"),
     hint: game.i18n.localize("ACKS.Setting.BHRHint"),
     default: false,

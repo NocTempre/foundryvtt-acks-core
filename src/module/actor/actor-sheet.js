@@ -2,7 +2,7 @@ import { AcksEntityTweaks } from "../dialog/entity-tweaks.js";
 import { AcksUtility } from "../utility.js";
 import { AcksMortalWoundsDialog } from "../dialog/mortal-wounds.js";
 import { AcksTamperingDialog } from "../dialog/tampering-mortality.js";
-import { TextEditorRef } from "../config.js";
+import { TextEditorRef, SYSTEM_ID } from "../config.js";
 export class AcksActorSheet extends ActorSheet {
   /* -------------------------------------------- */
   async getData() {
@@ -10,7 +10,7 @@ export class AcksActorSheet extends ActorSheet {
 
     data.config = CONFIG.ACKS;
     // Settings
-    data.config.encumbrance = game.settings.get("acks", "encumbranceOption");
+    data.config.encumbrance = game.settings.get(SYSTEM_ID, "encumbranceOption");
     data.effects = await AcksUtility.prepareActiveEffectCategories(this.actor.allApplicableEffects());
     data.system = this.actor.system;
     data.isGM = game.user.isGM;
@@ -206,7 +206,7 @@ export class AcksActorSheet extends ActorSheet {
       const item = this.actor.items.get(li.data("itemId"));
 
       let skip = false;
-      let skipKey = game.settings.get("acks", "skip-dialog-key");
+      let skipKey = game.settings.get(SYSTEM_ID, "skip-dialog-key");
       if (ev && ev[skipKey]) {
         skip = true;
       }
@@ -228,7 +228,7 @@ export class AcksActorSheet extends ActorSheet {
       const item = this.actor.items.get(li.data("itemId"));
 
       let skip = false;
-      let skipKey = game.settings.get("acks", "skip-dialog-key");
+      let skipKey = game.settings.get(SYSTEM_ID, "skip-dialog-key");
       if (ev && ev[skipKey]) {
         skip = true;
       }
@@ -260,7 +260,7 @@ export class AcksActorSheet extends ActorSheet {
       };
 
       let skip = false;
-      let skipKey = game.settings.get("acks", "skip-dialog-key");
+      let skipKey = game.settings.get(SYSTEM_ID, "skip-dialog-key");
       if (ev[skipKey]) {
         skip = true;
       }

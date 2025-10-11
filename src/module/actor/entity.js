@@ -1,5 +1,6 @@
 import { AcksDice } from "../dice.js";
 import { AcksUtility } from "../utility.js";
+import { SYSTEM_ID } from "../config.js";
 
 export class AcksActor extends Actor {
   static async create(data, options) {
@@ -525,7 +526,7 @@ export class AcksActor extends Actor {
     };
 
     let skip = false;
-    let skipKey = game.settings.get("acks", "skip-dialog-key");
+    let skipKey = game.settings.get(SYSTEM_ID, "skip-dialog-key");
     if (options.event && options.event[skipKey]) {
       skip = true;
     }
@@ -561,7 +562,7 @@ export class AcksActor extends Actor {
     };
 
     let skip = false;
-    let skipKey = game.settings.get("acks", "skip-dialog-key");
+    let skipKey = game.settings.get(SYSTEM_ID, "skip-dialog-key");
     if (options.event && options.event[skipKey]) {
       skip = true;
     }
@@ -591,7 +592,7 @@ export class AcksActor extends Actor {
     };
 
     let skip = false;
-    let skipKey = game.settings.get("acks", "skip-dialog-key");
+    let skipKey = game.settings.get(SYSTEM_ID, "skip-dialog-key");
     if (options.event && options.event[skipKey]) {
       skip = true;
     }
@@ -638,7 +639,7 @@ export class AcksActor extends Actor {
     };
 
     let skip = false;
-    let skipKey = game.settings.get("acks", "skip-dialog-key");
+    let skipKey = game.settings.get(SYSTEM_ID, "skip-dialog-key");
     if (options.event && options.event[skipKey]) {
       skip = true;
     }
@@ -684,7 +685,7 @@ export class AcksActor extends Actor {
     };
 
     let skip = false;
-    let skipKey = game.settings.get("acks", "skip-dialog-key");
+    let skipKey = game.settings.get(SYSTEM_ID, "skip-dialog-key");
     if (options.event && options.event[skipKey]) {
       skip = true;
     }
@@ -724,7 +725,7 @@ export class AcksActor extends Actor {
     };
 
     let skip = false;
-    let skipKey = game.settings.get("acks", "skip-dialog-key");
+    let skipKey = game.settings.get(SYSTEM_ID, "skip-dialog-key");
     if (options.event && options.event[skipKey]) {
       skip = true;
     }
@@ -844,7 +845,7 @@ export class AcksActor extends Actor {
     };
 
     let skip = false;
-    let skipKey = game.settings.get("acks", "skip-dialog-key");
+    let skipKey = game.settings.get(SYSTEM_ID, "skip-dialog-key");
     if (options.event && options.event[skipKey]) {
       skip = true;
     }
@@ -926,7 +927,7 @@ export class AcksActor extends Actor {
     const data = this.system;
     let rollParts = ["1d20"];
 
-    if (game.settings.get("acks", "exploding20s")) {
+    if (game.settings.get(SYSTEM_ID, "exploding20s")) {
       rollParts = ["1d20x="];
     }
 
@@ -976,7 +977,7 @@ export class AcksActor extends Actor {
       },
     };
 
-    let skipKey = game.settings.get("acks", "skip-dialog-key");
+    let skipKey = game.settings.get(SYSTEM_ID, "skip-dialog-key");
     if (options.event && options.event[skipKey]) {
       options.skipDialog = true;
     }

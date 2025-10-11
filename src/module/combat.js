@@ -1,5 +1,6 @@
 import { AcksSurprise } from "./surprise-manager.js";
 import { AcksUtility } from "./utility.js";
+import { SYSTEM_ID, SOCKET_NAMESPACE } from "./config.js";
 
 export class AcksCombatClass extends Combat {
   /*******************************************************/
@@ -8,7 +9,7 @@ export class AcksCombatClass extends Combat {
    * @returns {Combatant[]}
    */
   setupTurns() {
-    let locked = this.getFlag("acks", "lock-turns");
+    let locked = this.getFlag(SYSTEM_ID, "lock-turns");
     if (locked) {
       return;
     }
@@ -34,18 +35,18 @@ export class AcksCombatClass extends Combat {
   async rollInitiative(ids, options) {
     if (!game.user.isGM) {
       console.log("Emit Roll Initiative", ids, options);
-      game.socket.emit("system.acks", { type: "rollInitiative", combatId: this.id, ids: ids, options: options });
+      game.socket.emit(SOCKET_NAMESPACE, { type: "rollInitiative", combatId: this.id, ids: ids, options: options });
       return;
     }
     console.log("%%%%%%%%% Roll Initiative", ids, options);
-    await this.setFlag("acks", "lock-turns", true);
+    await this.setFlag(SYSTEM_ID, "lock-turns", true);
 
     ids = typeof ids === "string" ? [ids] : ids;
     let messages = [];
     let rollMode = game.settings.get("core", "rollMode");
 
     // Get current groups
-    let groups = this.getFlag("acks", "groups") || [];
+    let groups = this.getFlag(SYSTEM_ID, "groups") || [];
     let maxInit = { value: -1, cId: "" };
     let updates = [];
     for (let cId of ids) {
@@ -117,7 +118,7 @@ export class AcksCombatClass extends Combat {
     this.pools = AcksCombat.getCombatantsPool();
     await this.processOutNumbering();
 
-    await this.setFlag("acks", "lock-turns", false);
+    await this.setFlag(SYSTEM_ID, "lock-turns", false);
     await this.updateEmbeddedDocuments("Combatant", updates);
 
     setTimeout(function () {
@@ -129,7 +130,7 @@ export class AcksCombatClass extends Combat {
   }
   /*******************************************************/
   async rollAll(options) {
-    if (!this.getFlag("acks", "initDone")) {
+    if (!this.getFlag(SYSTEM_ID, "initDone")) {
       ui.notifications.warn(game.i18n.localize("COMBAT.CombatNotStarted"));
       return;
     }
@@ -138,7 +139,7 @@ export class AcksCombatClass extends Combat {
 
   /*******************************************************/
   async rollNPC(options) {
-    if (!this.getFlag("acks", "initDone")) {
+    if (!this.getFlag(SYSTEM_ID, "initDone")) {
       ui.notifications.warn(game.i18n.localize("COMBAT.CombatNotStarted"));
       return;
     }
@@ -147,7 +148,7 @@ export class AcksCombatClass extends Combat {
 
   /*******************************************************/
   async internalStartCombat() {
-    await this.setFlag("acks", "initDone", true);
+    await this.setFlag(SYSTEM_ID, "initDone", true);
     this._playCombatSound("startEncounter");
     let updateData = { round: 1, turn: 0, initDone: true };
 
@@ -181,7 +182,7 @@ export class AcksCombatClass extends Combat {
   async cleanupStatus(status) {
     for (let cbt of this.combatants) {
       if (status == "outnumbering" || status == "prepareSpell") {
-        await cbt?.setFlag("acks", status, false); // Flags management
+        await cbt?.setFlag(SYSTEM_ID, status, false); // Flags management
       } else {
         if (cbt?.actor?.hasEffect(status)) {
           AcksUtility.removeEffect(cbt.actor, status);
@@ -288,12 +289,12 @@ export class AcksCombatClass extends Combat {
     let friendlyMore = pools.friendly.length > pools.hostile.length;
     // DEBUG : console.log("Pools", pools, hostileMore, friendlyMore);
     for (let cbt of this.combatants) {
-      await cbt.setFlag("acks", "outnumbering", false);
+      await cbt.setFlag(SYSTEM_ID, "outnumbering", false);
       if (cbt.token.disposition == -1 && hostileMore) {
-        await cbt.setFlag("acks", "outnumbering", true);
+        await cbt.setFlag(SYSTEM_ID, "outnumbering", true);
       }
       if (cbt.token.disposition == 1 && friendlyMore) {
-        await cbt.setFlag("acks", "outnumbering", true);
+        await cbt.setFlag(SYSTEM_ID, "outnumbering", true);
       }
     }
   }
@@ -302,17 +303,17 @@ export class AcksCombatClass extends Combat {
   sortCombatantsACKS(a, b) {
     if (a.initiative === b.initiative) {
       // No outnumbering at all
-      if (!a.getFlag("acks", "outnumbering") && !b.getFlag("acks", "outnumbering")) {
+      if (!a.getFlag(SYSTEM_ID, "outnumbering") && !b.getFlag(SYSTEM_ID, "outnumbering")) {
         if (a.token.disposition == -1) {
           return -1;
         } else {
           return 1;
         }
       }
-      if (a.getFlag("acks", "outnumbering")) {
+      if (a.getFlag(SYSTEM_ID, "outnumbering")) {
         return 1;
       }
-      if (b.getFlag("acks", "outnumbering")) {
+      if (b.getFlag(SYSTEM_ID, "outnumbering")) {
         return -1;
       }
       return a.name.localeCompare(b.name);
@@ -349,7 +350,7 @@ export class AcksCombatClass extends Combat {
       return;
     }
 
-    let groups = foundry.utils.duplicate(this.getFlag("acks", "groups") || []);
+    let groups = foundry.utils.duplicate(this.getFlag(SYSTEM_ID, "groups") || []);
     // Group index is the group size
     let groupId = groups.length;
     groups[groupId] = { initiative: -1, initiativeBonus: 1000, tokens: groupTokens.map((t) => t.id) };
@@ -381,7 +382,7 @@ export class AcksCombatClass extends Combat {
     });
 
     // Save the groups
-    this.setFlag("acks", "groups", groups);
+    this.setFlag(SYSTEM_ID, "groups", groups);
     ui.notifications.info("Groups created/updated");
     // Log the current group state
     console.log("Groups", groups);
@@ -395,7 +396,10 @@ export class AcksCombat {
     data.combatants = [];
     let groups = {};
     combat.combatants.forEach((cbt) => {
-      groups[cbt.flags.acks.group] = { present: true };
+      const groupId = cbt.flags?.[SYSTEM_ID]?.group;
+      if (groupId !== undefined && groupId !== null) {
+        groups[groupId] = { present: true };
+      }
       data.combatants.push(cbt);
     });
 
@@ -418,7 +422,12 @@ export class AcksCombat {
         return;
       }
 
-      let initiative = groups[combatant.flags.acks.group].initiative;
+      const groupId = combatant.flags?.[SYSTEM_ID]?.group;
+      const group = groupId !== undefined ? groups[groupId] : undefined;
+      if (!group) {
+        continue;
+      }
+      let initiative = group.initiative;
       if (combatant.actor.system.isSlow) {
         initiative -= 1;
       }
@@ -432,7 +441,7 @@ export class AcksCombat {
 
   /*******************************************************/
   static async resetInitiative(combat, data) {
-    const reroll = game.settings.get("acks", "initiativePersistence");
+    const reroll = game.settings.get(SYSTEM_ID, "initiativePersistence");
     if (!["reset", "reroll"].includes(reroll)) {
       return;
     }
@@ -528,12 +537,12 @@ export class AcksCombat {
 
   /*******************************************************/
   static format(object, html) {
-    let colorEnabled = game.settings.get("acks", "enable-combatant-color");
+    let colorEnabled = game.settings.get(SYSTEM_ID, "enable-combatant-color");
     let colorFriendlies = "#00FF00";
     let colorHostiles = "#FF0000";
     try {
-      colorFriendlies = game.settings.get("acks", "color-friendlies");
-      colorHostiles = game.settings.get("acks", "color-hostiles");
+      colorFriendlies = game.settings.get(SYSTEM_ID, "color-friendlies");
+      colorHostiles = game.settings.get(SYSTEM_ID, "color-hostiles");
     } catch (e) {
       console.log("Color settings not found", e);
     }
@@ -586,13 +595,13 @@ export class AcksCombat {
             : `<a class='combatant-control click-slumbering ${slumbering}' data-tooltip="Slumbering"><i class='fas fa-person-falling-burst'></i></a>`;
           controls.eq(1).after(slumberingHtml);
 
-          const spellActive = cmbtant.flags.acks?.prepareSpell ? "active" : "";
+          const spellActive = cmbtant.flags?.[SYSTEM_ID]?.prepareSpell ? "active" : "";
           const spellActiveHtml = V13
             ? `<button type="button" class="inline-control combatant-control prepare-spell ${spellActive} icon fa-solid fa-magic" data-tooltip aria-label="Casting"></button>`
             : `<a class='combatant-control prepare-spell ${spellActive}' data-tooltip="Casting"><i class='fas fa-magic'></i></a>`;
           controls.eq(1).after(spellActiveHtml);
 
-          const outNumbering = cmbtant.flags.acks?.outnumbering ? "active" : "";
+          const outNumbering = cmbtant.flags?.[SYSTEM_ID]?.outnumbering ? "active" : "";
           const outNumberingHtml = V13
             ? `<button type="button" class="inline-control combatant-control outnumbering ${outNumbering} icon fa-solid fa-people-group" data-tooltip aria-label="Outnumbering"></button>`
             : `<span class='combatant-control outnumbering ${outNumbering}' data-tooltip="Outnumbering"><i class='fas fa-people-group'></i></span>`;
@@ -606,7 +615,7 @@ export class AcksCombat {
 
     $html.find(".combatant").each((_, ct) => {
       // Get the groups
-      const groups = game.combat.getFlag("acks", "groups") || [];
+      const groups = game.combat.getFlag(SYSTEM_ID, "groups") || [];
 
       if (colorEnabled) {
         const combatant = object.viewed.combatants.get(ct.dataset.combatantId);
@@ -629,7 +638,7 @@ export class AcksCombat {
 
   /*******************************************************/
   static updateCombatant(combat, combatant, data) {
-    let init = "individual"; //UNUSED game.settings.get("acks", "initiative");
+    let init = "individual"; //UNUSED game.settings.get(SYSTEM_ID, "initiative");
     // Why do you reroll ?
     // Legacy Slowness code from OSE
     //    if (combatant.actor.data.data.isSlow) {
@@ -644,7 +653,7 @@ export class AcksCombat {
           ct.initiative &&
           ct.initiative != "-789.00" &&
           ct._id != data._id &&
-          ct.flags.acks.group == combatant.flags.acks.group
+          ct.flags?.[SYSTEM_ID]?.group == combatant.flags?.[SYSTEM_ID]?.group
         ) {
           groupInit = ct.initiative;
           // Set init
@@ -681,9 +690,9 @@ export class AcksCombat {
       const isActive = event.currentTarget.classList.contains("active");
       const combatant = game.combat.combatants.get(id);
       if (isActive) {
-        await combatant.setFlag("acks", "prepareSpell", false);
+        await combatant.setFlag(SYSTEM_ID, "prepareSpell", false);
       } else {
-        await combatant.setFlag("acks", "prepareSpell", true);
+        await combatant.setFlag(SYSTEM_ID, "prepareSpell", true);
       }
     });
 
@@ -871,3 +880,4 @@ export class AcksCombat {
   /*******************************************************/
   static async preUpdateCombat(combat, data, diff, id) {}
 }
+

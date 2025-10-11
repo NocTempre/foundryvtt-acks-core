@@ -5,7 +5,7 @@ import { AcksActorSheetMonster } from "./module/actor/monster-sheet.js";
 import { preloadHandlebarsTemplates } from "./module/preloadTemplates.js";
 import { AcksActor } from "./module/actor/entity.js";
 import { AcksItem } from "./module/documents/item.js";
-import { ACKS } from "./module/config.js";
+import { ACKS, SYSTEM_ID } from "./module/config.js";
 import { registerMainSettings } from "./module/settings.js";
 import { registerHelpers } from "./module/helpers.js";
 import * as chat from "./module/chat.js";
@@ -75,11 +75,11 @@ Hooks.once("init", async function () {
 
   // Register sheet application classes
   Actors.unregisterSheet("core", ActorSheet);
-  Actors.registerSheet("acks", AcksActorSheetCharacter, {
+  Actors.registerSheet(SYSTEM_ID, AcksActorSheetCharacter, {
     types: ["character"],
     makeDefault: true,
   });
-  Actors.registerSheet("acks", AcksActorSheetMonster, {
+  Actors.registerSheet(SYSTEM_ID, AcksActorSheetMonster, {
     types: ["monster"],
     makeDefault: true,
   });
@@ -87,15 +87,15 @@ Hooks.once("init", async function () {
   Items.unregisterSheet("core", ItemSheet);
   if (AcksUtility.isMinVersion(13)) {
     // If Foundry is v13 or more - register both old and new Item sheets for now.
-    Items.registerSheet("acks", AcksItemSheet, {
+    Items.registerSheet(SYSTEM_ID, AcksItemSheet, {
       makeDefault: false,
     });
-    Items.registerSheet("acks", AcksItemSheetV2, {
+    Items.registerSheet(SYSTEM_ID, AcksItemSheetV2, {
       makeDefault: true,
     });
   } else {
     // Use old item sheet for Foundry v12
-    Items.registerSheet("acks", AcksItemSheet, {
+    Items.registerSheet(SYSTEM_ID, AcksItemSheet, {
       makeDefault: false,
     });
   }
