@@ -46,6 +46,7 @@ export class AcksCharacterCreator extends FormApplication {
     };
 
     const creationOrder = Array.from(system.details?.creation?.order ?? []);
+    this._creationOrder = creationOrder;
     const creationLocks = {};
     for (const ability of creationOrder) {
       creationLocks[ability] = true;
@@ -108,8 +109,8 @@ export class AcksCharacterCreator extends FormApplication {
       return null;
     }
 
-    const currentOrder = this._getCreationOrder();
-    const rollConfig = this._getPcRollConfig(currentOrder.length);
+    const orderLength = this._getCreationOrder().length;
+    const rollConfig = this._getPcRollConfig(orderLength);
     if (!rollConfig) {
       return null;
     }
@@ -117,6 +118,7 @@ export class AcksCharacterCreator extends FormApplication {
     this.object.system.counters[score]++;
 
     const label = game.i18n.localize(`ACKS.scores.${score}.long`);
+    const minHint = rollConfig.minimum ? ` (min ${rollConfig.minimum})` : "";
     const data = {
       roll: {
         type: "result",
@@ -132,8 +134,12 @@ export class AcksCharacterCreator extends FormApplication {
       flavor: game.i18n.format("ACKS.dialog.generateScore", {
         score: label,
         count: this.object.system.counters[score],
-      }),
-      title: game.i18n.format("ACKS.dialog.generateScore", { score: label, count: this.object.system.counters[score] }),
+      }) + minHint,
+      title:
+        game.i18n.format("ACKS.dialog.generateScore", {
+          score: label,
+          count: this.object.system.counters[score],
+        }) + minHint,
     });
 
     if (!roll) {
@@ -142,24 +148,32 @@ export class AcksCharacterCreator extends FormApplication {
 
     let total = roll.total;
     if (rollConfig.minimum && total < rollConfig.minimum) {
+      this._announceMinimum(score, total, rollConfig.minimum);
       total = rollConfig.minimum;
     }
 
-    currentOrder.push(score);
+    const updatedOrder = this._getCreationOrder();
+    if (!updatedOrder.includes(score)) {
+      updatedOrder.push(score);
+    }
+    this._creationOrder = updatedOrder;
     await this.object.update({
       [`system.scores.${score}.value`]: total,
-      "system.details.creation.order": currentOrder,
+      "system.details.creation.order": this._creationOrder,
       "system.details.characterType": "pc",
     });
 
     this.object.system.scores[score].value = total;
-    this.object.system.details.creation.order = currentOrder;
+    this.object.system.details.creation.order = Array.from(this._creationOrder);
 
     return total;
   }
 
   _getCreationOrder() {
-    return Array.from(this.object.system.details?.creation?.order ?? []);
+    if (!Array.isArray(this._creationOrder)) {
+      this._creationOrder = Array.from(this.object.system.details?.creation?.order ?? []);
+    }
+    return Array.from(this._creationOrder);
   }
 
   _isScoreLocked(score) {
@@ -202,6 +216,15 @@ export class AcksCharacterCreator extends FormApplication {
       }),
     });
     return roll ? roll.total : null;
+  }
+
+  _announceMinimum(score, rolledTotal, minimum) {
+    const label = game.i18n.localize(`ACKS.scores.${score}.long`);
+    const message = `${label}: minimum ${minimum} applied (rolled ${rolledTotal}).`;
+    ChatMessage.create({
+      content: message,
+      speaker: ChatMessage.getSpeaker({ actor: this.object }),
+    });
   }
 
   _updateSubmitState(html) {
@@ -265,6 +288,7 @@ export class AcksCharacterCreator extends FormApplication {
         "system.isNew": true,
       });
       this.object.system.isNew = true;
+      this._creationOrder = [];
       await this.object.generateHenchmanScores();
     } else {
       await this.object.update({
@@ -273,6 +297,7 @@ export class AcksCharacterCreator extends FormApplication {
         "system.isNew": true,
       });
       this.object.system.isNew = true;
+      this._creationOrder = [];
       await this._resetPcScores();
     }
 
@@ -289,6 +314,7 @@ export class AcksCharacterCreator extends FormApplication {
     for (const ability of Object.keys(this.object.system.scores ?? {})) {
       this.object.system.scores[ability].value = 0;
     }
+    this._creationOrder = [];
     this.object.system.details.creation.order = [];
     this.object.system.isNew = true;
     this.object.system.stats = { sum: 0, avg: 0, std: 0 };
