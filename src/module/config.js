@@ -11,18 +11,27 @@ export const modulePath = (relativePath) => `${MODULE_PATH}/${relativePath}`;
 export const TextEditorRef = foundry?.applications?.ux?.TextEditor?.implementation ?? globalThis.TextEditor;
 export const SOCKET_NAMESPACE = `system.${SYSTEM_ID}`;
 export const renderTemplate = foundry?.applications?.handlebars?.renderTemplate ?? globalThis.renderTemplate;
-const LEGACY_SYSTEM_PATHS = ["systems/acks", "acks"];
 export const normalizeAssetPath = (path) => {
   if (typeof path !== "string") return path;
   const cleaned = path.trim();
-  for (const legacy of LEGACY_SYSTEM_PATHS) {
-    if (cleaned.startsWith(`${legacy}/`)) {
-      return cleaned.replace(legacy, SYSTEM_PATH);
+  if (!cleaned) return cleaned;
+
+  const leadingSlash = cleaned.startsWith("/");
+  const segments = cleaned.replace(/^\/+/, "").split("/");
+  if (segments.length === 0) return cleaned;
+
+  if (segments[0] === "systems") {
+    if (segments[1] && segments[1] !== SYSTEM_ID) {
+      segments[1] = SYSTEM_ID;
     }
-    if (cleaned.startsWith(`/${legacy}/`)) {
-      return cleaned.replace(`/${legacy}/`, `/${SYSTEM_PATH}/`);
-    }
+    return `${leadingSlash ? "/" : ""}${segments.join("/")}`;
   }
+
+  if (segments[0] === SYSTEM_ID) {
+    segments.unshift("systems");
+    return `${leadingSlash ? "/" : ""}${segments.join("/")}`;
+  }
+
   return cleaned;
 };
 
