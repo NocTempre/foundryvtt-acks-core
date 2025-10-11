@@ -1,3 +1,5 @@
+import { templatePath, assetPath } from "./config.js";
+
 export const augmentTable = (table, html, data) => {
   // Treasure Toggle
   let head = html.find(".sheet-header");
@@ -78,11 +80,11 @@ async function rollTreasure(table, options = {}) {
     });
   }
 
-  let html = await renderTemplate("systems/acks/templates/chat/roll-treasure.html", templateData);
+  let html = await renderTemplate(templatePath("chat/roll-treasure.html"), templateData);
 
   let chatData = {
     content: html,
-    // sound: "systems/acks/assets/coins.mp3"
+    // sound: assetPath("coins.mp3")
   };
 
   let rollMode = game.settings.get("core", "rollMode");

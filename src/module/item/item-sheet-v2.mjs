@@ -1,5 +1,6 @@
 import { AcksUtility } from "../utility.js";
 import AcksEffectUtil from "../effect/acks-effect-util.mjs";
+import { templatePath } from "../config.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ItemSheetV2 } = foundry.applications.sheets;
@@ -56,18 +57,18 @@ export default class AcksItemSheetV2 extends HandlebarsApplicationMixin(ItemShee
   /** @override */
   static PARTS = {
     header: {
-      template: "systems/acks/templates/items/v2/item/header.hbs",
+      template: templatePath("items/v2/item/header.hbs"),
     },
     tabs: {
       template: "templates/generic/tab-navigation.hbs",
     },
     description: {
-      template: "systems/acks/templates/items/v2/item/description.hbs",
+      template: templatePath("items/v2/item/description.hbs"),
       scrollable: [""],
     },
     effects: {
-      template: "systems/acks/templates/items/v2/item/effects.hbs",
-      templates: ["systems/acks/templates/items/v2/common/item-active-effects.hbs"],
+      template: templatePath("items/v2/item/effects.hbs"),
+      templates: [templatePath("items/v2/common/item-active-effects.hbs")],
       scrollable: [""],
     },
   };
@@ -229,7 +230,7 @@ export default class AcksItemSheetV2 extends HandlebarsApplicationMixin(ItemShee
    */
   async _prepareDescriptionContext(context) {
     context.getDetailsPartialPath = () => {
-      return `systems/acks/templates/items/v2/details/details-${this.item.type}.hbs`;
+      return templatePath(`items/v2/details/details-${this.item.type}.hbs`);
     };
 
     const enrichmentOptions = {

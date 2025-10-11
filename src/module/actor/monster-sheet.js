@@ -1,5 +1,5 @@
-import { AcksActor } from "./entity.js";
 import { AcksActorSheet } from "./actor-sheet.js";
+import { templatePath } from "../config.js";
 
 // Define the Item sheet default options
 const __DEFAULT_ITEM_TYPES = [
@@ -26,7 +26,7 @@ export class AcksActorSheetMonster extends AcksActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["acks", "sheet", "monster", "actor"],
-      template: "systems/acks/templates/actors/monster-sheet.html",
+      template: templatePath("actors/monster-sheet.html"),
       width: 580,
       height: 660,
       resizable: true,
@@ -48,7 +48,7 @@ export class AcksActorSheetMonster extends AcksActorSheet {
     let choices = CONFIG.ACKS.monster_saves;
 
     let templateData = { choices: choices },
-      dlg = await renderTemplate("systems/acks/templates/actors/dialogs/monster-saves.html", templateData);
+      dlg = await renderTemplate(templatePath("actors/dialogs/monster-saves.html"), templateData);
     //Create Dialog window
     new Dialog(
       {
@@ -112,13 +112,13 @@ export class AcksActorSheetMonster extends AcksActorSheet {
     } else {
       link = `@RollTable[${data.id}]`;
     }
-    this.actor.update({ "data.details.treasure.table": link });
+    this.actor.update({ "system.details.treasure.table": link });
   }
 
   /* -------------------------------------------- */
   async _chooseItemType(choices = __DEFAULT_ITEM_TYPES) {
     let templateData = { types: choices },
-      dlg = await renderTemplate("systems/acks/templates/items/entity-create.html", templateData);
+      dlg = await renderTemplate(templatePath("items/entity-create.html"), templateData);
     //Create Dialog window
     return new Promise((resolve) => {
       new Dialog({
@@ -149,11 +149,7 @@ export class AcksActorSheetMonster extends AcksActorSheet {
   async _resetCounters(event) {
     for (const weapon of this.actor.itemTypes["weapon"]) {
       await weapon.update({
-        data: {
-          counter: {
-            value: parseInt(weapon.system.counter.max, 10),
-          },
-        },
+        "system.counter.value": parseInt(weapon.system.counter.max, 10),
       });
     }
   }
@@ -184,18 +180,18 @@ export class AcksActorSheetMonster extends AcksActorSheet {
 
     html.find(".morale-check a").click((ev) => {
       let actorObject = this.actor;
-      actorObject.rollMorale({ event: event });
+      actorObject.rollMorale({ event: ev });
     });
 
     html.find(".reaction-check a").click((ev) => {
       let actorObject = this.actor;
-      actorObject.rollReaction({ event: event });
+      actorObject.rollReaction({ event: ev });
     });
 
     html.find(".appearing-check a").click((ev) => {
       let actorObject = this.actor;
       let check = $(ev.currentTarget).closest(".check-field").data("check");
-      actorObject.rollAppearing({ event: event, check: check });
+      actorObject.rollAppearing({ event: ev, check: check });
     });
 
     // Everything below here is only needed if the sheet is editable

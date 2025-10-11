@@ -1,7 +1,7 @@
-import { AcksActor } from "./entity.js";
 import { AcksActorSheet } from "./actor-sheet.js";
 import { AcksCharacterModifiers } from "../dialog/character-modifiers.js";
 import { AcksCharacterCreator } from "../dialog/character-creation.js";
+import { templatePath } from "../config.js";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -20,7 +20,7 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["acks", "sheet", "actor", "character"],
-      template: "systems/acks/templates/actors/character-sheet.html",
+      template: templatePath("actors/character-sheet.html"),
       width: 800,
       height: 580,
       resizable: true,
@@ -64,7 +64,7 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
     let choices = CONFIG.ACKS.languages;
 
     let templateData = { choices: choices },
-      dlg = await renderTemplate("systems/acks/templates/actors/dialogs/lang-create.html", templateData);
+      dlg = await renderTemplate(templatePath("actors/dialogs/lang-create.html"), templateData);
     //Create Dialog window
     return new Promise((resolve) => {
       new Dialog({
@@ -284,9 +284,8 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
       const itemData = {
         name: `New ${type.capitalize()}`,
         type: type,
-        data: foundry.utils.duplicate(header.dataset),
+        system: foundry.utils.duplicate(header.dataset),
       };
-      //delete itemsystem["type"];
       await this.actor.createEmbeddedDocuments("Item", [itemData]);
     });
 

@@ -1,5 +1,6 @@
 import { AcksTableManager } from "../apps/table-manager.js";
 import { AcksUtility } from "../utility.js";
+import { templatePath } from "../config.js";
 
 export class AcksTamperingDialog extends FormApplication {
   /* -------------------------------------------- */
@@ -91,7 +92,7 @@ export class AcksTamperingDialog extends FormApplication {
     tamperingData.finalModifier = this.updateDialogResult(tamperingData);
     console.log("Tampering Data", tamperingData);
 
-    let content = await renderTemplate("systems/acks/templates/apps/tampering-mortality-dialog.html", tamperingData);
+    let content = await renderTemplate(templatePath("apps/tampering-mortality-dialog.html"), tamperingData);
 
     const dialogContext = await foundry.applications.api.DialogV2.wait({
       window: { title: tamperingData.title },
@@ -185,7 +186,7 @@ export class AcksTamperingDialog extends FormApplication {
     let rollResult = await AcksTableManager.rollD20Table("tampering", tableKey, modifier);
     console.log("Roll Result", rollResult);
 
-    let chatContent = await renderTemplate("systems/acks/templates/chat/tampering-result.html", rollResult);
+    let chatContent = await renderTemplate(templatePath("chat/tampering-result.html"), rollResult);
     let chatData = {
       user: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor: actor }),

@@ -11,8 +11,8 @@
  */
 export async function createAcksMacro(data, slot) {
   if (data.type !== "Item") return;
-  if (!("data" in data)) return ui.notifications.warn("You can only create macro buttons for owned Items");
-  const item = data.data;
+  const item = data.system ?? data.data;
+  if (!item) return ui.notifications.warn("You can only create macro buttons for owned Items");
 
   // Create the macro command
   const command = `game.acks.rollItemMacro("${item.name}");`;

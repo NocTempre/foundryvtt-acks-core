@@ -5,7 +5,7 @@ import { AcksTamperingDialog } from "../dialog/tampering-mortality.js";
 export class AcksActorSheet extends ActorSheet {
   /* -------------------------------------------- */
   async getData() {
-    const data = super.getData();
+    const data = await super.getData();
 
     data.config = CONFIG.ACKS;
     // Settings
@@ -254,7 +254,7 @@ export class AcksActorSheet extends ActorSheet {
       let element = ev.currentTarget;
       let attack = element.parentElement.parentElement.dataset.attack;
       const rollData = {
-        actor: this.data,
+        actor: this.actor,
         roll: {},
       };
 

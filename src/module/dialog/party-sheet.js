@@ -1,8 +1,10 @@
+import { templatePath } from "../config.js";
+
 export class AcksPartySheet extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["acks", "dialog", "party-sheet"],
-      template: "systems/acks/templates/apps/party-sheet.hbs",
+      template: templatePath("apps/party-sheet.hbs"),
       width: 500,
       height: 400,
       resizable: true,
@@ -93,7 +95,7 @@ export class AcksPartySheet extends FormApplication {
   async _selectActors(event) {
     event.preventDefault();
 
-    const template = "systems/acks/templates/apps/party-select.html";
+    const template = templatePath("apps/party-select.html");
     const templateData = {
       actors: game.actors.contents,
     };

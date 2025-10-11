@@ -1,4 +1,5 @@
 import { AcksUtility } from "../utility.js";
+import { templatePath } from "../config.js";
 /**
  * Extend the basic ItemSheet with some very simple modifications
  */
@@ -36,8 +37,7 @@ export class AcksItemSheet extends ItemSheet {
 
   /** @override */
   get template() {
-    const path = "systems/acks/templates/items/";
-    return `${path}/${this.item.type}-sheet.html`;
+    return templatePath(`items/${this.item.type}-sheet.html`);
   }
 
   /**
@@ -45,7 +45,7 @@ export class AcksItemSheet extends ItemSheet {
    * The prepared data object contains both the actor data as well as additional sheet options
    */
   async getData() {
-    const data = super.getData();
+    const data = await super.getData();
     data.config = CONFIG.ACKS;
     data.system = this.object.system;
     data.effects = await AcksUtility.prepareActiveEffectCategories(this.item.effects);

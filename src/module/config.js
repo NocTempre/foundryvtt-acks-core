@@ -1,3 +1,14 @@
+const SYSTEM_PATH_MATCH = /(systems\/[^/]+)/.exec(import.meta.url);
+export const SYSTEM_PATH = SYSTEM_PATH_MATCH?.[1] ?? "systems/acks";
+export const SYSTEM_ID = SYSTEM_PATH.split("/")[1];
+export const TEMPLATE_PATH = `${SYSTEM_PATH}/templates`;
+export const MODULE_PATH = `${SYSTEM_PATH}/module`;
+export const ASSETS_PATH = `${SYSTEM_PATH}/assets`;
+
+export const templatePath = (relativePath) => `${TEMPLATE_PATH}/${relativePath}`;
+export const assetPath = (relativePath) => `${ASSETS_PATH}/${relativePath}`;
+export const modulePath = (relativePath) => `${MODULE_PATH}/${relativePath}`;
+
 export const ACKS = {
   hitDiceModifiers: {
     d4: { value: 0, label: "d4 (0)" },
@@ -11,7 +22,7 @@ export const ACKS = {
       acks: true,
       id: "surprised",
       name: "Surprised",
-      img: "systems/acks/assets/icons/surprised.svg",
+      img: `${ASSETS_PATH}/icons/surprised.svg`,
       duration: { rounds: 1 },
     },
     { acks: true, id: "overnumbering", name: "OverNumbered", img: "icons/svg/regen.svg" },
@@ -126,15 +137,15 @@ export const ACKS = {
     charge: "ACKS.items.Charge",
   },
   tag_images: {
-    melee: "systems/acks/assets/melee.png",
-    missile: "systems/acks/assets/missile.png",
-    slow: "systems/acks/assets/slow.png",
-    twohanded: "systems/acks/assets/twohanded.png",
-    blunt: "systems/acks/assets/blunt.png",
-    brace: "systems/acks/assets/brace.png",
-    splash: "systems/acks/assets/splash.png",
-    reload: "systems/acks/assets/reload.png",
-    charge: "systems/acks/assets/charge.png",
+    melee: `${ASSETS_PATH}/melee.png`,
+    missile: `${ASSETS_PATH}/missile.png`,
+    slow: `${ASSETS_PATH}/slow.png`,
+    twohanded: `${ASSETS_PATH}/twohanded.png`,
+    blunt: `${ASSETS_PATH}/blunt.png`,
+    brace: `${ASSETS_PATH}/brace.png`,
+    splash: `${ASSETS_PATH}/splash.png`,
+    reload: `${ASSETS_PATH}/reload.png`,
+    charge: `${ASSETS_PATH}/charge.png`,
   },
   hireling_categories: {
     henchman: "ACKS.hireling.henchman",

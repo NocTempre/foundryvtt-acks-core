@@ -1,5 +1,5 @@
 {
-  "id": "acks",
+  "id": "acks-dev",
   "title": "Adventurer Conqueror King System",
   "description": "Play B/X or other OSR compatible content using the ACKS system",
   "version": "#{VERSION}#",
@@ -26,7 +26,6 @@
       "name": "ArcanistWill"
     }
   ],
-  "manifestPlusVersion": "1.2.0",
   "media": [
     {
       "type": "cover",
@@ -41,7 +40,7 @@
       "name": "acks-class-abilities",
       "banner": "systems/acks/assets/ui/banners/p94_nobiran_wonderworker_shooting_fire.webp",
       "label": "Powers",
-      "system": "acks",
+      "system": "acks-dev",
       "path": "packs/acks-class-abilities",
       "type": "Item",
       "module": "acks-packs"
@@ -50,7 +49,7 @@
       "name": "acks-proficiencies",
       "banner": "systems/acks/assets/ui/banners/p108_proficiency_treatises2.webp",
       "label": "Proficiencies",
-      "system": "acks",
+      "system": "acks-dev",
       "path": "packs/acks-proficiencies",
       "type": "Item",
       "module": "acks-packs"
@@ -60,7 +59,7 @@
       "banner": "systems/acks/assets/ui/banners/page141_helmets_colored.webp",
       "color": "#822650",
       "label": "Equipment",
-      "system": "acks",
+      "system": "acks-dev",
       "path": "packs/acks-all-equipment",
       "type": "Item",
       "module": "acks-packs"
@@ -70,7 +69,7 @@
       "banner": "systems/acks/assets/ui/banners/p78_evil_eye2.webp",
       "color": "#822650",
       "label": "Arcane Spells",
-      "system": "acks",
+      "system": "acks-dev",
       "path": "packs/acks-arcane-spells",
       "type": "Item",
       "module": "acks-packs"
@@ -79,7 +78,7 @@
       "name": "acks-divine-spells",
       "banner": "systems/acks/assets/ui/banners/p293_divine_spell_progression_01.webp",
       "label": "Divine Spells",
-      "system": "acks",
+      "system": "acks-dev",
       "path": "packs/acks-divine-spells",
       "type": "Item",
       "module": "acks-packs"
@@ -89,7 +88,7 @@
       "banner": "systems/acks/assets/ui/banners/page141_helmets_colored.webp",
       "color": "#822650",
       "label": "Equipment (II)",
-      "system": "acks",
+      "system": "acks-dev",
       "path": "packs/acks-adventuring-equipment",
       "type": "Item",
       "module": "acks-packs"
@@ -98,7 +97,7 @@
       "name": "acks-monster-abilities",
       "banner": "systems/acks/assets/ui/banners/page99_zaharan_full_page_colored.webp",
       "label": "Monster Abilities",
-      "system": "acks",
+      "system": "acks-dev",
       "path": "packs/acks-monster-abilities",
       "type": "Item",
       "module": "acks-packs"
@@ -107,7 +106,7 @@
       "name": "acks-languages",
       "banner": "systems/acks/assets/ui/banners/page186_187_colored.webp",
       "label": "Languages",
-      "system": "acks",
+      "system": "acks-dev",
       "path": "packs/acks-languages",
       "type": "Item",
       "module": "acks-packs"
@@ -116,7 +115,7 @@
       "name": "acks-monsters",
       "banner": "systems/acks/assets/ui/banners/page407_colored.webp",
       "label": "Monsters",
-      "system": "acks",
+      "system": "acks-dev",
       "path": "packs/acks-monsters",
       "type": "Actor",
       "module": "acks-packs"
@@ -125,7 +124,7 @@
       "name": "acks-treasure",
       "label": "Treasure",
       "banner": "systems/acks/assets/ui/banners/p42_treasure_shelf.webp",
-      "system": "acks",
+      "system": "acks-dev",
       "path": "packs/acks-treasure",
       "type": "RollTable",
       "module": "acks-packs"
@@ -134,7 +133,7 @@
       "name": "acks-maps",
       "banner": "systems/acks/assets/ui/banners/p273_marching_mapping.webp",
       "label": "Maps",
-      "system": "acks",
+      "system": "acks-dev",
       "path": "packs/acks-maps",
       "type": "Scene",
       "module": "acks-packs"
@@ -143,7 +142,7 @@
       "name": "acks-clothing",
       "banner": "systems/acks/assets/ui/banners/p146_chiton.webp",
       "label": "Clothing (II)",
-      "system": "acks",
+      "system": "acks-dev",
       "path": "packs/acks-clothing",
       "type": "Item",
       "module": "acks-packs"
@@ -152,7 +151,7 @@
       "name": "acks-journals",
       "banner": "systems/acks/assets/ui/banners/p108_proficiency_treatises2.webp",
       "label": "Game System Help",
-      "system": "acks",
+      "system": "acks-dev",
       "path": "packs/acks-journals",
       "type": "JournalEntry",
       "module": "acks-packs"
@@ -272,3 +271,4 @@
   "manifest": "#{MANIFEST}#",
   "download": "#{DOWNLOAD}#"
 }
+

@@ -1,8 +1,10 @@
+import { modulePath } from "../config.js";
+
 export class AcksTableManager {
   static init() {
     // Fetch the internal tables from the ruledata/internal_tables.json file
     // Fetch the files
-    const filePath = "systems/acks/module/ruledata/internal_tables.json";
+    const filePath = modulePath("ruledata/internal_tables.json");
     const file = fetch(filePath)
       .then((response) => {
         if (!response.ok) {

@@ -1,10 +1,12 @@
+import { templatePath } from "../config.js";
+
 // eslint-disable-next-line no-unused-vars
 export class AcksCharacterModifiers extends FormApplication {
   static get defaultOptions() {
     const options = super.defaultOptions;
     options.classes = ["acks", "dialog", "modifiers"];
     options.id = "sheet-modifiers";
-    options.template = "systems/acks/templates/actors/dialogs/modifiers-dialog.html";
+    options.template = templatePath("actors/dialogs/modifiers-dialog.html");
     options.width = 240;
     return options;
   }

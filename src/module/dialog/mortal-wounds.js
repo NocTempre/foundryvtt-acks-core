@@ -1,5 +1,6 @@
 import { AcksTableManager } from "../apps/table-manager.js";
 import { AcksUtility } from "../utility.js";
+import { templatePath } from "../config.js";
 
 export class AcksMortalWoundsDialog extends FormApplication {
   /* -------------------------------------------- */
@@ -106,7 +107,7 @@ export class AcksMortalWoundsDialog extends FormApplication {
     mortalWoundsData.finalModifier = this.updateDialogResult(mortalWoundsData);
     console.log("Mortal Wounds Data", mortalWoundsData);
 
-    let content = await renderTemplate("systems/acks/templates/apps/mortal-wounds-dialog.html", mortalWoundsData);
+    let content = await renderTemplate(templatePath("apps/mortal-wounds-dialog.html"), mortalWoundsData);
 
     const dialogContext = await foundry.applications.api.DialogV2.wait({
       window: { title: mortalWoundsData.title },
@@ -235,7 +236,7 @@ export class AcksMortalWoundsDialog extends FormApplication {
     let rollResult = await AcksTableManager.rollD20Table("mortal_wounds", tableKey, modifier);
     console.log("Final Modifier", mortalWoundsData);
 
-    let chatContent = await renderTemplate("systems/acks/templates/chat/mortal-wounds-result.html", rollResult);
+    let chatContent = await renderTemplate(templatePath("chat/mortal-wounds-result.html"), rollResult);
     let chatData = {
       user: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor: actor }),

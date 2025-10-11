@@ -171,7 +171,7 @@ export class AcksUtility {
     let effect = li.dataset.effectId ? owner.effects.get(li.dataset.effectId) : null;
     switch (a.dataset.action) {
       case "create":
-        effect = await ActiveEffect.implementation.create(
+        effect = await ActiveEffect.create(
           {
             name: game.i18n.format("DOCUMENT.New", { type: game.i18n.localize("DOCUMENT.ActiveEffect") }),
             transfer: true,

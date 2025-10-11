@@ -1,5 +1,6 @@
 import { AcksDice } from "../dice.js";
 import { AcksUtility } from "../utility.js";
+import { assetPath, templatePath } from "../config.js";
 
 /**
  * Override and extend the basic :class:`Item` implementation
@@ -18,19 +19,19 @@ export class AcksItem extends Item {
     const { type } = itemData;
     switch (type) {
       case "spell":
-        return { img: "systems/acks/assets/default/spell.png" };
+        return { img: assetPath("default/spell.png") };
       case "ability":
-        return { img: "systems/acks/assets/default/ability.png" };
+        return { img: assetPath("default/ability.png") };
       case "armor":
-        return { img: "systems/acks/assets/default/armor.png" };
+        return { img: assetPath("default/armor.png") };
       case "weapon":
-        return { img: "systems/acks/assets/default/weapon.png" };
+        return { img: assetPath("default/weapon.png") };
       case "money":
-        return { img: "systems/acks/assets/gold.png" };
+        return { img: assetPath("gold.png") };
       case "language":
-        return { img: "systems/acks/assets/icons/language.png" };
+        return { img: assetPath("icons/language.png") };
       default:
-        return { img: "systems/acks/assets/default/item.png" };
+        return { img: assetPath("default/item.png") };
     }
   }
 
@@ -287,7 +288,7 @@ export class AcksItem extends Item {
     };
     //console.log("Template data", templateData);
     // Render the chat card template
-    const template = `systems/acks/templates/chat/item-card.html`;
+    const template = templatePath("chat/item-card.html");
     const html = await renderTemplate(template, templateData);
 
     // Basic chat message data

@@ -1,3 +1,5 @@
+import { templatePath } from "./config.js";
+
 export class AcksDice {
   static digestResult(data, roll) {
     let result = {
@@ -53,7 +55,7 @@ export class AcksDice {
   }
 
   static async sendRoll({ parts = [], data = {}, title = null, flavor = null, speaker = null, form = null } = {}) {
-    const template = "systems/acks/templates/chat/roll-result.html";
+    const template = templatePath("chat/roll-result.html");
 
     let chatData = {
       user: game.user.id,
@@ -166,7 +168,7 @@ export class AcksDice {
     speaker = null,
     form = null,
   } = {}) {
-    const template = "systems/acks/templates/chat/roll-attack.html";
+    const template = templatePath("chat/roll-attack.html");
 
     let chatData = {
       user: game.user._id,
@@ -255,7 +257,7 @@ export class AcksDice {
     title = null,
   } = {}) {
     let rolled = false;
-    const template = "systems/acks/templates/chat/roll-dialog.html";
+    const template = templatePath("chat/roll-dialog.html");
     let dialogData = {
       formula: parts.join(" "),
       data: data,
@@ -341,7 +343,7 @@ export class AcksDice {
 
   static async Roll({ parts = [], data = {}, skipDialog = false, speaker = null, flavor = null, title = null } = {}) {
     let rolled = false;
-    const template = "systems/acks/templates/chat/roll-dialog.html";
+    const template = templatePath("chat/roll-dialog.html");
     let dialogData = {
       formula: parts.join(" "),
       data: data,

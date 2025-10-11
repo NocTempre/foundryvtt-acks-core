@@ -1,6 +1,7 @@
 /*******************************************************/
 import { AcksUtility } from "./utility.js";
 import { AcksCombat } from "./combat.js";
+import { templatePath } from "./config.js";
 
 /*******************************************************/
 export class AcksSurprise extends FormApplication {
@@ -9,7 +10,7 @@ export class AcksSurprise extends FormApplication {
     return foundry.utils.mergeObject(super.defaultOptions, {
       title: "Surprise Selector",
       classes: ["acks", "dialog", "party-sheet"],
-      template: "systems/acks/templates/apps/dialog-surprise.html",
+      template: templatePath("apps/dialog-surprise.html"),
       width: 820,
       height: 450,
       resizable: false,
@@ -179,7 +180,7 @@ export class AcksActorSurprise extends FormApplication {
     return foundry.utils.mergeObject(super.defaultOptions, {
       title: "Per actor surprise modifiers",
       classes: ["acks", "dialog", "party-sheet"],
-      template: "systems/acks/templates/apps/dialog-actor-surprise-modifier.html",
+      template: templatePath("apps/dialog-actor-surprise-modifier.html"),
       width: 360,
       height: 280,
       resizable: false,

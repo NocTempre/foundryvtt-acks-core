@@ -1,5 +1,6 @@
 /* -------------------------------------------- */
 import { AcksUtility } from "./utility.js";
+import { templatePath } from "./config.js";
 
 /* -------------------------------------------- */
 export class AcksTokenHud {
@@ -28,7 +29,7 @@ export class AcksTokenHud {
     // initiative
     await AcksTokenHud._configureSubMenu(
       controlIconActions,
-      "systems/acks/templates/token/hud-actor-actions.html",
+      templatePath("token/hud-actor-actions.html"),
       hudData,
       (event) => {
         let actionIndex = Number(event.currentTarget.attributes["data-action-index"].value);
@@ -49,7 +50,7 @@ export class AcksTokenHud {
     // att+apt+career
     await AcksTokenHud._configureSubMenu(
       controlIconTarget,
-      "systems/acks/templates/token/hud-actor-rolls.html",
+      templatePath("token/hud-actor-rolls.html"),
       hudRolls,
       (event) => {
         let rollIndex = Number(event.currentTarget.attributes["data-roll-index"].value);

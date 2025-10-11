@@ -1,11 +1,12 @@
 import { AcksDice } from "../dice.js";
+import { templatePath } from "../config.js";
 
 export class AcksCharacterCreator extends FormApplication {
   static get defaultOptions() {
     const options = super.defaultOptions;
     options.classes = ["acks", "dialog", "creator"];
     options.id = "character-creator";
-    options.template = "systems/acks/templates/actors/dialogs/character-creation.html";
+    options.template = templatePath("actors/dialogs/character-creation.html");
     options.width = 235;
     return options;
   }
@@ -125,7 +126,7 @@ export class AcksCharacterCreator extends FormApplication {
       stats: this.object.system.stats,
       gold: gold,
     };
-    const content = await renderTemplate("systems/acks/templates/chat/roll-creation.html", templateData);
+    const content = await renderTemplate(templatePath("chat/roll-creation.html"), templateData);
     ChatMessage.create({
       content: content,
       speaker,
