@@ -1,6 +1,9 @@
 {
   "Actor": {
-    "types": ["character", "monster"],
+    "types": [
+      "character",
+      "monster"
+    ],
     "templates": {
       "common": {
         "isNew": false,
@@ -99,7 +102,10 @@
       }
     },
     "character": {
-      "templates": ["common", "spellcaster"],
+      "templates": [
+        "common",
+        "spellcaster"
+      ],
       "config": {
         "movementAuto": true
       },
@@ -145,7 +151,9 @@
       "fight": {
         "healingrate": "1d3",
         "mortalwounds": 0,
-        "cleaves": 0
+        "cleaves": 0,
+        "weaponstyles": "",
+        "weaponproficiencies": ""
       },
       "exploration": {
         "ld": 18,
@@ -191,7 +199,10 @@
       }
     },
     "monster": {
-      "templates": ["common", "spellcaster"],
+      "templates": [
+        "common",
+        "spellcaster"
+      ],
       "details": {
         "biography": "",
         "alignment": "Neutral",
@@ -210,7 +221,15 @@
     }
   },
   "Item": {
-    "types": ["item", "weapon", "armor", "spell", "ability", "language", "money"],
+    "types": [
+      "item",
+      "weapon",
+      "armor",
+      "spell",
+      "ability",
+      "language",
+      "money"
+    ],
     "money": {},
     "language": {},
     "item": {},

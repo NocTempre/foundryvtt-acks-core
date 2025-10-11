@@ -179,6 +179,26 @@
           </div>
         </li>
 
+        <li class="attribute attribute-secondaries">
+          <h4 class="attribute-name box-title box-title-min-height" title="{{localize 'ACKS.fight.weaponstylesHint'}}">
+            {{localize 'ACKS.fight.weaponstyles'}}
+          </h4>
+          <div class="flexrow">
+            <input name="system.fight.weaponstyles" type="text" value="{{system.fight.weaponstyles}}" placeholder="{{localize 'ACKS.fight.weaponstylesPlaceholder'}}"
+              data-dtype="String" />
+          </div>
+        </li>
+
+        <li class="attribute attribute-secondaries">
+          <h4 class="attribute-name box-title box-title-min-height" title="{{localize 'ACKS.fight.weaponproficienciesHint'}}">
+            {{localize 'ACKS.fight.weaponproficiencies'}}
+          </h4>
+          <div class="flexrow">
+            <input name="system.fight.weaponproficiencies" type="text" value="{{system.fight.weaponproficiencies}}" placeholder="{{localize 'ACKS.fight.weaponproficienciesPlaceholder'}}"
+              data-dtype="String" />
+          </div>
+        </li>
+
         <li class="attribute attribute-secondaries attack" data-attack="melee">
           <h4 class="attribute-name box-title box-title-min-height" title="{{localize 'ACKS.Melee'}}">
             <a><i class="acks-roll-small fa-solid fa-dice-d20"></i>{{localize 'ACKS.MeleeShort'}}</a>
@@ -309,7 +329,7 @@
         </div>
       </li>
       <li class="favorite-section">
-        <h4 class="favorite-title">Favorites</h4>
+        <h4 class="favorite-title">{{localize "ACKS.equippedAttacks"}}</h4>
         {{#each favorites as |item idx|}}
         <div class="item-name flexrow favorite-item">
           <a class="favorite-rollable" data-item-id="{{item._id}}">

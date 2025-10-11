@@ -9,18 +9,15 @@
   "ACKS.Roll": "Tirada",
   "ACKS.Success": "Éxito",
   "ACKS.Failure": "Fallo",
-
   "ACKS.dialog.tweaks": "Ajustes",
   "ACKS.dialog.partysheet": "Party Sheet",
   "ACKS.dialog.generator": "Attributes",
-
   "ACKS.Formula": "Formula",
   "ACKS.SitMod": "Mod. Situational",
   "ACKS.Modifier": "Modificador",
   "ACKS.Modifiers": "Modificadors",
   "ACKS.RollMode": "Modo Tirada",
   "ACKS.RollExample": "ej. +1d4",
-
   "ACKS.roll.formula": "{label} tirada",
   "ACKS.roll.appearing": "Aparición",
   "ACKS.roll.morale": "Moral tirada",
@@ -34,9 +31,7 @@
   "ACKS.roll.exploration": "Prueba de {exploration}",
   "ACKS.roll.details.exploration": "Tirar 1d6 <= {expl} para éxito",
   "ACKS.roll.reaction": "Tirada de Reacción",
-
   "ACKS.table.treasure.roll": "Roll Treasure",
-
   "ACKS.details.name": "Nombre",
   "ACKS.details.class": "Clase",
   "ACKS.details.title": "Titulo",
@@ -52,16 +47,13 @@
   "ACKS.details.morale": "Moral",
   "ACKS.details.reaction": "Reacción",
   "ACKS.details.appearing": "NA",
-
   "ACKS.Attack": "Ataque",
   "ACKS.Encumbrance": "Carga",
-
   "ACKS.Retainer": "Seguidores",
   "ACKS.RetainerWage": "Salario",
   "ACKS.RetainerUpkeep": "Mantenimiento",
   "ACKS.Loyalty": "Puntuación Lealtad",
   "ACKS.LoyaltyShort": "PL",
-
   "ACKS.scores.str.long": "Fuerza",
   "ACKS.scores.str.short": "FUE",
   "ACKS.scores.wis.long": "Sabiduría",
@@ -74,7 +66,6 @@
   "ACKS.scores.con.short": "CON",
   "ACKS.scores.cha.long": "Carisma",
   "ACKS.scores.cha.short": "CAR",
-
   "ACKS.saves.death.short": "M",
   "ACKS.saves.death.long": "Veneno o Muerte",
   "ACKS.saves.wand.short": "V",
@@ -86,13 +77,11 @@
   "ACKS.saves.spell.short": "C",
   "ACKS.saves.spell.long": "Sort. Varas Báculos",
   "ACKS.saves.magic.long": "Bonificación vs Magia",
-
   "ACKS.Health": "Puntos de Golpes",
   "ACKS.HealthMax": "Puntos de Golpes Máximos",
   "ACKS.HealthShort": "PG",
   "ACKS.HitDice": "Puntos de Golpe",
   "ACKS.HitDiceShort": "DG",
-
   "ACKS.movement.base": "Movimiento",
   "ACKS.movement.short": "MV",
   "ACKS.movement.details": "Detalles de Movimiento",
@@ -102,7 +91,6 @@
   "ACKS.movement.overland.short": "Ba",
   "ACKS.movement.exploration.short": "Ex",
   "ACKS.movement.exploration.long": "Exploration Movement Rate",
-
   "ACKS.ArmorClassNaked": "Sin Armadura",
   "ACKS.ArmorClass": "Clase de Armadura",
   "ACKS.ArmorClassShort": "CA",
@@ -123,7 +111,6 @@
   "ACKS.AttacksShort": "ATQ",
   "ACKS.Damage": "Daño",
   "ACKS.Spellcaster": "Lanzador Conjuros",
-
   "ACKS.Language": "Lenguaje",
   "ACKS.SpokenLanguages": "Lenguajes Hablados",
   "ACKS.Literacy": "Leer/Esc.",
@@ -132,7 +119,6 @@
   "ACKS.Illiterate": "Analfabeto",
   "ACKS.NPCReaction": "Reacción NPC",
   "ACKS.RetainersMax": "#Seguidores",
-
   "ACKS.category.attributes": "Atributos",
   "ACKS.category.inventory": "Inventario",
   "ACKS.category.abilities": "Habilidades",
@@ -141,7 +127,6 @@
   "ACKS.category.languages": "Lenguajes",
   "ACKS.category.description": "Descripción",
   "ACKS.category.equipment": "Equipo",
-
   "ACKS.Setting.IndividualInit": "Iniciativa Individual",
   "ACKS.Setting.IndividualInitHint": "La iniciativa se lanza por cada actor y se modifica por su puntuación de DES",
   "ACKS.Setting.AscendingAC": "Categoria de Armadura Ascendente",
@@ -156,7 +141,6 @@
   "ACKS.Setting.MovementAuto": "Calcular Movimiento",
   "ACKS.Setting.SignificantTreasure": "Peso de tesoro significativo",
   "ACKS.Setting.SignificantTreasureHint": "Peso con el que el tesoro reducirá el movimiento, solo útil para el cálculo básico",
-
   "ACKS.items.Equip": "Equipar",
   "ACKS.items.Unequip": "Desequipar",
   "ACKS.items.Misc": "Misc",
@@ -179,18 +163,18 @@
   "ACKS.items.ArmorAC": "CA",
   "ACKS.items.ArmorAAC": "CAA",
   "ACKS.items.Bonus": "Bonus",
+  "ACKS.items.ProficiencyKey": "Clave de competencia",
   "ACKS.items.roundAttacks": "Ataques usados este Round",
   "ACKS.items.roundAttacksMax": "Máximo Ataques por Round",
   "ACKS.items.resetAttacks": "Reiniciar Ataques por Round",
   "ACKS.items.hasShield": "Tiene un bono de Escudo",
   "ACKS.items.typeTag": "Escriba una lista de etiquetas separadas por comas, por ejemplo 'Melee, Misile (5'-10' / 11'-20' / 21'-30')'",
-
+  "ACKS.equippedAttacks": "Ataques equipados",
   "ACKS.armor.type": "Tipo Armadura",
   "ACKS.armor.unarmored": "Sin Armadura",
   "ACKS.armor.light": "Ligera",
   "ACKS.armor.heavy": "Pesada",
   "ACKS.armor.shield": "Escudo",
-
   "ACKS.spells.spend": "{speaker} esta lanzando {name}!",
   "ACKS.spells.Memorized": "Memorizado",
   "ACKS.spells.Cast": "Lanzar",
@@ -201,9 +185,7 @@
   "ACKS.spells.Level": "Nivel",
   "ACKS.spells.Save": "Salvación",
   "ACKS.spells.ResetSlots": "Reniciar Espacios de conjuro",
-
   "ACKS.abilities.Requirements": "Requisitos",
-
   "ACKS.exploration.ld.long": "Escuchar Ruidos",
   "ACKS.exploration.ld.short": "Escuchar Ruidos",
   "ACKS.exploration.ld.abrev": "ER",
@@ -216,7 +198,6 @@
   "ACKS.exploration.ft.long": "Detectar trampas y fosos",
   "ACKS.exploration.ft.short": "Detectar trampas",
   "ACKS.exploration.ft.abrev": "DT",
-
   "ACKS.messages.GetExperience": "{name} ha ganado {value} puntos de experiencia!",
   "ACKS.messages.AttackSuccess": "<b>Golpea CA {result}!</b> ({bonus})",
   "ACKS.messages.AttackAscendingSuccess": "<b>Golpea CA {result}!</b>",
@@ -224,7 +205,6 @@
   "ACKS.messages.InflictsDamage": "Inflinge daño!",
   "ACKS.ChatContextDamage": "Aplicar Daño",
   "ACKS.ChatContextHealing": "Aplicar Curación",
-
   "ACKS.colors.green": "Verde",
   "ACKS.colors.red": "Rojo",
   "ACKS.colors.yellow": "Amarillo",
@@ -232,11 +212,17 @@
   "ACKS.colors.blue": "Azul",
   "ACKS.colors.orange": "Naranja",
   "ACKS.colors.white": "Blanco",
-
   "ACKS.reaction.check": "Tirada de Reacción",
   "ACKS.reaction.Hostile": "{name} es Hostil",
   "ACKS.reaction.Unfriendly": "{name} es Antipático",
   "ACKS.reaction.Neutral": "{name} es Neutral",
   "ACKS.reaction.Indifferent": "{name} es Indifferente",
-  "ACKS.reaction.Friendly": "{name} es Amistoso"
+  "ACKS.reaction.Friendly": "{name} es Amistoso",
+  "ACKS.fight.weaponstyles": "Estilos de combate",
+  "ACKS.fight.weaponstylesHint": "Lista separada por comas de estilos adicionales",
+  "ACKS.fight.weaponstylesPlaceholder": "ej. Arma a distancia, Arma a dos manos",
+  "ACKS.fight.weaponproficiencies": "Competencias de armas",
+  "ACKS.fight.weaponproficienciesHint": "Lista separada por comas de grupos o nombres de armas",
+  "ACKS.fight.weaponproficienciesPlaceholder": "ej. espadas, hachas, arco largo",
+  "ACKS.notifications.weaponNotProficient": "{actor} no es competente con {weapon}."
 }

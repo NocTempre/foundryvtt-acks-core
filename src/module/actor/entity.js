@@ -2,6 +2,100 @@ import { AcksDice } from "../dice.js";
 import { AcksUtility } from "../utility.js";
 import { SYSTEM_ID } from "../config.js";
 
+const STYLE_LABELS = {
+  missile: "Missile Weapon",
+  single: "Single Weapon",
+  dual: "Dual Weapon",
+  twoHanded: "Two-Handed Weapon",
+  weaponShield: "Weapon and Shield",
+};
+
+const STYLE_ALIAS_TESTS = [
+  { regex: /missile/, key: "missile" },
+  { regex: /two[\s-]*hand(ed)?/, key: "twoHanded" },
+  { regex: /\b2[\s-]*hand(ed)?/, key: "twoHanded" },
+  { regex: /dual/, key: "dual" },
+  { regex: /two[\s-]*weapon/, key: "dual" },
+  { regex: /single/, key: "single" },
+  { regex: /weapon\s*(?:\+|and|&)\s*shield/, key: "weaponShield" },
+  { regex: /shield/, key: "weaponShield" },
+];
+
+const WEAPON_PROFICIENCY_PATTERNS = [
+  { key: "axes", patterns: ["axe"] },
+  { key: "swords", patterns: ["sword"] },
+  { key: "daggers", patterns: ["dagger", "knife"] },
+  { key: "hammers", patterns: ["hammer", "pick"] },
+  { key: "maces", patterns: ["mace", "morning star", "flail", "club", "sap"] },
+  { key: "spears", patterns: ["spear", "javelin", "lance", "pole-arm", "polearm", "pike"] },
+  { key: "bows", patterns: ["bow"] },
+  { key: "crossbows", patterns: ["crossbow", "arbalest"] },
+  { key: "staffs", patterns: ["staff"] },
+  { key: "thrown", patterns: ["dart", "bola", "net"] },
+  { key: "whips", patterns: ["whip"] },
+];
+
+const PROFICIENCY_WILDCARDS = new Set(["*", "all", "any"]);
+
+const slugify = (value) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const splitListEntries = (value) =>
+  value
+    .split(/[,;\n]+/)
+    .map((entry) => entry.trim())
+    .filter((entry) => entry.length > 0);
+
+const resolveStyleKey = (rawValue) => {
+  const value = rawValue.toLowerCase();
+  const cleaned = value.replace(/^fighting\s*style[:\s-]*/, "");
+  for (const { regex, key } of STYLE_ALIAS_TESTS) {
+    if (regex.test(cleaned)) {
+      return key;
+    }
+  }
+  return null;
+};
+
+const extractProficiencyFromAbility = (name) => {
+  const match = name.toLowerCase().match(/^weapon\s+proficiency[:\-\s]*(.+)$/);
+  if (!match) {
+    return null;
+  }
+  return match[1].trim();
+};
+
+const deriveWeaponProficiencyKey = (item) => {
+  const name = item?.name?.toLowerCase() ?? "";
+  for (const { key, patterns } of WEAPON_PROFICIENCY_PATTERNS) {
+    if (patterns.some((pattern) => name.includes(pattern))) {
+      return key;
+    }
+  }
+  if (item?.system?.missile && !item?.system?.melee) {
+    return "missile";
+  }
+  if (item?.system?.melee && !item?.system?.missile) {
+    return "melee";
+  }
+  return slugify(name);
+};
+
+const getWeaponHandsInfo = (item) => {
+  const tags = (item.system?.tags ?? []).map((tag) => tag.value.toLowerCase());
+  const name = item.name?.toLowerCase() ?? "";
+  let hands = 1;
+  if (tags.includes("two-handed") || name.includes("2h") || name.includes("two-handed") || name.includes("two handed")) {
+    hands = 2;
+  }
+  const missile = !!item.system?.missile;
+  const melee = !!item.system?.melee;
+  return { hands, missile, melee };
+};
+
 export class AcksActor extends Actor {
   static async create(data, options) {
     // Case of compendium global import
@@ -1155,11 +1249,306 @@ export class AcksActor extends Actor {
 
   /* -------------- ------------------------------ */
   getFavorites() {
-    return this.items.filter((i) => i.system.favorite);
+    const equippedWeapons = this.items.filter((i) => i.type === "weapon" && i.system.equipped);
+    const favoriteNonWeapons = this.items.filter(
+      (i) => i.system.favorite && !(i.type === "weapon" && i.system.equipped),
+    );
+    return [...equippedWeapons, ...favoriteNonWeapons];
   }
   buildFavoriteActions() {
-    let fav = this.getFavorites();
-    return fav;
+    return this.getFavorites();
+  }
+
+  getKnownFightingStyles() {
+    const styles = new Set();
+    const manual = this.system?.fight?.weaponstyles ?? "";
+    if (typeof manual === "string" && manual.trim().length) {
+      for (const entry of splitListEntries(manual)) {
+        const key = resolveStyleKey(entry);
+        if (key) {
+          styles.add(key);
+        }
+      }
+    }
+    for (const ability of this.itemTypes?.ability ?? []) {
+      const key = resolveStyleKey(ability.name ?? "");
+      if (key) {
+        styles.add(key);
+      }
+    }
+    return styles;
+  }
+
+  knowsFightingStyle(styleKey) {
+    return this.getKnownFightingStyles().has(styleKey);
+  }
+
+  getWeaponProficiencyKeys() {
+    const values = new Set();
+    const slugs = new Set();
+    const addValue = (value) => {
+      if (!value) return;
+      const trimmed = value.trim();
+      if (!trimmed) return;
+      values.add(trimmed.toLowerCase());
+      slugs.add(slugify(trimmed));
+    };
+    const manual = this.system?.fight?.weaponproficiencies ?? "";
+    if (typeof manual === "string" && manual.trim().length) {
+      for (const entry of splitListEntries(manual)) {
+        addValue(entry);
+      }
+    }
+    for (const ability of this.itemTypes?.ability ?? []) {
+      const key = extractProficiencyFromAbility(ability.name ?? "");
+      if (key) {
+        addValue(key);
+      }
+    }
+    return { values, slugs };
+  }
+
+  isProficientWithWeapon(item) {
+    if (!item || item.type !== "weapon") {
+      return true;
+    }
+    const { values, slugs } = this.getWeaponProficiencyKeys();
+    const hasWildcard = [...values].some((val) => PROFICIENCY_WILDCARDS.has(val));
+    if (hasWildcard) {
+      return true;
+    }
+    const explicit = item.system?.proficiencyKey?.trim();
+    const derived = deriveWeaponProficiencyKey(item);
+    const candidates = [
+      explicit,
+      item.name?.toLowerCase(),
+      derived,
+      explicit ? slugify(explicit) : null,
+      slugify(item.name ?? ""),
+      slugify(derived ?? ""),
+    ].filter((val) => !!val);
+    for (const candidate of candidates) {
+      const normalized = candidate.toLowerCase();
+      if (values.has(normalized) || slugs.has(slugify(normalized))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  async toggleItemEquipped(item) {
+    const targetState = !item.system.equipped;
+    const validation = this.validateEquipmentChange(item, targetState);
+    if (!validation.valid) {
+      if (validation.reason) {
+        ui.notifications?.error(validation.reason);
+      }
+      return false;
+    }
+    await this.updateEmbeddedDocuments("Item", [
+      {
+        _id: item.id,
+        "system.equipped": targetState,
+      },
+    ]);
+    if (validation.warning) {
+      ui.notifications?.warn(validation.warning);
+    }
+    return true;
+  }
+
+  validateEquipmentChange(item, equip) {
+    if (!equip) {
+      return { valid: true };
+    }
+    const isShield = item.type === "armor" && item.system?.type === "shield";
+    if (item.type !== "weapon" && !isShield) {
+      return { valid: true };
+    }
+    if (item.type === "weapon" && !this.isProficientWithWeapon(item)) {
+      const reason = game.i18n.format("ACKS.notifications.weaponNotProficient", {
+        actor: this.name,
+        weapon: item.name,
+      });
+      return { valid: false, reason };
+    }
+    const weapons = [];
+    const shields = [];
+    for (const weapon of this.itemTypes?.weapon ?? []) {
+      if (weapon.id === item.id) {
+        continue;
+      }
+      if (weapon.system?.equipped) {
+        weapons.push(weapon);
+      }
+    }
+    for (const armor of this.itemTypes?.armor ?? []) {
+      if (armor.id === item.id) {
+        continue;
+      }
+      if (armor.system?.equipped && armor.system?.type === "shield") {
+        shields.push(armor);
+      }
+    }
+    if (equip) {
+      if (item.type === "weapon") {
+        weapons.push(item);
+      } else if (item.type === "armor" && item.system?.type === "shield") {
+        shields.push(item);
+      }
+    }
+    return this._validateWeaponConfiguration(weapons, shields);
+  }
+
+  _validateWeaponConfiguration(weapons, shields) {
+    if (shields.length > 1) {
+      return { valid: false, reason: "Cannot equip more than one shield at a time." };
+    }
+    const options = [];
+    for (const weapon of weapons) {
+      const usage = this._generateWeaponUsageOptions(weapon);
+      if (usage.length === 0) {
+        return { valid: false, reason: `Unable to determine how to wield ${weapon.name}.` };
+      }
+      options.push(usage);
+    }
+    const arrangements = this._generateUsageArrangements(options);
+    const styleSet = this.getKnownFightingStyles();
+    const shieldCount = shields.length;
+    for (const arrangement of arrangements) {
+      const evaluation = this._evaluateArrangement(arrangement, shieldCount, styleSet);
+      if (evaluation.valid) {
+        return evaluation;
+      }
+    }
+    return {
+      valid: false,
+      reason:
+        arrangements.length === 0
+          ? "No valid way to wield equipped weapons with current fighting styles."
+          : "Equipped weapons are not supported by known fighting styles.",
+    };
+  }
+
+  _generateWeaponUsageOptions(item) {
+    const info = getWeaponHandsInfo(item);
+    const options = [];
+    if (info.hands > 1) {
+      if (info.melee) {
+        options.push({ item, hands: 2, category: "melee" });
+      }
+      if (info.missile) {
+        options.push({ item, hands: 2, category: "missile" });
+      }
+    } else {
+      if (info.melee) {
+        options.push({ item, hands: 1, category: "melee" });
+      }
+      if (info.missile) {
+        options.push({ item, hands: 1, category: "missile" });
+      }
+    }
+    return options;
+  }
+
+  _generateUsageArrangements(optionSets) {
+    if (optionSets.length === 0) {
+      return [[]];
+    }
+    const results = [];
+    const iterate = (index, current) => {
+      if (index >= optionSets.length) {
+        results.push([...current]);
+        return;
+      }
+      for (const option of optionSets[index]) {
+        current.push(option);
+        iterate(index + 1, current);
+        current.pop();
+      }
+    };
+    iterate(0, []);
+    return results;
+  }
+
+  _evaluateArrangement(arrangement, shieldCount, styles) {
+    let totalHands = shieldCount;
+    let twoHandMelee = 0;
+    let twoHandMissile = 0;
+    let oneHandMelee = 0;
+    let oneHandMissile = 0;
+
+    for (const option of arrangement) {
+      totalHands += option.hands;
+      if (option.hands === 2) {
+        if (option.category === "missile") {
+          twoHandMissile += 1;
+        } else {
+          twoHandMelee += 1;
+        }
+      } else if (option.category === "missile") {
+        oneHandMissile += 1;
+      } else {
+        oneHandMelee += 1;
+      }
+    }
+
+    if (totalHands > 2) {
+      return { valid: false, reason: "Equipped weapons and shields require more than two hands." };
+    }
+
+    if (twoHandMelee > 1 || twoHandMissile > 1) {
+      return { valid: false, reason: "Cannot wield multiple two-handed weapons simultaneously." };
+    }
+
+    if (twoHandMelee && (oneHandMelee + oneHandMissile + shieldCount + twoHandMissile)) {
+      return { valid: false, reason: "Two-handed melee weapons leave no hands for other gear." };
+    }
+
+    if (twoHandMissile && (oneHandMelee + oneHandMissile + shieldCount + twoHandMelee)) {
+      return { valid: false, reason: "Two-handed missile weapons leave no hands for other gear." };
+    }
+
+    if (oneHandMelee > 0 && oneHandMissile > 0) {
+      return { valid: false, reason: "Cannot mix melee and missile weapons in hand simultaneously." };
+    }
+
+    const required = new Set();
+
+    if (twoHandMelee > 0) {
+      required.add("twoHanded");
+    }
+
+    if (twoHandMissile > 0 || oneHandMissile > 0) {
+      required.add("missile");
+    }
+
+    if (shieldCount > 0 && arrangement.length > 0) {
+      required.add("weaponShield");
+    }
+
+    if (oneHandMelee > 0 && shieldCount === 0 && twoHandMelee === 0 && twoHandMissile === 0) {
+      if (oneHandMelee === 1) {
+        required.add("single");
+      } else if (oneHandMelee === 2) {
+        required.add("dual");
+      } else {
+        return { valid: false, reason: "Too many one-handed melee weapons equipped." };
+      }
+    }
+
+    if (required.size === 0 && arrangement.length === 0) {
+      return { valid: true };
+    }
+
+    for (const key of required) {
+      if (!styles.has(key)) {
+        const label = STYLE_LABELS[key] ?? key;
+        return { valid: false, reason: `Missing fighting style: ${label}.` };
+      }
+    }
+
+    return { valid: true };
   }
   /*-------------------------------------------- */
   buildRollList() {
@@ -1182,19 +1571,23 @@ export class AcksActor extends Actor {
     }
     // Compute AC
     let baseAac = 0;
-    let AacShield = 0;
     const data = this.system;
     data.aac.naked = baseAac + data.scores.dex.mod;
+    const hasShieldStyle = this.knowsFightingStyle("weaponShield");
+    let shieldBonus = 0;
     const armors = this.items.filter((i) => i.type == "armor");
     armors.forEach((a) => {
       if (a.system.equipped && a.system.type != "shield") {
         baseAac = a.system.aac.value;
       } else if (a.system.equipped && a.system.type == "shield") {
-        AacShield = a.system.aac.value;
+        if (hasShieldStyle) {
+          shieldBonus = a.system.aac.value;
+        }
       }
     });
-    data.aac.value = baseAac + data.scores.dex.mod + AacShield + data.aac.mod;
-    data.aac.shield = AacShield;
+    const activeShield = hasShieldStyle ? shieldBonus : 0;
+    data.aac.value = baseAac + data.scores.dex.mod + activeShield + data.aac.mod;
+    data.aac.shield = activeShield;
   }
 
   /* -------------------------------------------- */

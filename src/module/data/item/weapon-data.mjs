@@ -10,7 +10,7 @@ import itemPhysicalSchema from "../schema/item-physical-schema.mjs";
 export default class WeaponData extends foundry.abstract.TypeDataModel {
   /**
    * Define the data schema for documents of this type. The schema is populated the first time it is accessed and cached for future reuse.
-   * @return {{description: HTMLField, cost: NumberField, weight: NumberField, weight6: NumberField, range, favorite, save, pattern, damage, bonus, tags, slow, missile, melee, equipped, counter}}
+   * @return {{description: HTMLField, cost: NumberField, weight: NumberField, weight6: NumberField, range, favorite, save, pattern, damage, bonus, tags, slow, missile, melee, proficiencyKey, equipped, counter}}
    */
   static defineSchema() {
     const { ArrayField, BooleanField, NumberField, SchemaField, StringField } = foundry.data.fields;
@@ -49,6 +49,8 @@ export default class WeaponData extends foundry.abstract.TypeDataModel {
       missile: new BooleanField({ initial: false }),
       // Is weapon melee
       melee: new BooleanField({ initial: false }),
+      // Override used to resolve required proficiency
+      proficiencyKey: new StringField({ initial: "" }),
       // Is weapon equipped
       equipped: new BooleanField({ initial: false }),
       // counter?

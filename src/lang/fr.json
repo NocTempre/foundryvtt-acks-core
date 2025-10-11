@@ -10,7 +10,6 @@
   "ACKS.Roll": "Lancer",
   "ACKS.Success": "Succès",
   "ACKS.Failure": "Échec",
-
   "ACKS.dialog.tweaks": "Ajuster",
   "ACKS.dialog.partysheet": "Fiche de Groupe",
   "ACKS.dialog.selectActors": "Choisir PJs",
@@ -22,14 +21,12 @@
   "ACKS.dialog.createItem": "Créer un Objet",
   "ACKS.dialog.itemType": "Type de l'Objet",
   "ACKS.dialog.itemName": "Nom de l'Objet",
-
   "ACKS.Formula": "Formule",
   "ACKS.SitMod": "Mod. de situation",
   "ACKS.Modifier": "Modificateur",
   "ACKS.Modifiers": "Modificateurs",
   "ACKS.RollMode": "Mode de Jet",
   "ACKS.RollExample": "ex. +1d4",
-
   "ACKS.roll.formula": "Jet de {label}",
   "ACKS.roll.appearing": "Nombre Apparaissant",
   "ACKS.roll.morale": "Jet de Moral",
@@ -45,9 +42,7 @@
   "ACKS.roll.reaction": "Jet de Réaction",
   "ACKS.roll.initiative": "Le groupe {group} tire son Initiative !",
   "ACKS.roll.individualInit": "{name} tire son Initiative!",
-
   "ACKS.table.treasure.roll": "Trésor Aléatoire",
-
   "ACKS.details.name": "Nom",
   "ACKS.details.class": "Classe",
   "ACKS.details.title": "Titre",
@@ -64,16 +59,13 @@
   "ACKS.details.morale": "Moral",
   "ACKS.details.reaction": "Réaction",
   "ACKS.details.appearing": "NA",
-
   "ACKS.Attack": "Attaque",
   "ACKS.Encumbrance": "Encombrement",
-
   "ACKS.Retainer": "Suivant",
   "ACKS.RetainerWage": "Tarif",
   "ACKS.RetainerUpkeep": "Entretien",
   "ACKS.Loyalty": "Loyauté",
   "ACKS.LoyaltyShort": "LOY",
-
   "ACKS.scores.str.long": "Force",
   "ACKS.scores.str.short": "FOR",
   "ACKS.scores.wis.long": "Sagesse",
@@ -86,7 +78,6 @@
   "ACKS.scores.con.short": "CON",
   "ACKS.scores.cha.long": "Charisme",
   "ACKS.scores.cha.short": "CHA",
-
   "ACKS.saves.death.short": "MP",
   "ACKS.saves.death.long": "Mort",
   "ACKS.saves.wand.short": "B",
@@ -98,13 +89,11 @@
   "ACKS.saves.spell.short": "SBB",
   "ACKS.saves.spell.long": "Sorts",
   "ACKS.saves.magic.long": "Sauv. Magie",
-
   "ACKS.Health": "Points de Vie",
   "ACKS.HealthMax": "Points de Vie Maximaux",
   "ACKS.HealthShort": "PV",
   "ACKS.HitDice": "Dé de Vie",
   "ACKS.HitDiceShort": "DV",
-
   "ACKS.movement.base": "Déplacement",
   "ACKS.movement.short": "DP",
   "ACKS.movement.details": "Détail du Déplacement",
@@ -114,7 +103,6 @@
   "ACKS.movement.overland.short": "Ext",
   "ACKS.movement.exploration.short": "Dp",
   "ACKS.movement.exploration.long": "Déplacement",
-
   "ACKS.ArmorClassNaked": "Sans Armure",
   "ACKS.ArmorClass": "Classe d'Armure",
   "ACKS.ArmorClassShort": "CA",
@@ -136,7 +124,6 @@
   "ACKS.AttacksShort": "ATT",
   "ACKS.Damage": "Dégâts",
   "ACKS.Spellcaster": "Lanceur de Sort",
-
   "ACKS.Language": "Langue",
   "ACKS.SpokenLanguages": "Langues parlées",
   "ACKS.Literacy": "Lire/Écrire",
@@ -148,10 +135,8 @@
   "ACKS.NativePlus1": "Natale + 1",
   "ACKS.NativePlus2": "Natale + 2",
   "ACKS.NativePlus3": "Natale + 3",
-
   "ACKS.NPCReaction": "Réaction",
   "ACKS.RetainersMax": "#Suivants",
-
   "ACKS.category.saves": "Sauvegardes",
   "ACKS.category.attributes": "Stats",
   "ACKS.category.inventory": "Inventaire",
@@ -161,7 +146,6 @@
   "ACKS.category.languages": "Langues",
   "ACKS.category.description": "Descriptions",
   "ACKS.category.equipment": "Équipement",
-
   "ACKS.Setting.Initiative": "Initiative",
   "ACKS.Setting.InitiativeHint": "Initiative groupée ou individuelle. L'initiative unique est tirée une seule fois en début de combat.",
   "ACKS.Setting.InitiativeOnce": "Initiative unique individuelle",
@@ -181,7 +165,6 @@
   "ACKS.Setting.MovementAuto": "Calculer Déplacement",
   "ACKS.Setting.SignificantTreasure": "Poids d'un Trésor Significatif",
   "ACKS.Setting.SignificantTreasureHint": "Poids auquel le Trésor réduit le déplacement. Utilisé pour l'encombrement Basique",
-
   "ACKS.items.Equip": "Equiper",
   "ACKS.items.Unequip": "Déséquiper",
   "ACKS.items.Misc": "Divers",
@@ -201,6 +184,7 @@
   "ACKS.items.ArmorAC": "CA",
   "ACKS.items.ArmorAAC": "CAA",
   "ACKS.items.Bonus": "Bonus",
+  "ACKS.items.ProficiencyKey": "Clé de compétence",
   "ACKS.items.AtkBonus": "Bonus d'Attaque",
   "ACKS.items.roundAttacks": "Attaques utilisées ce tour",
   "ACKS.items.roundAttacksMax": "Attaques max par tour",
@@ -208,8 +192,8 @@
   "ACKS.items.hasShield": "A un bonus de Bouclier",
   "ACKS.items.typeTag": "Tapez une liste de tags descriptifs ex. 'Mêlée,Missile (5’–10’ / 11’–20’ / 21’–30’)' puis Entrée",
   "ACKS.items.enterTag": "Tags",
+  "ACKS.equippedAttacks": "Attaques équipées",
   "ACKS.items.pattern": "Marqueur de schéma d'attaque",
-
   "ACKS.items.Range": "Portée",
   "ACKS.items.Melee": "Mêlée",
   "ACKS.items.Missile": "Distance",
@@ -220,13 +204,11 @@
   "ACKS.items.Splash": "Zone",
   "ACKS.items.Reload": "Rechargement",
   "ACKS.items.Charge": "Charge",
-
   "ACKS.armor.type": "Type d'Armure",
   "ACKS.armor.unarmored": "Sans Armure",
   "ACKS.armor.light": "Légère",
   "ACKS.armor.heavy": "Lourde",
   "ACKS.armor.shield": "Bouclier",
-
   "ACKS.spells.spend": "{speaker} lance {name}!",
   "ACKS.spells.Memorized": "Memorisé",
   "ACKS.spells.Cast": "Lancé",
@@ -237,9 +219,7 @@
   "ACKS.spells.Level": "Niveau",
   "ACKS.spells.Save": "Sauvegarde",
   "ACKS.spells.ResetSlots": "Réinitialiser les Emplacements",
-
   "ACKS.abilities.Requirements": "Prérequis",
-
   "ACKS.exploration.ld.long": "Ecoute aux Portes",
   "ACKS.exploration.ld.short": "Eco. Porte",
   "ACKS.exploration.ld.abrev": "EP",
@@ -252,7 +232,6 @@
   "ACKS.exploration.ft.long": "Détecter les Pièges",
   "ACKS.exploration.ft.short": "Dét. Pièges",
   "ACKS.exploration.ft.abrev": "DP",
-
   "ACKS.messages.GetExperience": "{name} a gagné {value} points d'expérience !",
   "ACKS.messages.AttackSuccess": "<b>Touche une CA de {result}!</b> ({bonus})",
   "ACKS.messages.AttackAscendingSuccess": "<b>Touche une CAA de {result}!</b>",
@@ -261,7 +240,6 @@
   "ACKS.messages.InflictsDamage": "Inflige des dégâts !",
   "ACKS.messages.applyDamage": "Appliquer les dégâts",
   "ACKS.messages.applyHealing": "Appliquer les soins",
-
   "ACKS.colors.green": "Vert",
   "ACKS.colors.red": "Rouge",
   "ACKS.colors.yellow": "Jaune",
@@ -269,10 +247,16 @@
   "ACKS.colors.blue": "Bleu",
   "ACKS.colors.orange": "Orange",
   "ACKS.colors.white": "Blanc",
-
   "ACKS.reaction.Hostile": "{name} est Hostile",
   "ACKS.reaction.Unfriendly": "{name} est Inamical",
   "ACKS.reaction.Neutral": "{name} est Neutre",
   "ACKS.reaction.Indifferent": "{name} est Indifférent",
-  "ACKS.reaction.Friendly": "{name} est Amical"
+  "ACKS.reaction.Friendly": "{name} est Amical",
+  "ACKS.fight.weaponstyles": "Styles de combat",
+  "ACKS.fight.weaponstylesHint": "Liste séparée par des virgules de styles supplémentaires",
+  "ACKS.fight.weaponstylesPlaceholder": "ex. Arme à distance, Arme à deux mains",
+  "ACKS.fight.weaponproficiencies": "Compétences d'armes",
+  "ACKS.fight.weaponproficienciesHint": "Liste séparée par des virgules de groupes ou noms d'armes",
+  "ACKS.fight.weaponproficienciesPlaceholder": "ex. épées, haches, arc long",
+  "ACKS.notifications.weaponNotProficient": "{actor} n'est pas compétent avec {weapon}."
 }

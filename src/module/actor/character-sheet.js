@@ -296,14 +296,7 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
       const li = $(ev.currentTarget).parents(".item");
       const item = this.actor.items.get(li.data("itemId"));
       //console.log("item", item.system.equipped);
-      await this.actor.updateEmbeddedDocuments("Item", [
-        {
-          _id: li.data("itemId"),
-          system: {
-            equipped: !item.system.equipped,
-          },
-        },
-      ]);
+      await this.actor.toggleItemEquipped(item);
     });
 
     html.find(".item-favorite").click(async (ev) => {

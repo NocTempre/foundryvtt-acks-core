@@ -10,7 +10,6 @@
   "ACKS.Roll": "Rolar",
   "ACKS.Success": "Sucesso",
   "ACKS.Failure": "Falha",
-
   "ACKS.dialog.tweaks": "Ferramentas",
   "ACKS.dialog.partysheet": "Visão do grupo",
   "ACKS.dialog.selectActors": "Selecionar PJs",
@@ -19,14 +18,12 @@
   "ACKS.dialog.generateSaves": "Gerar salvaguardas",
   "ACKS.dialog.generateScores": "Gerar status",
   "ACKS.dialog.generateScore": "Rolou {score} ({count})",
-
   "ACKS.Formula": "Fórmula",
   "ACKS.SitMod": "Modificador situacional",
   "ACKS.Modifier": "Modificador",
   "ACKS.Modifiers": "Modificadores",
   "ACKS.RollMode": "Modo de rolagem",
   "ACKS.RollExample": "ex. +1d4",
-
   "ACKS.roll.formula": "{label} rolar",
   "ACKS.roll.appearing": "Aparecimento da rolagem ({type})",
   "ACKS.roll.morale": "Teste de moral",
@@ -42,9 +39,7 @@
   "ACKS.roll.reaction": "Rolagem de reação",
   "ACKS.roll.initiative": "Grupo {group} rola para iniciativa!",
   "ACKS.roll.individualInit": "{name} rola para iniciativa!",
-
   "ACKS.table.treasure.roll": "Rolar tesouro",
-
   "ACKS.details.name": "Nome",
   "ACKS.details.class": "Classe",
   "ACKS.details.title": "Titulo",
@@ -61,16 +56,13 @@
   "ACKS.details.morale": "Moral",
   "ACKS.details.reaction": "Reação",
   "ACKS.details.appearing": "NA",
-
   "ACKS.Attack": "Ataca",
   "ACKS.Encumbrance": "Sobrecarga",
-
   "ACKS.Retainer": "Empregado",
   "ACKS.RetainerWage": "Salário",
   "ACKS.RetainerUpkeep": "Manutenção",
   "ACKS.Loyalty": "Classificação de lealdade",
   "ACKS.LoyaltyShort": "CL",
-
   "ACKS.scores.str.long": "Força",
   "ACKS.scores.str.short": "FOR",
   "ACKS.scores.wis.long": "Sabedoria",
@@ -83,7 +75,6 @@
   "ACKS.scores.con.short": "CON",
   "ACKS.scores.cha.long": "Carisma",
   "ACKS.scores.cha.short": "CAR",
-
   "ACKS.saves.death.short": "Mt",
   "ACKS.saves.death.long": "Morte Veneno",
   "ACKS.saves.wand.short": "V",
@@ -95,13 +86,11 @@
   "ACKS.saves.spell.short": "Ma",
   "ACKS.saves.spell.long": "Magias Bastões Cajados",
   "ACKS.saves.magic.long": "Bônus vs Magia",
-
   "ACKS.Health": "Pontos de Vida",
   "ACKS.HealthMax": "Pontos de Vida máximo",
   "ACKS.HealthShort": "PV",
   "ACKS.HitDice": "Dados de Vida",
   "ACKS.HitDiceShort": "DV",
-
   "ACKS.movement.base": "Taxa de Movimento",
   "ACKS.movement.short": "TM",
   "ACKS.movement.details": "Detalhes do movimento",
@@ -111,7 +100,6 @@
   "ACKS.movement.overland.short": "TMT",
   "ACKS.movement.exploration.short": "TE",
   "ACKS.movement.exploration.long": "Taxa de Movimento em Exploração",
-
   "ACKS.ArmorClassNaked": "Classe de Armadura despido",
   "ACKS.ArmorClass": "Classe de Armadura",
   "ACKS.ArmorClassShort": "CA",
@@ -133,7 +121,6 @@
   "ACKS.AttacksShort": "ATA",
   "ACKS.Damage": "Dano",
   "ACKS.Spellcaster": "Conjurador",
-
   "ACKS.Language": "Lingua",
   "ACKS.SpokenLanguages": "Linguas faladas",
   "ACKS.Literacy": "Alfabetização",
@@ -145,10 +132,8 @@
   "ACKS.NativePlus1": "Nativo + 1",
   "ACKS.NativePlus2": "Nativo + 2",
   "ACKS.NativePlus3": "Nativo + 3",
-
   "ACKS.NPCReaction": "Reação do NPC",
   "ACKS.RetainersMax": "#Retentor",
-
   "ACKS.category.saves": "Salvaguarda",
   "ACKS.category.attributes": "Atributos",
   "ACKS.category.inventory": "Itens",
@@ -158,7 +143,6 @@
   "ACKS.category.languages": "Linguas",
   "ACKS.category.description": "Descrição",
   "ACKS.category.equipment": "Equipamento",
-
   "ACKS.Setting.Initiative": "Iniciativa",
   "ACKS.Setting.InitiativeHint": "Iniciativa agrupada ou individual. Iniciativa única individual é somente rolada ao inicio do combate",
   "ACKS.Setting.InitiativeOnce": "Iniciativa única individual",
@@ -176,7 +160,6 @@
   "ACKS.Setting.MovementAuto": "Calcular movimento",
   "ACKS.Setting.SignificantTreasure": "Peso significativo do tesouro",
   "ACKS.Setting.SignificantTreasureHint": "Peso com o qual o tesouro reduzirá o movimento, somente usar com sobrecarga básica",
-
   "ACKS.items.Equip": "Equipar",
   "ACKS.items.Unequip": "Desequipar",
   "ACKS.items.Misc": "Diverso",
@@ -196,6 +179,7 @@
   "ACKS.items.ArmorAC": "CA",
   "ACKS.items.ArmorAAC": "CAA",
   "ACKS.items.Bonus": "Bônus",
+  "ACKS.items.ProficiencyKey": "Chave de proficiência",
   "ACKS.items.AtkBonus": "Bônus ataque",
   "ACKS.items.roundAttacks": "Ataques usados na rodada",
   "ACKS.items.roundAttacksMax": "Máximo de ataques por rodada",
@@ -203,8 +187,8 @@
   "ACKS.items.hasShield": "Tem um bônus de escudo",
   "ACKS.items.typeTag": "Digite virgula para separar a lista de tag",
   "ACKS.items.enterTag": "Tags",
+  "ACKS.equippedAttacks": "Ataques equipados",
   "ACKS.items.pattern": "Marcador padrão de ataque",
-
   "ACKS.items.Range": "Distância",
   "ACKS.items.Melee": "Corpo",
   "ACKS.items.Missile": "Projétil",
@@ -215,13 +199,11 @@
   "ACKS.items.Splash": "Arma de respingo",
   "ACKS.items.Reload": "Recarga",
   "ACKS.items.Charge": "Carga",
-
   "ACKS.armor.type": "Tipo de armadura",
   "ACKS.armor.unarmored": "Sem armadura",
   "ACKS.armor.light": "Leve",
   "ACKS.armor.heavy": "Pesada",
   "ACKS.armor.shield": "Escudo",
-
   "ACKS.spells.spend": "{speaker} está conjurando {name}!",
   "ACKS.spells.Memorized": "Memorizada",
   "ACKS.spells.Cast": "Conjurar",
@@ -232,9 +214,7 @@
   "ACKS.spells.Level": "Nivel",
   "ACKS.spells.Save": "Salvaguarda",
   "ACKS.spells.ResetSlots": "Reiniciar espaços de magia",
-
   "ACKS.abilities.Requirements": "Requerimentos",
-
   "ACKS.exploration.ld.long": "Ouvir ruidos",
   "ACKS.exploration.ld.short": "Ouvir ruidos",
   "ACKS.exploration.ld.abrev": "OR",
@@ -247,7 +227,6 @@
   "ACKS.exploration.ft.long": "Encontrar armadilhas em salas",
   "ACKS.exploration.ft.short": "Encontrar armadilhas",
   "ACKS.exploration.ft.abrev": "EA",
-
   "ACKS.messages.GetExperience": "{name} ganha {value} pontos de experiência!",
   "ACKS.messages.AttackSuccess": "<b>Acerta CA {result}!</b> ({bonus})",
   "ACKS.messages.AttackAscendingSuccess": "<b>Acerta CA {result}!</b>",
@@ -256,7 +235,6 @@
   "ACKS.messages.InflictsDamage": "Inflige dano!",
   "ACKS.messages.applyDamage": "Aplicar dano",
   "ACKS.messages.applyHealing": "Aplicar cura",
-
   "ACKS.colors.green": "Verde",
   "ACKS.colors.red": "Vermelho",
   "ACKS.colors.yellow": "Amarelo",
@@ -264,11 +242,17 @@
   "ACKS.colors.blue": "Azul",
   "ACKS.colors.orange": "Laranja",
   "ACKS.colors.white": "Branco",
-
   "ACKS.reaction.check": "Teste de reação",
   "ACKS.reaction.Hostile": "{name} é Hostil",
   "ACKS.reaction.Unfriendly": "{name} é Inamistoso",
   "ACKS.reaction.Neutral": "{name} é Neutro",
   "ACKS.reaction.Indifferent": "{name} é Indiferente",
-  "ACKS.reaction.Friendly": "{name} é Amigável"
+  "ACKS.reaction.Friendly": "{name} é Amigável",
+  "ACKS.fight.weaponstyles": "Estilos de combate",
+  "ACKS.fight.weaponstylesHint": "Lista separada por vírgulas de estilos adicionais",
+  "ACKS.fight.weaponstylesPlaceholder": "ex. Arma de projétil, Arma de duas mãos",
+  "ACKS.fight.weaponproficiencies": "Proficiências em armas",
+  "ACKS.fight.weaponproficienciesHint": "Lista separada por vírgulas de grupos ou nomes de armas",
+  "ACKS.fight.weaponproficienciesPlaceholder": "ex. espadas, machados, arco longo",
+  "ACKS.notifications.weaponNotProficient": "{actor} não é proficiente com {weapon}."
 }
