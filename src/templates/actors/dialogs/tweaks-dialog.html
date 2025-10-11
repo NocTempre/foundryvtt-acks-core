@@ -13,6 +13,15 @@
           system.retainer.enabled}}  data-dtype="Boolean"/>
     </div>
   </div>
+  {{#if (eq this.type 'character')}}
+  <div class="form-group">
+    <label for="classlock">{{localize "ACKS.details.classLockToggle"}}</label>
+    <div class="form-fields">
+      <input type="checkbox" name="system.details.classLock" id="classlock" {{checked system.details.classLock}}
+        data-dtype="Boolean" />
+    </div>
+  </div>
+  {{/if}}
   <div class="form-group">
     <label>{{localize "ACKS.InitiativeBonus"}}</label>
     <div class="form-fields">
@@ -24,7 +33,8 @@
   <div class="form-group">
     <label>{{localize "ACKS.details.experience.next"}}</label>
     <div class="form-fields">
-      <input type="text" name="system.details.xp.next" id="experiencenext" value="{{system.details.xp.next}}" data-dtype="Number" />
+      <input type="text" name="system.details.xp.next" id="experiencenext" value="{{system.details.xp.next}}"
+        data-dtype="Number" {{#if system.details.classLock}}disabled{{/if}} />
     </div>
   </div>
   <div class="form-group">
@@ -48,7 +58,8 @@
   <div class="form-group">
     <label>{{localize "ACKS.MeleeDamageBonus"}}</label>
     <div class="form-fields">
-      <input type="text" name="system.damage.mod.melee" id="meleedmg" value="{{system.damage.mod.melee}}" data-dtype="Number" />
+      <input type="text" name="system.damage.mod.melee" id="meleedmg" value="{{system.damage.mod.melee}}"
+        data-dtype="Number" {{#if system.details.classLock}}disabled{{/if}} />
     </div>
   </div>
   <div class="form-group">
@@ -61,7 +72,8 @@
   <div class="form-group">
     <label>{{localize "ACKS.MissileDamageBonus"}}</label>
     <div class="form-fields">
-      <input type="text" name="system.damage.mod.missile" id="missiledmg" value="{{system.damage.mod.missile}}" data-dtype="Number" />
+      <input type="text" name="system.damage.mod.missile" id="missiledmg" value="{{system.damage.mod.missile}}"
+        data-dtype="Number" {{#if system.details.classLock}}disabled{{/if}} />
     </div>
   </div>
   <div class="form-group">

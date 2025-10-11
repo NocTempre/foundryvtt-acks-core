@@ -96,7 +96,8 @@
             {{/if}}
           </h4>
           <div class="attribute-value">
-            <input name="system.hp.hd" type="text" value="{{system.hp.hd}}" placeholder="" data-dtype="String" />
+            <input name="system.hp.hd" type="text" value="{{system.hp.hd}}" placeholder="" data-dtype="String"
+              {{#if system.details.classLock}}disabled{{/if}} />
           </div>
         </li>
 
@@ -175,7 +176,7 @@
           </h4>
           <div class="flexrow">
             <input name="system.fight.cleaves" type="text" value="{{system.fight.cleaves}}" placeholder=""
-              data-dtype="Number" />
+              data-dtype="Number" {{#if system.details.classLock}}disabled{{/if}} />
           </div>
         </li>
 
@@ -196,7 +197,7 @@
           </h4>
           <div class="flexrow">
             <input name="system.thac0.throw" type="text" value="{{system.thac0.throw}}" placeholder=""
-              data-dtype="Number" />
+              data-dtype="Number" {{#if system.details.classLock}}disabled{{/if}} />
           </div>
         </li>
         <li class="attribute attribute-secondaries attack" data-attack="missile">
@@ -270,7 +271,7 @@
         </h4>
         <div class="attribute-value">
           <input name="system.saves.paralysis.value" type="text" value="{{system.saves.paralysis.value}}"
-            placeholder="0" data-dtype="Number" />
+            placeholder="0" data-dtype="Number" {{#if system.details.classLock}}disabled{{/if}} />
         </div>
       </li>
       <li class="attribute saving-throw" data-save="death">
@@ -279,7 +280,7 @@
         </h4>
         <div class="attribute-value">
           <input name="system.saves.death.value" type="text" value="{{system.saves.death.value}}" placeholder="0"
-            data-dtype="Number" />
+            data-dtype="Number" {{#if system.details.classLock}}disabled{{/if}} />
         </div>
       </li>
       <li class="attribute saving-throw" data-save="breath">
@@ -288,7 +289,7 @@
         </h4>
         <div class="attribute-value">
           <input name="system.saves.breath.value" type="text" value="{{system.saves.breath.value}}" placeholder="0"
-            data-dtype="Number" />
+            data-dtype="Number" {{#if system.details.classLock}}disabled{{/if}} />
         </div>
       </li>
       <li class="attribute saving-throw" data-save="implements">
@@ -297,7 +298,7 @@
         </h4>
         <div class="attribute-value">
           <input name="system.saves.implements.value" type="text" value="{{system.saves.implements.value}}"
-            placeholder="0" data-dtype="Number" />
+            placeholder="0" data-dtype="Number" {{#if system.details.classLock}}disabled{{/if}} />
         </div>
       </li>
       <li class="attribute saving-throw" data-save="spell">
@@ -305,7 +306,8 @@
           <a><i class="acks-roll-small fa-solid fa-dice-d20"></i>{{ localize "ACKS.saves.spell.long" }}</a>
         </h4>
         <div class="attribute-value">
-          <input name="system.saves.spell.value" type="text" value="{{system.saves.spell.value}}" placeholder="0" />
+          <input name="system.saves.spell.value" type="text" value="{{system.saves.spell.value}}" placeholder="0"
+            {{#if system.details.classLock}}disabled{{/if}} />
         </div>
       </li>
       <li class="favorite-section">

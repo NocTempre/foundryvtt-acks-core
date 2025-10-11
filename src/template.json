@@ -112,6 +112,8 @@
         "title": "",
         "alignment": "Neutral",
         "characterType": "pc",
+        "classKey": "",
+        "classLock": false,
         "level": 1,
         "casterlevel": 0,
         "age": 18,

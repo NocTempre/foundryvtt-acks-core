@@ -170,6 +170,54 @@
 .acks.sheet.actor .summary li input {
   text-align: left;
 }
+.acks.sheet.actor .summary li.class-selection {
+  display: flex;
+  align-items: center;
+}
+.acks.sheet.actor .summary li.class-selection .class-selection-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+.acks.sheet.actor .summary li.class-selection .class-selection-wrapper.unlocked input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.acks.sheet.actor .summary li.class-selection .class-selection-wrapper.locked input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.acks.sheet.actor .summary li.class-selection .class-select {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border, #b5b3a4);
+  border-radius: 4px;
+  background: var(--acks-input-background, rgba(255, 255, 255, 0.9));
+  color: inherit;
+}
+.acks.sheet.actor .summary li.class-selection .class-select:not(:disabled) {
+  cursor: pointer;
+}
+.acks.sheet.actor .summary li.class-selection .class-select:disabled,
+.acks.sheet.actor .summary li.class-selection .class-select.is-locked {
+  cursor: default;
+  opacity: 0.85;
+}
+.acks.sheet.actor .summary li.class-selection .class-select i {
+  font-size: 14px;
+  line-height: 1;
+}
+.acks.sheet.actor .summary li.class-selection .class-select .class-icon {
+  width: 20px;
+  height: 20px;
+}
 .acks.sheet.actor .summary li.notify input {
   font-weight: bold;
   animation: 0.8s ease-in 1s infinite alternate notify;

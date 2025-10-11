@@ -82,6 +82,11 @@
 
   "ACKS.details.name": "Name",
   "ACKS.details.class": "Class",
+  "ACKS.details.selectClass": "Select Class",
+  "ACKS.details.selectClassPrompt": "Choose a class",
+  "ACKS.details.classSelectionTitle": "Class Selection",
+  "ACKS.details.classLockToggle": "Class Locked",
+  "ACKS.details.classListMissing": "No class definitions are available for selection.",
   "ACKS.details.title": "Title",
   "ACKS.details.alignment": "Alignment",
   "ACKS.details.level": "Level",

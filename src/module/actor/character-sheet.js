@@ -224,6 +224,10 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
       this._onShowModifiers(ev);
     });
 
+    if (this.options.editable) {
+      html.find("[data-action='select-class']").click((ev) => this._onSelectClass(ev));
+    }
+
     // Everything below here is only needed if the sheet is editable
     if (!this.options.editable) return;
 
@@ -328,5 +332,58 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
     html.find("a[data-action='generate-scores']").click((ev) => {
       this.generateScores(ev);
     });
+  }
+
+  async _onSelectClass(event) {
+    event.preventDefault();
+    if (this.actor?.system?.details?.classLock) {
+      return;
+    }
+    const choices = CONFIG.ACKS?.classList ?? [];
+    if (!choices.length) {
+      ui.notifications?.warn(game.i18n.localize("ACKS.details.classListMissing"));
+      return;
+    }
+
+    const currentKey = this.actor?.system?.details?.classKey ?? "";
+    const options = choices
+      .map((entry) => {
+        const selected = entry.id === currentKey ? " selected" : "";
+        const optionLabel = entry.source ? `${entry.label} (${entry.source})` : entry.label;
+        return `<option value="${entry.id}"${selected}>${optionLabel}</option>`;
+      })
+      .join("");
+
+    const content = `
+      <form class="acks-class-select">
+        <div class="form-group">
+          <label>${game.i18n.localize("ACKS.details.class")}</label>
+          <div class="form-fields">
+            <select name="classKey" data-dtype="String">
+              <option value="">${game.i18n.localize("ACKS.details.selectClassPrompt")}</option>
+              ${options}
+            </select>
+          </div>
+        </div>
+      </form>`;
+
+    const classKey = await Dialog.prompt({
+      title: game.i18n.localize("ACKS.details.classSelectionTitle"),
+      content,
+      label: game.i18n.localize("ACKS.Ok"),
+      rejectClose: true,
+      callback: (html) => html.find("[name='classKey']").val(),
+    });
+
+    if (!classKey) {
+      return;
+    }
+
+    const updateData = {
+      "system.details.classKey": classKey,
+      "system.details.classLock": true,
+    };
+
+    await this.actor.update(updateData);
   }
 }

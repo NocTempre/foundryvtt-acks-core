@@ -36,6 +36,10 @@ export const normalizeAssetPath = (path) => {
 };
 
 export const ACKS = {
+  classes: {},
+  classList: [],
+  classSources: [],
+  classDefaultIcon: `${ASSETS_PATH}/ui/icons/class-placeholder.svg`,
   hitDiceModifiers: {
     d4: { value: 0, label: "d4 (0)" },
     d6: { value: 2, label: "d6 (2)" },

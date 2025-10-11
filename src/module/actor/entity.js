@@ -2,6 +2,22 @@ import { AcksDice } from "../dice.js";
 import { AcksUtility } from "../utility.js";
 import { SYSTEM_ID } from "../config.js";
 
+const TARGET_NUMBER_PATTERN = /(\d+)/;
+
+function parseTargetValue(value) {
+  if (value === null || value === undefined) return null;
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+  if (typeof value === "string") {
+    const match = value.match(TARGET_NUMBER_PATTERN);
+    if (!match) return null;
+    const parsed = Number(match[0]);
+    return Number.isNaN(parsed) ? null : parsed;
+  }
+  return null;
+}
+
 export class AcksActor extends Actor {
   static async create(data, options) {
     // Case of compendium global import
@@ -105,6 +121,14 @@ export class AcksActor extends Actor {
   /* -------------------------------------------- */
   prepareData() {
     super.prepareData();
+  }
+
+  /* -------------------------------------------- */
+  prepareBaseData() {
+    super.prepareBaseData();
+    if (this.type === "character") {
+      this.applyClassAutomation();
+    }
   }
 
   /* -------------------------------------------- */
@@ -1332,5 +1356,108 @@ export class AcksActor extends Actor {
     const data = this.system;
 
     data.thac0.bba = 10 - data.thac0.throw;
+  }
+
+  applyClassAutomation() {
+    const data = this.system;
+    const details = data?.details;
+    if (!details?.classLock) {
+      return;
+    }
+
+    const classKey = details.classKey;
+    if (!classKey) {
+      return;
+    }
+
+    const classDefinitions = CONFIG.ACKS?.classes ?? {};
+    const classDef = classDefinitions[classKey];
+    if (!classDef || !Array.isArray(classDef.levels) || classDef.levels.length === 0) {
+      return;
+    }
+
+    const currentXp = Number(details.xp?.value ?? 0) || 0;
+    let activeLevel = classDef.levels[0];
+    let nextLevel = null;
+
+    for (const level of classDef.levels) {
+      const levelXp = Number(level.xp ?? 0);
+      if (currentXp >= levelXp) {
+        activeLevel = level;
+        continue;
+      }
+      nextLevel = level;
+      break;
+    }
+
+    if (!activeLevel) {
+      return;
+    }
+
+    // Update descriptive fields
+    if (classDef.name) {
+      details.class = classDef.name;
+    }
+    if (activeLevel.title) {
+      details.title = activeLevel.title;
+    }
+
+    const levelNumber = Number(activeLevel.level ?? details.level);
+    if (!Number.isNaN(levelNumber)) {
+      details.level = levelNumber;
+    }
+
+    if (nextLevel) {
+      const threshold = Number(nextLevel.xp ?? details.xp?.next);
+      if (!Number.isNaN(threshold)) {
+        details.xp.next = threshold;
+      }
+    } else {
+      const fallback = Math.max(currentXp, Number(activeLevel.xp ?? currentXp));
+      if (!Number.isNaN(fallback)) {
+        details.xp.next = fallback;
+      }
+    }
+
+    const hitDice = activeLevel.hit_dice ?? classDef.hit_die;
+    if (hitDice) {
+      data.hp.hd = hitDice;
+    }
+
+    const damageBonus = Number(activeLevel.damage_bonus);
+    if (!Number.isNaN(damageBonus)) {
+      data.damage.mod.melee = damageBonus;
+      data.damage.mod.missile = damageBonus;
+    }
+
+    const cleaves = Number(activeLevel.cleaves);
+    if (!Number.isNaN(cleaves)) {
+      data.fight.cleaves = cleaves;
+    }
+
+    const attackThrow = parseTargetValue(activeLevel.attack_throw);
+    if (attackThrow !== null) {
+      data.thac0.throw = attackThrow;
+    }
+
+    const saveMap = {
+      paralysis: "paralysis",
+      death: "death",
+      implements: "implements",
+      spells: "spell",
+      wand: "wand",
+      breath: "breath",
+    };
+
+    for (const [sourceKey, targetKey] of Object.entries(saveMap)) {
+      const saveValue = activeLevel[sourceKey];
+      if (saveValue === undefined) continue;
+      const parsed = parseTargetValue(saveValue);
+      if (parsed === null) continue;
+      const save = data.saves?.[targetKey];
+      if (save?.value !== undefined) {
+        save.value = parsed;
+      }
+    }
   }
 }

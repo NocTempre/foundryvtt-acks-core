@@ -5,7 +5,7 @@ import { AcksActorSheetMonster } from "./module/actor/monster-sheet.js";
 import { preloadHandlebarsTemplates } from "./module/preloadTemplates.js";
 import { AcksActor } from "./module/actor/entity.js";
 import { AcksItem } from "./module/documents/item.js";
-import { ACKS, SYSTEM_ID } from "./module/config.js";
+import { ACKS, SYSTEM_ID, assetPath, normalizeAssetPath } from "./module/config.js";
 import { registerMainSettings } from "./module/settings.js";
 import { registerHelpers } from "./module/helpers.js";
 import * as chat from "./module/chat.js";
@@ -26,6 +26,207 @@ import WeaponData from "./module/data/item/weapon-data.mjs";
 import ArmorData from "./module/data/item/armor-data.mjs";
 import SpellData from "./module/data/item/spell-data.mjs";
 import AbilityData from "./module/data/item/ability-data.mjs";
+
+async function loadClassDefinitions() {
+  const fetchJson = foundry.utils?.fetchJsonWithTimeout ?? fetchJsonFallback;
+  const FilePickerClass =
+    foundry?.applications?.apps?.FilePicker?.implementation ??
+    foundry?.app?.applications?.FilePicker?.implementation ??
+    foundry?.applications?.apps?.FilePicker ??
+    globalThis.FilePicker;
+
+  const slugify = (value) => {
+    if (typeof value !== "string" || value.trim() === "") return "";
+    if (foundry.utils?.slugify) {
+      return foundry.utils.slugify(value, { strict: true });
+    }
+    return value
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  };
+
+  const startCase = (value) => {
+    if (typeof value !== "string") return "";
+    const trimmed = value.trim();
+    if (!trimmed) return "";
+    return trimmed
+      .replace(/[-_]+/g, " ")
+      .replace(/\s+/g, " ")
+      .toLowerCase()
+      .replace(/\b\w/g, (c) => c.toUpperCase());
+  };
+
+  const collectRuleFiles = async (rootDirectory) => {
+    if (!FilePickerClass?.browse) return [];
+
+    const stack = [rootDirectory];
+    const visited = new Set();
+    const files = [];
+
+    while (stack.length > 0) {
+      const current = stack.pop();
+      if (!current || visited.has(current)) continue;
+      visited.add(current);
+
+      try {
+        const result = await FilePickerClass.browse("data", current);
+        for (const file of result.files ?? []) {
+          if (typeof file === "string" && file.toLowerCase().endsWith(".json")) {
+            files.push(file);
+          }
+        }
+        for (const dir of result.dirs ?? []) {
+          if (typeof dir === "string" && !visited.has(dir)) {
+            stack.push(dir);
+          }
+        }
+      } catch (error) {
+        console.warn(`ACKS | Unable to browse rule directory ${current}`, error);
+      }
+    }
+
+    return files;
+  };
+
+  const rulesRoot = assetPath("rules");
+  const defaultFile = assetPath("rules/acks2_core7_classes.json");
+
+  let ruleFiles = [];
+  try {
+    ruleFiles = await collectRuleFiles(rulesRoot);
+  } catch (error) {
+    console.warn("ACKS | Failed to enumerate rule files", error);
+  }
+
+  if (!ruleFiles?.length) {
+    ruleFiles = [defaultFile];
+  } else if (!ruleFiles.includes(defaultFile)) {
+    ruleFiles.push(defaultFile);
+  }
+
+  const uniqueRuleFiles = Array.from(new Set(ruleFiles.filter((path) => typeof path === "string" && path.trim())));
+  const classes = {};
+  const list = [];
+  const sources = new Map();
+  const locale = game?.i18n?.lang ?? "en";
+
+  for (const filePath of uniqueRuleFiles) {
+    let raw;
+    try {
+      raw = await fetchJson(filePath);
+    } catch (error) {
+      console.error(`ACKS | Failed to load class definitions from ${filePath}`, error);
+      continue;
+    }
+
+    let entries = [];
+    if (Array.isArray(raw)) {
+      entries = raw;
+    } else if (Array.isArray(raw?.classes)) {
+      entries = raw.classes;
+    } else if (Array.isArray(raw?.entries)) {
+      entries = raw.entries;
+    }
+
+    if (!entries.length) continue;
+
+    const fileName = filePath.split("/").pop() ?? "classes";
+    const fileStem = fileName.replace(/\.json$/i, "");
+    const fallbackSourceRaw =
+      (typeof raw?.source === "string" && raw.source.trim()) ? raw.source.trim() :
+      (typeof raw?.label === "string" && raw.label.trim()) ? raw.label.trim() :
+      fileStem;
+    const fallbackSourceLabel = startCase(fallbackSourceRaw) || startCase(fileStem) || fileStem;
+    const fallbackSourceId =
+      slugify(raw?.sourceId ?? fallbackSourceRaw) ||
+      slugify(fallbackSourceLabel) ||
+      slugify(fileStem);
+
+    if (fallbackSourceId && fallbackSourceLabel) {
+      sources.set(fallbackSourceId, { id: fallbackSourceId, label: fallbackSourceLabel, file: filePath });
+    }
+
+    for (const entry of entries) {
+      if (!entry?.name) continue;
+
+      const entryType = typeof entry.type === "string" ? entry.type.toLowerCase() : "class";
+      if (entryType !== "class") continue;
+
+      const entrySourceRaw =
+        (typeof entry.source === "string" && entry.source.trim()) ? entry.source.trim() : fallbackSourceRaw;
+      const entrySourceLabel = startCase(entrySourceRaw) || fallbackSourceLabel;
+      const entrySourceId =
+        slugify(entry.sourceId ?? entrySourceRaw) ||
+        fallbackSourceId;
+
+      if (entrySourceId && entrySourceLabel) {
+        sources.set(entrySourceId, { id: entrySourceId, label: entrySourceLabel, file: filePath });
+      }
+
+      const baseName = entry.name.trim();
+      if (!baseName) continue;
+
+      const baseSlug = slugify(entry.id ?? baseName);
+      if (!baseSlug) continue;
+
+      let baseId = entry.id ?? baseSlug;
+      if (!entry.id && entrySourceId) {
+        baseId = `${baseSlug}-${entrySourceId}`;
+      }
+
+      let uniqueId = baseId;
+      let counter = 2;
+      while (classes[uniqueId]) {
+        uniqueId = `${baseId}-${counter++}`;
+      }
+
+      const levels = Array.isArray(entry.levels) ? entry.levels.map((lv) => ({ ...lv })) : [];
+      const levelIndex = {};
+      for (const level of levels) {
+        const levelNumber = Number(level.level ?? 0);
+        level.level = levelNumber;
+        level.xp = Number(level.xp ?? 0);
+        levelIndex[levelNumber] = level;
+      }
+
+      const iconPath = entry.icon ? normalizeAssetPath(entry.icon) : undefined;
+
+      const classData = {
+        ...entry,
+        id: uniqueId,
+        type: entryType,
+        source: entrySourceLabel,
+        sourceId: entrySourceId,
+        file: filePath,
+        levels,
+        levelIndex,
+        icon: iconPath ?? ACKS.classDefaultIcon,
+      };
+
+      classes[uniqueId] = classData;
+      list.push({ id: uniqueId, label: entry.name, source: entrySourceLabel, icon: classData.icon });
+    }
+  }
+
+  list.sort((a, b) => {
+    const nameComparison = a.label.localeCompare(b.label, locale);
+    if (nameComparison !== 0) return nameComparison;
+    return (a.source ?? "").localeCompare(b.source ?? "", locale);
+  });
+
+  CONFIG.ACKS.classes = classes;
+  CONFIG.ACKS.classList = list;
+  CONFIG.ACKS.classSources = Array.from(sources.values()).sort((a, b) => a.label.localeCompare(b.label, locale));
+}
+
+async function fetchJsonFallback(path, options = {}) {
+  const response = await fetch(path, options);
+  if (!response.ok) {
+    throw new Error(`Failed to load JSON from ${path}: ${response.status} ${response.statusText}`);
+  }
+  return response.json();
+}
 
 /* -------------------------------------------- */
 /*  Foundry VTT Initialization                  */
@@ -60,6 +261,8 @@ Hooks.once("init", async function () {
   };
 
   CONFIG.ACKS = ACKS;
+
+  await loadClassDefinitions();
 
   game.acks = {
     rollItemMacro: macros.rollItemMacro,
