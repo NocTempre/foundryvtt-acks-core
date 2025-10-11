@@ -281,10 +281,12 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
       event.preventDefault();
       const header = event.currentTarget;
       const type = header.dataset.type;
+      const systemData = foundry.utils.duplicate(header.dataset);
+      delete systemData.type;
       const itemData = {
         name: `New ${type.capitalize()}`,
         type: type,
-        system: foundry.utils.duplicate(header.dataset),
+        system: systemData,
       };
       await this.actor.createEmbeddedDocuments("Item", [itemData]);
     });
