@@ -38,6 +38,7 @@ Hooks.once("init", async function () {
   const ActorSheetV1 = foundry.appv1?.sheets?.ActorSheet;
   const ItemSheetV1 = foundry.appv1?.sheets?.ItemSheet;
   const ActorDirectoryClass =
+    foundry.applications?.sidebar?.tabs?.ActorDirectory ??
     foundry.applications?.directories?.ActorDirectory ??
     globalThis.ActorDirectory ??
     game?.actors?.directory?.constructor;
