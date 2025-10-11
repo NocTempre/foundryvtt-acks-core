@@ -1,9 +1,11 @@
 import { AcksUtility } from "../utility.js";
 import { templatePath, TextEditorRef } from "../config.js";
+
+const BaseItemSheet = foundry.appv1?.sheets?.ItemSheet ?? ItemSheet;
 /**
  * Extend the basic ItemSheet with some very simple modifications
  */
-export class AcksItemSheet extends ItemSheet {
+export class AcksItemSheet extends BaseItemSheet {
   constructor(...args) {
     super(...args);
 

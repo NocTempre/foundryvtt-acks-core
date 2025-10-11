@@ -33,6 +33,14 @@ import AbilityData from "./module/data/item/ability-data.mjs";
 
 Hooks.once("init", async function () {
   //CONFIG.debug.hooks = true;
+  const ActorsCollection = foundry.documents?.collections?.Actors ?? globalThis.Actors ?? game?.actors?.constructor;
+  const ItemsCollection = foundry.documents?.collections?.Items ?? globalThis.Items ?? game?.items?.constructor;
+  const ActorSheetV1 = foundry.appv1?.sheets?.ActorSheet;
+  const ItemSheetV1 = foundry.appv1?.sheets?.ItemSheet;
+  const ActorDirectoryClass =
+    foundry.applications?.directories?.ActorDirectory ??
+    globalThis.ActorDirectory ??
+    game?.actors?.directory?.constructor;
 
   // Clamp/Clamped management v11/v12
   if (Math.clamp === undefined) {
@@ -74,28 +82,28 @@ Hooks.once("init", async function () {
   CONFIG.Combat.documentClass = AcksCombatClass;
 
   // Register sheet application classes
-  Actors.unregisterSheet("core", ActorSheet);
-  Actors.registerSheet(SYSTEM_ID, AcksActorSheetCharacter, {
+  ActorsCollection.unregisterSheet("core", ActorSheetV1);
+  ActorsCollection.registerSheet(SYSTEM_ID, AcksActorSheetCharacter, {
     types: ["character"],
     makeDefault: true,
   });
-  Actors.registerSheet(SYSTEM_ID, AcksActorSheetMonster, {
+  ActorsCollection.registerSheet(SYSTEM_ID, AcksActorSheetMonster, {
     types: ["monster"],
     makeDefault: true,
   });
   // Unregister default item sheet
-  Items.unregisterSheet("core", ItemSheet);
+  ItemsCollection.unregisterSheet("core", ItemSheetV1);
   if (AcksUtility.isMinVersion(13)) {
     // If Foundry is v13 or more - register both old and new Item sheets for now.
-    Items.registerSheet(SYSTEM_ID, AcksItemSheet, {
+    ItemsCollection.registerSheet(SYSTEM_ID, AcksItemSheet, {
       makeDefault: false,
     });
-    Items.registerSheet(SYSTEM_ID, AcksItemSheetV2, {
+    ItemsCollection.registerSheet(SYSTEM_ID, AcksItemSheetV2, {
       makeDefault: true,
     });
   } else {
     // Use old item sheet for Foundry v12
-    Items.registerSheet(SYSTEM_ID, AcksItemSheet, {
+    ItemsCollection.registerSheet(SYSTEM_ID, AcksItemSheet, {
       makeDefault: false,
     });
   }
@@ -115,7 +123,7 @@ Hooks.once("init", async function () {
       return;
     }
     const partyBtnAction = () => {
-      const actorDirectory = game.actors.apps.find((app) => app instanceof ActorDirectory);
+      const actorDirectory = game.actors.apps.find((app) => app instanceof ActorDirectoryClass);
       if (actorDirectory) {
         party.showPartySheet(actorDirectory);
       } else {
@@ -187,7 +195,7 @@ Hooks.on("combatRound", AcksCombat.combatRound);
 
 Hooks.on("renderChatLog", (app, html, data) => AcksItem.chatListeners(html));
 Hooks.on("getChatLogEntryContext", chat.addChatMessageContextOptions);
-Hooks.on("renderChatMessage", chat.addChatMessageButtons);
+Hooks.on("renderChatMessageHTML", chat.addChatMessageButtons);
 Hooks.on("renderRollTableConfig", treasure.augmentTable);
 Hooks.on("updateActor", party.update);
 

@@ -3,7 +3,10 @@ import { AcksUtility } from "../utility.js";
 import { AcksMortalWoundsDialog } from "../dialog/mortal-wounds.js";
 import { AcksTamperingDialog } from "../dialog/tampering-mortality.js";
 import { TextEditorRef, SYSTEM_ID } from "../config.js";
-export class AcksActorSheet extends ActorSheet {
+
+const BaseActorSheet = foundry.appv1?.sheets?.ActorSheet ?? ActorSheet;
+
+export class AcksActorSheet extends BaseActorSheet {
   /* -------------------------------------------- */
   async getData() {
     const data = await super.getData();

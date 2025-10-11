@@ -32,5 +32,6 @@ export const preloadHandlebarsTemplates = async function () {
     "items/v2/common/item-description.hbs",
   ];
 
-  return loadTemplates(relativePaths.map(templatePath));
+  const loader = foundry.applications?.handlebars?.loadTemplates ?? globalThis.loadTemplates;
+  return loader(relativePaths.map(templatePath));
 };

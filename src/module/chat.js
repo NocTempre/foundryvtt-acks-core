@@ -40,7 +40,8 @@ export const addChatMessageContextOptions = function (html, options) {
 
 /* -------------------------------------------- */
 
-export const addChatMessageButtons = function (msg, html, data) {
+export const addChatMessageButtons = function (msg, htmlElement, data) {
+  const html = htmlElement instanceof HTMLElement ? $(htmlElement) : htmlElement;
   // Hide blind rolls
   let blindable = html.find(".blindable");
   if (msg.blind && !game.user.isGM && blindable?.data("blind") === true) {
