@@ -28,10 +28,9 @@ export class AcksCharacterCreator extends FormApplication {
    * @return {Object}
    */
   getData() {
-    let data = this.object.system;
-    data.user = game.user;
-    data.config = CONFIG.ACKS;
-    data.counters = {
+    const system = this.object.system;
+
+    system.counters = system.counters ?? {
       str: 0,
       wis: 0,
       dex: 0,
@@ -40,84 +39,273 @@ export class AcksCharacterCreator extends FormApplication {
       con: 0,
       gold: 0,
     };
-    data.stats = {
+    system.stats = system.stats ?? {
       sum: 0,
       avg: 0,
       std: 0,
     };
-    return data;
+
+    const creationOrder = Array.from(system.details?.creation?.order ?? []);
+    const creationLocks = {};
+    for (const ability of creationOrder) {
+      creationLocks[ability] = true;
+    }
+
+    system.user = game.user;
+    system.config = CONFIG.ACKS;
+    system.characterType = system.details?.characterType ?? "pc";
+    system.creationOrder = creationOrder;
+    system.creationLocks = creationLocks;
+    system.currentScores = {};
+    for (const [key, score] of Object.entries(system.scores ?? {})) {
+      system.currentScores[key] = Number(score.value) || 0;
+    }
+
+    return system;
   }
 
   /* -------------------------------------------- */
-  doStats(ev) {
-    let list = $(ev.currentTarget).closest(".attribute-list");
-    let values = [];
-    list.find(".score-value").each((i, s) => {
-      if (s.value != 0) {
-        values.push(parseInt(s.value));
-      }
-    });
+  doStats(html) {
+    const values = html
+      .find(".attribute-list .score-value")
+      .map((_, input) => parseInt(input.value, 10))
+      .get()
+      .filter((value) => !Number.isNaN(value) && value !== 0);
 
-    let n = values.length;
-    let sum = values.reduce((a, b) => a + b);
-    let mean = parseFloat(sum) / n;
-    let std = Math.sqrt(values.map((x) => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n);
+    const stats = html.find(".roll-stats");
 
-    let stats = list.siblings(".roll-stats");
-    stats.find(".sum").text(sum);
-    stats.find(".avg").text(Math.round((10 * sum) / n) / 10);
-    stats.find(".std").text(Math.round(100 * std) / 100);
-
-    if (n >= 6) {
-      $(ev.currentTarget).closest("form").find('button[type="submit"]').removeAttr("disabled");
+    if (values.length === 0) {
+      stats.find(".sum").text(0);
+      stats.find(".avg").text(0);
+      stats.find(".std").text(0);
+      this.object.system.stats = { sum: 0, avg: 0, std: 0 };
+      return;
     }
 
+    const sum = values.reduce((a, b) => a + b, 0);
+    const mean = sum / values.length;
+    const variance = values.reduce((acc, value) => acc + Math.pow(value - mean, 2), 0) / values.length;
+    const std = Math.sqrt(variance);
+
+    stats.find(".sum").text(sum);
+    stats.find(".avg").text(Math.round((10 * mean)) / 10);
+    stats.find(".std").text(Math.round(100 * std) / 100);
+
     this.object.system.stats = {
-      sum: sum,
-      avg: Math.round((10 * sum) / n) / 10,
+      sum,
+      avg: Math.round((10 * mean)) / 10,
       std: Math.round(100 * std) / 100,
     };
   }
 
   /* -------------------------------------------- */
-  rollScore(score, options = {}) {
-    // Increase counter
+  async rollScore(score, options = {}) {
+    if (score === "gold") {
+      return this._rollGold(options);
+    }
+
+    if (this._isScoreLocked(score) || (this.object.system.details?.characterType ?? "pc") !== "pc") {
+      return null;
+    }
+
+    const currentOrder = this._getCreationOrder();
+    const rollConfig = this._getPcRollConfig(currentOrder.length);
+    if (!rollConfig) {
+      return null;
+    }
+
     this.object.system.counters[score]++;
 
-    const label = score != "gold" ? game.i18n.localize(`ACKS.scores.${score}.long`) : "Gold";
-    const rollParts = ["3d6"];
+    const label = game.i18n.localize(`ACKS.scores.${score}.long`);
     const data = {
       roll: {
         type: "result",
       },
     };
-    // Roll and return
-    return AcksDice.Roll({
+
+    const roll = await AcksDice.Roll({
       event: options.event,
-      parts: rollParts,
+      parts: [rollConfig.formula],
       data: data,
       skipDialog: true,
-      speaker: ChatMessage.getSpeaker({ actor: this }),
+      speaker: ChatMessage.getSpeaker({ actor: this.object }),
       flavor: game.i18n.format("ACKS.dialog.generateScore", {
         score: label,
         count: this.object.system.counters[score],
       }),
       title: game.i18n.format("ACKS.dialog.generateScore", { score: label, count: this.object.system.counters[score] }),
     });
+
+    if (!roll) {
+      return null;
+    }
+
+    let total = roll.total;
+    if (rollConfig.minimum && total < rollConfig.minimum) {
+      total = rollConfig.minimum;
+    }
+
+    currentOrder.push(score);
+    await this.object.update({
+      [`system.scores.${score}.value`]: total,
+      "system.details.creation.order": currentOrder,
+      "system.details.characterType": "pc",
+    });
+
+    this.object.system.scores[score].value = total;
+    this.object.system.details.creation.order = currentOrder;
+
+    return total;
+  }
+
+  _getCreationOrder() {
+    return Array.from(this.object.system.details?.creation?.order ?? []);
+  }
+
+  _isScoreLocked(score) {
+    return this._getCreationOrder().includes(score);
+  }
+
+  _getPcRollConfig(index) {
+    if (index === 0) {
+      return { formula: "5d6kh3", minimum: 13 };
+    }
+    if (index === 1 || index === 2) {
+      return { formula: "4d6kh3", minimum: 9 };
+    }
+    if (index >= 6) {
+      return null;
+    }
+    return { formula: "3d6" };
+  }
+
+  async _rollGold(options = {}) {
+    this.object.system.counters.gold++;
+    const data = {
+      roll: {
+        type: "result",
+      },
+    };
+    const roll = await AcksDice.Roll({
+      event: options.event,
+      parts: ["3d6"],
+      data: data,
+      skipDialog: true,
+      speaker: ChatMessage.getSpeaker({ actor: this.object }),
+      flavor: game.i18n.format("ACKS.dialog.generateScore", {
+        score: "Gold",
+        count: this.object.system.counters.gold,
+      }),
+      title: game.i18n.format("ACKS.dialog.generateScore", {
+        score: "Gold",
+        count: this.object.system.counters.gold,
+      }),
+    });
+    return roll ? roll.total : null;
+  }
+
+  _updateSubmitState(html) {
+    const submit = html.find('button[type="submit"]');
+    if (!submit.length) {
+      return;
+    }
+    const type = this.object.system.details?.characterType ?? "pc";
+    const isComplete = this._getCreationOrder().length >= 6;
+    if (type === "pc" && !isComplete) {
+      submit.attr("disabled", "disabled");
+    } else {
+      submit.removeAttr("disabled");
+    }
+  }
+
+  _syncLockState(html) {
+    const type = this.object.system.details?.characterType ?? "pc";
+    const locked = new Set(this._getCreationOrder());
+    html.find(".attribute-list .form-group").each((_, element) => {
+      const group = $(element);
+      const ability = group.data("score");
+      const anchor = group.find("a.score-roll");
+      const input = group.find("input.score-value");
+      const isLocked = type !== "pc" || locked.has(ability);
+
+      if (anchor.length) {
+        if (isLocked) {
+          anchor.addClass("locked").attr("aria-disabled", "true");
+        } else {
+          anchor.removeClass("locked").removeAttr("aria-disabled");
+        }
+      }
+
+      if (isLocked) {
+        input.attr("readonly", "readonly");
+      } else {
+        input.removeAttr("readonly");
+      }
+
+      if (type !== "pc") {
+        input.attr("readonly", "readonly");
+      }
+    });
+
+    this._updateSubmitState(html);
+  }
+
+  async _onTypeChange(event, html) {
+    const target = event.currentTarget;
+    const selectedType = target.value;
+    const currentType = this.object.system.details?.characterType ?? "pc";
+    if (selectedType === currentType) {
+      return;
+    }
+
+    if (selectedType === "henchman") {
+      await this.object.update({
+        "system.details.characterType": "henchman",
+        "system.details.creation.order": [],
+        "system.isNew": true,
+      });
+      this.object.system.isNew = true;
+      await this.object.generateHenchmanScores();
+    } else {
+      await this.object.update({
+        "system.details.characterType": "pc",
+        "system.details.creation.order": [],
+        "system.isNew": true,
+      });
+      this.object.system.isNew = true;
+      await this._resetPcScores();
+    }
+
+    this.render(true);
+  }
+
+  async _resetPcScores() {
+    const updates = {};
+    for (const ability of Object.keys(this.object.system.scores ?? {})) {
+      updates[`system.scores.${ability}.value`] = 0;
+    }
+    updates["system.isNew"] = true;
+    await this.object.update(updates);
+    for (const ability of Object.keys(this.object.system.scores ?? {})) {
+      this.object.system.scores[ability].value = 0;
+    }
+    this.object.system.details.creation.order = [];
+    this.object.system.isNew = true;
+    this.object.system.stats = { sum: 0, avg: 0, std: 0 };
   }
 
   /* -------------------------------------------- */
   async close(options) {
     // Gather scores
     let scores = {};
-    $(this.form.children)
-      .find(".score-roll")
+    $(this.form)
+      .find(".form-group[data-score]")
       .each((_, d) => {
         let gr = $(d).closest(".form-group");
         let val = gr.find(".score-value").val();
         scores[gr.data("score")] = val;
       });
-    const gold = $(this.form.children).find(".gold-value").val();
+    const gold = $(this.form).find(".gold-value").val();
     const speaker = ChatMessage.getSpeaker({ actor: this });
     const templateData = {
       config: CONFIG.ACKS,
@@ -138,38 +326,62 @@ export class AcksCharacterCreator extends FormApplication {
   /** @override */
   activateListeners(html) {
     super.activateListeners(html);
-    html.find("a.score-roll").click((ev) => {
-      let el = ev.currentTarget.parentElement.parentElement;
-      let score = el.dataset.score;
-      this.rollScore(score, { event: ev }).then((r) => {
-        $(el).find("input").val(r.total).trigger("change");
-      });
+    html.find('input[name="character-type"]').change((ev) => {
+      this._onTypeChange(ev, html);
     });
 
-    html.find("a.gold-roll").click((ev) => {
-      let el = ev.currentTarget.parentElement.parentElement.parentElement;
-      this.rollScore("gold", { event: ev }).then((r) => {
-        $(el)
-          .find(".gold-value")
-          .val(r.total * 10);
-      });
+    html.find("a.score-roll").click(async (ev) => {
+      ev.preventDefault();
+      const anchor = ev.currentTarget;
+      if (anchor.classList.contains("locked")) {
+        return;
+      }
+      const group = anchor.closest(".form-group");
+      if (!group) {
+        return;
+      }
+      const score = group.dataset.score;
+      const total = await this.rollScore(score, { event: ev });
+      if (total === null || total === undefined) {
+        return;
+      }
+      $(group).find("input.score-value").val(total).trigger("change");
+      $(anchor).addClass("locked").attr("aria-disabled", "true");
+      this._syncLockState(html);
     });
 
-    html.find("input.score-value").change((ev) => {
-      this.doStats(ev);
+    html.find("a.gold-roll").click(async (ev) => {
+      ev.preventDefault();
+      const total = await this._rollGold({ event: ev });
+      if (total === null || total === undefined) {
+        return;
+      }
+      $(ev.currentTarget)
+        .closest(".roll-stats")
+        .find(".gold-value")
+        .val(total * 10);
     });
+
+    html.find("input.score-value").change(() => {
+      this.doStats(html);
+      this._updateSubmitState(html);
+    });
+
+    this._syncLockState(html);
+    this.doStats(html);
+    this._updateSubmitState(html);
   }
 
   async _onSubmit(event, { updateData = null, preventClose = false, preventRender = false } = {}) {
     super._onSubmit(event, { updateData: updateData, preventClose: preventClose, preventRender: preventRender });
     // Update stats
     let update = {};
-    $(this.form.children)
-      .find(".score-roll")
-      .each((_, d) => {
-        let gr = $(d).closest(".form-group");
-        let val = gr.find(".score-value").val();
-        update["system.scores." + gr.data("score")] = { mod: 0, bonus: 0, value: val };
+    $(this.form)
+      .find(".form-group[data-score]")
+      .each((_, element) => {
+        const group = $(element);
+        const value = Number(group.find(".score-value").val()) || 0;
+        update[`system.scores.${group.data("score")}`] = { mod: 0, bonus: 0, value: value };
       });
     await this.object.update(update);
 

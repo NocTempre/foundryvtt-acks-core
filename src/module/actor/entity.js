@@ -10,17 +10,31 @@ export class AcksActor extends Actor {
     }
     // If the created actor has items (only applicable to foundry.utils.duplicated actors) bypass the new actor creation logic
     if (data.items) {
-      let actor = super.create(data, options);
-      return actor;
+      return super.create(data, options);
     }
 
-    data.system = { isNew: true }; // Flag the actor as new
+    data.system = data.system ?? {};
+    data.system.isNew = true; // Flag the actor as new
     if (data.type == "character") {
+      data.system.details = data.system.details ?? {};
+      if (!data.system.details.characterType) {
+        data.system.details.characterType = "pc";
+      }
       const skills = await AcksUtility.loadCompendium("acks.acks-all-equipment");
       data.items = skills.map((i) => i.toObject()).filter((i) => i.type == "money");
     }
 
-    return super.create(data, options);
+    const actor = await super.create(data, options);
+
+    if (
+      actor.type === "character" &&
+      actor.system.details?.characterType === "henchman" &&
+      actor.system.isNew
+    ) {
+      await actor.generateHenchmanScores();
+    }
+
+    return actor;
   }
 
   async _onUpdate(changed, options, userId) {
@@ -38,7 +52,15 @@ export class AcksActor extends Actor {
         manager.delHenchman(this.id);
       }, 200);
     }
-    if ((this.type == "character" && changed.system?.scores) || (this.type == "monster" && changed.system?.saves)) {
+    if (this.type == "character" && changed.system?.scores) {
+      const creationOrder = this.system.details?.creation?.order ?? [];
+      const isHenchman = this.system.details?.characterType === "henchman";
+      if (isHenchman || creationOrder.length >= 6) {
+        setTimeout(() => {
+          this.update({ "system.isNew": false });
+        }, 200);
+      }
+    } else if (this.type == "monster" && changed.system?.saves) {
       setTimeout(() => {
         this.update({ "system.isNew": false });
       }, 200);
@@ -455,6 +477,35 @@ export class AcksActor extends Actor {
       });
       return (ct == 0);
     }*/
+  }
+
+  /* -------------------------------------------- */
+  async generateHenchmanScores() {
+    if (this.type !== "character") {
+      return;
+    }
+    const scores = this.system?.scores;
+    if (!scores) {
+      return;
+    }
+
+    if (!this.system.isNew) {
+      return;
+    }
+
+    const abilityKeys = Object.keys(scores);
+    const updates = {
+      "system.details.characterType": "henchman",
+      "system.retainer.enabled": true,
+      "system.details.creation.order": abilityKeys,
+    };
+
+    for (const ability of abilityKeys) {
+      const roll = await new Roll("3d6").evaluate({ async: true });
+      updates[`system.scores.${ability}.value`] = roll.total;
+    }
+
+    await this.update(updates);
   }
 
   /* -------------------------------------------- */
