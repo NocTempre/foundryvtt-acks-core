@@ -43,7 +43,14 @@
         <input type="text" name="system.range.long" value="{{system.range.long}}" data-dtype="Number"/>
       </div>
     </div>
-  {{/if}}
+{{/if}}
+
+  <div class="form-group form-group--row">
+    <label class="form-group__label">{{localize 'ACKS.items.ProficiencyKey'}}</label>
+    <div class="form-group__fields">
+      <input type="text" name="system.proficiencyKey" value="{{system.proficiencyKey}}" data-dtype="String"/>
+    </div>
+  </div>
 
   <div class="form-group">
     <label class="form-group__label">{{localize 'ACKS.spells.Save'}}</label>

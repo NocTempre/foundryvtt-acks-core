@@ -2,6 +2,150 @@ import { AcksDice } from "../dice.js";
 import { AcksUtility } from "../utility.js";
 import { SYSTEM_ID } from "../config.js";
 
+const STYLE_LABELS = {
+  missile: "Missile Weapon",
+  single: "Single Weapon",
+  dual: "Dual Weapon",
+  twoHanded: "Two-Handed Weapon",
+  weaponShield: "Weapon and Shield",
+};
+
+const STYLE_ALIAS_TESTS = [
+  { regex: /missile/, key: "missile" },
+  { regex: /two[\s-]*hand(ed)?/, key: "twoHanded" },
+  { regex: /\b2[\s-]*hand(ed)?/, key: "twoHanded" },
+  { regex: /dual/, key: "dual" },
+  { regex: /two[\s-]*weapon/, key: "dual" },
+  { regex: /single/, key: "single" },
+  { regex: /weapon\s*(?:\+|and|&)\s*shield/, key: "weaponShield" },
+  { regex: /shield/, key: "weaponShield" },
+];
+
+const slugify = (value) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const splitListEntries = (value) =>
+  value
+    .split(/[,;\n]+/)
+    .map((entry) => entry.trim())
+    .filter((entry) => entry.length > 0);
+
+const resolveStyleKey = (rawValue) => {
+  const value = rawValue.toLowerCase();
+  const cleaned = value.replace(/^fighting\s*style[:\s-]*/, "");
+  for (const { regex, key } of STYLE_ALIAS_TESTS) {
+    if (regex.test(cleaned)) {
+      return key;
+    }
+  }
+  return null;
+};
+
+const getWeaponHandsInfo = (item) => {
+  const tags = (item.system?.tags ?? []).map((tag) => tag.value.toLowerCase());
+  const name = item.name?.toLowerCase() ?? "";
+  let hands = 1;
+  if (tags.includes("two-handed") || name.includes("2h") || name.includes("two-handed") || name.includes("two handed")) {
+    hands = 2;
+  }
+  const missile = !!item.system?.missile;
+  const melee = !!item.system?.melee;
+  return { hands, missile, melee };
+};
+
+const NARROW_COMBO_ID = "narrow-combo";
+const BROAD_COMBO_ID = "broad-combo";
+
+const EXOTIC_WEAPON_IDS = new Set(["bola", "cestus", "net", "sap", "sling", "staff-sling", "whip"]);
+
+const WEAPON_SLUG_ALIASES = {
+  "hand-axe": "hand-axe",
+  "battle-axe": "battle-axe",
+  "great-axe": "great-axe",
+  "short-sword": "short-sword",
+  longsword: "longsword",
+  "sword-1h": "longsword",
+  "two-handed-sword": "two-handed-sword",
+  "sword-2h": "two-handed-sword",
+  "flail-1h": "flail-1h",
+  "flail-2h": "flail-2h",
+  flail: "flail",
+  "warhammer-1h": "warhammer-1h",
+  "warhammer-2h": "warhammer-2h",
+  warhammer: "warhammer",
+  "morning-star": "morning-star",
+  "war-pick-1h": "war-pick",
+  "war-pick-2h": "war-pick",
+  "war-pick": "war-pick",
+  mace: "mace",
+  "spear-1h": "spear",
+  "spear-2h": "spear",
+  spear: "spear",
+  javelin: "javelin",
+  "lance-mounted": "lance",
+  lance: "lance",
+  "pole-arm-two-handed": "pole-arm",
+  "pole-arm": "pole-arm",
+  shortbow: "shortbow",
+  longbow: "longbow",
+  "composite-bow": "composite-bow",
+  crossbow: "crossbow",
+  arbalest: "arbalest",
+  "staff-sling": "staff-sling",
+  "staff-1h": "staff",
+  "staff-2h": "staff",
+  staff: "staff",
+  club: "club",
+  bola: "bola",
+  cestus: "cestus",
+  net: "net",
+  sap: "sap",
+  sling: "sling",
+  whip: "whip",
+  dart: "dart",
+  "darts-5": "dart",
+  "throwing-axe": "throwing-axe",
+  "morningstar": "morning-star",
+};
+
+const WEAPON_SIZE_CATEGORY = {
+  dagger: "tiny",
+  dart: "tiny",
+  cestus: "tiny",
+  sap: "tiny",
+  sling: "tiny",
+  "staff-sling": "tiny",
+  bola: "tiny",
+  club: "small",
+  whip: "small",
+  "hand-axe": "small",
+  "throwing-axe": "small",
+  "short-sword": "small",
+  javelin: "small",
+  net: "small",
+  staff: "medium",
+  longsword: "medium",
+  "warhammer-1h": "medium",
+  "flail-1h": "medium",
+  "war-pick": "medium",
+  mace: "medium",
+  spear: "medium",
+  "battle-axe": "medium",
+  warhammer: "medium",
+  "morning-star": "medium",
+  "great-axe": "large",
+  "two-handed-sword": "large",
+  "flail-2h": "large",
+  "warhammer-2h": "large",
+  "pole-arm": "large",
+  lance: "large",
+};
+
+const getCombatLimits = () => CONFIG.ACKS?.combatTraining?.limits ?? {};
+
 export class AcksActor extends Actor {
   static async create(data, options) {
     // Case of compendium global import
@@ -73,6 +217,15 @@ export class AcksActor extends Actor {
    */
   computeAdditionnalData() {
     const data = this.system;
+
+    data.fight = data.fight ?? {};
+    data.fight.combat = data.fight.combat ?? { tier: "restricted", categories: [], weapons: [], styles: [] };
+    data.fight.combat.tier = data.fight.combat.tier ?? "restricted";
+    data.fight.combat.categories = Array.isArray(data.fight.combat.categories)
+      ? data.fight.combat.categories
+      : [];
+    data.fight.combat.weapons = Array.isArray(data.fight.combat.weapons) ? data.fight.combat.weapons : [];
+    data.fight.combat.styles = Array.isArray(data.fight.combat.styles) ? data.fight.combat.styles : [];
 
     // Compute modifiers from actor scores
     this.computeModifiers();
@@ -1155,11 +1308,606 @@ export class AcksActor extends Actor {
 
   /* -------------- ------------------------------ */
   getFavorites() {
-    return this.items.filter((i) => i.system.favorite);
+    const equippedWeapons = this.items.filter((i) => i.type === "weapon" && i.system.equipped);
+    const favoriteNonWeapons = this.items.filter(
+      (i) => i.system.favorite && !(i.type === "weapon" && i.system.equipped),
+    );
+    return [...equippedWeapons, ...favoriteNonWeapons];
   }
   buildFavoriteActions() {
-    let fav = this.getFavorites();
-    return fav;
+    return this.getFavorites();
+  }
+
+  getCombatTraining() {
+    this.system.fight = this.system.fight ?? {};
+    let combat = foundry.utils.duplicate(this.system.fight.combat ?? {});
+
+    combat.tier = combat.tier ?? "restricted";
+    combat.categories = Array.isArray(combat.categories) ? Array.from(new Set(combat.categories)) : [];
+    combat.weapons = Array.isArray(combat.weapons) ? Array.from(new Set(combat.weapons)) : [];
+    combat.styles = Array.isArray(combat.styles) ? Array.from(new Set(combat.styles)) : [];
+
+    const combatConfig = CONFIG.ACKS.combatTraining ?? {};
+    const allowedRestricted = new Set((combatConfig.restrictedWeapons ?? []).map((opt) => opt.id));
+    const allowedWeaponOptions = new Set((combatConfig.weaponOptions ?? []).map((opt) => opt.id));
+    const allowedStyles = new Set((combatConfig.styles ?? []).map((opt) => opt.id));
+
+    const legacyStyles = this.system?.fight?.weaponstyles;
+    if (combat.styles.length === 0 && typeof legacyStyles === "string" && legacyStyles.trim().length) {
+      const styleSet = new Set(combat.styles);
+      for (const entry of splitListEntries(legacyStyles)) {
+        const key = resolveStyleKey(entry);
+        if (key && allowedStyles.has(key)) {
+          styleSet.add(key);
+        }
+      }
+      combat.styles = Array.from(styleSet);
+    }
+
+    const legacyWeapons = this.system?.fight?.weaponproficiencies;
+    if (combat.weapons.length === 0 && typeof legacyWeapons === "string" && legacyWeapons.trim().length) {
+      const converted = new Set(combat.weapons);
+      const allAllowed = new Set([...allowedRestricted, ...allowedWeaponOptions]);
+      for (const entry of splitListEntries(legacyWeapons)) {
+        const slug = slugify(entry);
+        const id = WEAPON_SLUG_ALIASES[slug] ?? slug;
+        if (allAllowed.has(id)) {
+          converted.add(id);
+        }
+      }
+      combat.weapons = Array.from(converted);
+    }
+
+    this._normalizeCombatConfig(combat, { enforceLimits: true });
+
+    this.system.fight.combat = combat;
+    return combat;
+  }
+
+  getKnownFightingStyles() {
+    const combat = this.getCombatTraining();
+    const styles = new Set(combat.styles ?? []);
+    for (const ability of this.itemTypes?.ability ?? []) {
+      const key = resolveStyleKey(ability.name ?? "");
+      if (key) {
+        styles.add(key);
+      }
+    }
+    return styles;
+  }
+
+  knowsFightingStyle(styleKey) {
+    return this.getKnownFightingStyles().has(styleKey);
+  }
+
+  async setCombatTier(tier) {
+    const allowed = Object.keys(CONFIG.ACKS.combatTraining.tiers);
+    if (!allowed.includes(tier)) {
+      return false;
+    }
+    const combat = foundry.utils.duplicate(this.getCombatTraining());
+    combat.tier = tier;
+    this._normalizeCombatConfig(combat, { enforceLimits: true });
+    const validation = this._validateCombatConfig(combat);
+    if (!validation.valid) {
+      if (validation.reason) {
+        ui.notifications?.warn(validation.reason);
+      }
+      return false;
+    }
+    this._normalizeCombatConfig(combat, { enforceLimits: true });
+    await this.update({ "system.fight.combat": combat });
+    return true;
+  }
+
+  async toggleCombatSelection(group, value, checked) {
+    const combat = foundry.utils.duplicate(this.getCombatTraining());
+    const key =
+      group === "category" ? "categories" : group === "weapon" ? "weapons" : group === "style" ? "styles" : null;
+    if (!key) {
+      return false;
+    }
+    const current = new Set(combat[key] ?? []);
+    if (checked) {
+      current.add(value);
+    } else {
+      current.delete(value);
+    }
+    combat[key] = Array.from(current);
+    this._normalizeCombatConfig(combat, { enforceLimits: false });
+    if (checked && !combat[key].includes(value)) {
+      if (group === "weapon" && (combat.tier === "narrow" || combat.tier === "broad")) {
+        ui.notifications?.warn(game.i18n.localize("ACKS.notifications.combat.noWeaponsForCombo"));
+      } else if (group === "weapon") {
+        const config = CONFIG.ACKS.combatTraining ?? {};
+        const lookupArray = [...(config.restrictedWeapons ?? []), ...(config.weaponOptions ?? [])];
+        const match = lookupArray.find((opt) => opt.id === value);
+        const weaponName = match ? game.i18n.localize(match.label) : value;
+        ui.notifications?.warn(
+          game.i18n.format("ACKS.notifications.weaponNotProficient", {
+            actor: this.name,
+            weapon: weaponName,
+          }),
+        );
+      }
+      return false;
+    }
+    const validation = this._validateCombatConfig(combat);
+    if (!validation.valid) {
+      if (validation.reason) {
+        ui.notifications?.warn(validation.reason);
+      }
+      return false;
+    }
+    this._normalizeCombatConfig(combat, { enforceLimits: true });
+    await this.update({ "system.fight.combat": combat });
+    return true;
+  }
+
+  _normalizeCombatConfig(combat, { enforceLimits = false } = {}) {
+    combat.tier = combat.tier ?? "restricted";
+
+    const config = CONFIG.ACKS.combatTraining ?? {};
+    const limits = getCombatLimits();
+    const allowedStyles = new Set((config.styles ?? []).map((opt) => opt.id));
+    const allowedRestricted = new Set((config.restrictedWeapons ?? []).map((opt) => opt.id));
+    const allowedNarrow = new Set((config.narrowCategories ?? []).map((opt) => opt.id));
+    const allowedBroad = new Set((config.broadCategories ?? []).map((opt) => opt.id));
+    const allowedWeaponOptions = new Set((config.weaponOptions ?? []).map((opt) => opt.id));
+
+    combat.styles = Array.from(new Set(combat.styles ?? [])).filter((id) => allowedStyles.has(id));
+    combat.categories = Array.from(new Set(combat.categories ?? []));
+    combat.weapons = Array.from(new Set(combat.weapons ?? []));
+
+    switch (combat.tier) {
+      case "restricted": {
+        combat.categories = [];
+        combat.weapons = combat.weapons.filter((id) => allowedRestricted.has(id));
+        const limit = limits.restrictedWeapons ?? 0;
+        if (enforceLimits && limit > 0 && combat.weapons.length > limit) {
+          combat.weapons = combat.weapons.slice(0, limit);
+        }
+        break;
+      }
+      case "narrow": {
+        combat.categories = combat.categories.filter((id) => allowedNarrow.has(id));
+        if (enforceLimits) {
+          const limit = limits.narrowCategories ?? 0;
+          if (limit > 0 && combat.categories.length > limit) {
+            combat.categories = combat.categories.slice(0, limit);
+          }
+        }
+        const hasCombo = combat.categories.includes(NARROW_COMBO_ID);
+        combat.weapons = hasCombo ? combat.weapons.filter((id) => allowedWeaponOptions.has(id)) : [];
+        if (hasCombo && enforceLimits) {
+          const limit = limits.narrowWeapons ?? 0;
+          if (limit > 0 && combat.weapons.length > limit) {
+            combat.weapons = combat.weapons.slice(0, limit);
+          }
+        }
+        break;
+      }
+      case "broad": {
+        combat.categories = combat.categories.filter((id) => allowedBroad.has(id));
+        if (enforceLimits) {
+          const limit = limits.broadCategories ?? 0;
+          if (limit > 0 && combat.categories.length > limit) {
+            combat.categories = combat.categories.slice(0, limit);
+          }
+        }
+        const hasCombo = combat.categories.includes(BROAD_COMBO_ID);
+        combat.weapons = hasCombo ? combat.weapons.filter((id) => allowedWeaponOptions.has(id)) : [];
+        if (hasCombo && enforceLimits) {
+          const limit = limits.broadWeapons ?? 0;
+          if (limit > 0 && combat.weapons.length > limit) {
+            combat.weapons = combat.weapons.slice(0, limit);
+          }
+        }
+        break;
+      }
+      case "unrestricted":
+        combat.categories = [];
+        combat.weapons = [];
+        break;
+      default: {
+        combat.tier = "restricted";
+        combat.categories = [];
+        combat.weapons = combat.weapons.filter((id) => allowedRestricted.has(id));
+        const limit = limits.restrictedWeapons ?? 0;
+        if (enforceLimits && limit > 0 && combat.weapons.length > limit) {
+          combat.weapons = combat.weapons.slice(0, limit);
+        }
+        break;
+      }
+    }
+  }
+
+  _validateCombatConfig(combat) {
+    const limits = getCombatLimits();
+    const exceeds = (value, limit) => limit > 0 && value > limit;
+
+    switch (combat.tier) {
+      case "restricted":
+        if (exceeds(combat.weapons.length, limits.restrictedWeapons ?? 0)) {
+          return { valid: false, reason: game.i18n.localize("ACKS.notifications.combat.restrictedLimit") };
+        }
+        break;
+      case "narrow": {
+        if (exceeds(combat.categories.length, limits.narrowCategories ?? 0)) {
+          return { valid: false, reason: game.i18n.localize("ACKS.notifications.combat.narrowCategoryLimit") };
+        }
+        const hasCombo = combat.categories.includes(NARROW_COMBO_ID);
+        if (!hasCombo && combat.weapons.length > 0) {
+          return { valid: false, reason: game.i18n.localize("ACKS.notifications.combat.noWeaponsForCombo") };
+        }
+        if (hasCombo && exceeds(combat.weapons.length, limits.narrowWeapons ?? 0)) {
+          return { valid: false, reason: game.i18n.localize("ACKS.notifications.combat.narrowWeaponLimit") };
+        }
+        if (hasCombo) {
+          const dependency = this._checkCombatComboDependencies(combat);
+          if (!dependency.valid) {
+            return dependency;
+          }
+        }
+        break;
+      }
+      case "broad": {
+        if (exceeds(combat.categories.length, limits.broadCategories ?? 0)) {
+          return { valid: false, reason: game.i18n.localize("ACKS.notifications.combat.broadCategoryLimit") };
+        }
+        const hasCombo = combat.categories.includes(BROAD_COMBO_ID);
+        if (!hasCombo && combat.weapons.length > 0) {
+          return { valid: false, reason: game.i18n.localize("ACKS.notifications.combat.noWeaponsForCombo") };
+        }
+        if (hasCombo && exceeds(combat.weapons.length, limits.broadWeapons ?? 0)) {
+          return { valid: false, reason: game.i18n.localize("ACKS.notifications.combat.broadWeaponLimit") };
+        }
+        if (hasCombo) {
+          const dependency = this._checkCombatComboDependencies(combat);
+          if (!dependency.valid) {
+            return dependency;
+          }
+        }
+        break;
+      }
+      default:
+        break;
+    }
+    return { valid: true };
+  }
+
+  _checkCombatComboDependencies(combat) {
+    const weapons = new Set(combat.weapons ?? []);
+    if (weapons.size === 0) {
+      return { valid: true };
+    }
+    const requiresShortbow = weapons.has("longbow") || weapons.has("composite-bow");
+    if (requiresShortbow && !weapons.has("shortbow")) {
+      return { valid: false, reason: game.i18n.localize("ACKS.notifications.combat.requiresShortbow") };
+    }
+    const requiresJavelin = weapons.has("spear") || weapons.has("pole-arm");
+    if (requiresJavelin && !weapons.has("javelin")) {
+      return { valid: false, reason: game.i18n.localize("ACKS.notifications.combat.requiresJavelin") };
+    }
+    return { valid: true };
+  }
+
+  _getWeaponClassification(item) {
+    const override = item.system?.proficiencyKey?.trim();
+    const baseSlug = override ? slugify(override) : slugify(item.name ?? "");
+    const id = WEAPON_SLUG_ALIASES[baseSlug] ?? baseSlug;
+    const info = getWeaponHandsInfo(item);
+    const lowerName = (item.name ?? "").toLowerCase();
+    const groups = {
+      axes: id.includes("axe") || lowerName.includes("axe"),
+      bows: id.includes("bow") || lowerName.includes("bow") || id.includes("crossbow") || lowerName.includes("crossbow") || id.includes("arbalest") || lowerName.includes("arbalest"),
+      flails: id.includes("flail") || lowerName.includes("flail") || id.includes("hammer") || lowerName.includes("hammer") || id.includes("mace") || lowerName.includes("mace") || id.includes("war-pick") || lowerName.includes("war pick") || id.includes("morning") || lowerName.includes("morning"),
+      swords: id.includes("sword") || lowerName.includes("sword") || id.includes("dagger") || lowerName.includes("dagger"),
+      spears: id.includes("spear") || lowerName.includes("spear") || id.includes("javelin") || lowerName.includes("javelin") || id.includes("lance") || lowerName.includes("lance") || id.includes("pole") || lowerName.includes("pole"),
+      exotics: EXOTIC_WEAPON_IDS.has(id),
+    };
+
+    const size = WEAPON_SIZE_CATEGORY[id] ?? (info.hands > 1 ? "large" : "medium");
+
+    return {
+      id,
+      missile: info.missile,
+      melee: info.melee,
+      hands: info.hands,
+      size,
+      groups,
+    };
+  }
+
+  _isProficientLegacy(item, classification) {
+    const legacy = this.system?.fight?.weaponproficiencies;
+    if (typeof legacy !== "string" || !legacy.trim()) {
+      return false;
+    }
+    const entries = splitListEntries(legacy).map((entry) => slugify(entry));
+    const lookup = new Set(entries);
+    if (lookup.has(classification.id)) {
+      return true;
+    }
+    if (lookup.has(slugify(item.name ?? ""))) {
+      return true;
+    }
+    return false;
+  }
+
+  getWeaponProficiencyStatus(item) {
+    if (!item || item.type !== "weapon") {
+      return { valid: true };
+    }
+
+    const combat = this.getCombatTraining();
+    const tier = combat.tier ?? "restricted";
+    if (tier === "unrestricted") {
+      return { valid: true };
+    }
+
+    const categories = new Set(combat.categories ?? []);
+    const weapons = new Set((combat.weapons ?? []).map((w) => w));
+    const comboCheck = this._checkCombatComboDependencies(combat);
+    if (!comboCheck.valid) {
+      return comboCheck;
+    }
+
+    const classification = this._getWeaponClassification(item);
+
+    const allowRestricted = () => weapons.has(classification.id);
+    const allowNarrowCategory = () => (
+      (categories.has("narrow-axes") && classification.groups.axes) ||
+      (categories.has("narrow-bows") && classification.groups.bows) ||
+      (categories.has("narrow-flailhammermace") && classification.groups.flails) ||
+      (categories.has("narrow-swords") && classification.groups.swords) ||
+      (categories.has("narrow-spears") && classification.groups.spears) ||
+      (categories.has("narrow-exotics") && classification.groups.exotics)
+    );
+    const allowBroadCategory = () => (
+      (categories.has("broad-melee-small") && classification.melee && ["tiny", "small", "medium"].includes(classification.size)) ||
+      (categories.has("broad-melee-large") && classification.melee && ["medium", "large"].includes(classification.size)) ||
+      (categories.has("broad-axesflails") && (classification.groups.axes || classification.groups.flails)) ||
+      (categories.has("broad-swords") && (classification.groups.swords || classification.groups.spears)) ||
+      (categories.has("broad-missile") && classification.missile)
+    );
+
+    let proficient = false;
+    if (tier === "restricted") {
+      proficient = allowRestricted();
+    } else if (tier === "narrow") {
+      proficient = allowNarrowCategory() || (categories.has(NARROW_COMBO_ID) && weapons.has(classification.id));
+    } else if (tier === "broad") {
+      proficient = allowBroadCategory() || (categories.has(BROAD_COMBO_ID) && weapons.has(classification.id));
+    }
+
+    if (!proficient && this._isProficientLegacy(item, classification)) {
+      proficient = true;
+    }
+
+    if (proficient) {
+      return { valid: true };
+    }
+
+    const reason = game.i18n.format("ACKS.notifications.weaponNotProficient", {
+      actor: this.name,
+      weapon: item.name,
+    });
+    return { valid: false, reason };
+  }
+
+  async toggleItemEquipped(item) {
+    const targetState = !item.system.equipped;
+    const validation = this.validateEquipmentChange(item, targetState);
+    if (!validation.valid) {
+      if (validation.reason) {
+        ui.notifications?.error(validation.reason);
+      }
+      return false;
+    }
+    await this.updateEmbeddedDocuments("Item", [
+      {
+        _id: item.id,
+        "system.equipped": targetState,
+      },
+    ]);
+    if (validation.warning) {
+      ui.notifications?.warn(validation.warning);
+    }
+    return true;
+  }
+
+  validateEquipmentChange(item, equip) {
+    if (!equip) {
+      return { valid: true };
+    }
+    const isShield = item.type === "armor" && item.system?.type === "shield";
+    if (item.type !== "weapon" && !isShield) {
+      return { valid: true };
+    }
+    if (item.type === "weapon") {
+      const status = this.getWeaponProficiencyStatus(item);
+      if (!status.valid) {
+        return status;
+      }
+    }
+    const weapons = [];
+    const shields = [];
+    for (const weapon of this.itemTypes?.weapon ?? []) {
+      if (weapon.id === item.id) {
+        continue;
+      }
+      if (weapon.system?.equipped) {
+        weapons.push(weapon);
+      }
+    }
+    for (const armor of this.itemTypes?.armor ?? []) {
+      if (armor.id === item.id) {
+        continue;
+      }
+      if (armor.system?.equipped && armor.system?.type === "shield") {
+        shields.push(armor);
+      }
+    }
+    if (equip) {
+      if (item.type === "weapon") {
+        weapons.push(item);
+      } else if (item.type === "armor" && item.system?.type === "shield") {
+        shields.push(item);
+      }
+    }
+    return this._validateWeaponConfiguration(weapons, shields);
+  }
+
+  _validateWeaponConfiguration(weapons, shields) {
+    if (shields.length > 1) {
+      return { valid: false, reason: "Cannot equip more than one shield at a time." };
+    }
+    const options = [];
+    for (const weapon of weapons) {
+      const usage = this._generateWeaponUsageOptions(weapon);
+      if (usage.length === 0) {
+        return { valid: false, reason: `Unable to determine how to wield ${weapon.name}.` };
+      }
+      options.push(usage);
+    }
+    const arrangements = this._generateUsageArrangements(options);
+    const styleSet = this.getKnownFightingStyles();
+    const shieldCount = shields.length;
+    for (const arrangement of arrangements) {
+      const evaluation = this._evaluateArrangement(arrangement, shieldCount, styleSet);
+      if (evaluation.valid) {
+        return evaluation;
+      }
+    }
+    return {
+      valid: false,
+      reason:
+        arrangements.length === 0
+          ? "No valid way to wield equipped weapons with current fighting styles."
+          : "Equipped weapons are not supported by known fighting styles.",
+    };
+  }
+
+  _generateWeaponUsageOptions(item) {
+    const info = getWeaponHandsInfo(item);
+    const options = [];
+    if (info.hands > 1) {
+      if (info.melee) {
+        options.push({ item, hands: 2, category: "melee" });
+      }
+      if (info.missile) {
+        options.push({ item, hands: 2, category: "missile" });
+      }
+    } else {
+      if (info.melee) {
+        options.push({ item, hands: 1, category: "melee" });
+      }
+      if (info.missile) {
+        options.push({ item, hands: 1, category: "missile" });
+      }
+    }
+    return options;
+  }
+
+  _generateUsageArrangements(optionSets) {
+    if (optionSets.length === 0) {
+      return [[]];
+    }
+    const results = [];
+    const iterate = (index, current) => {
+      if (index >= optionSets.length) {
+        results.push([...current]);
+        return;
+      }
+      for (const option of optionSets[index]) {
+        current.push(option);
+        iterate(index + 1, current);
+        current.pop();
+      }
+    };
+    iterate(0, []);
+    return results;
+  }
+
+  _evaluateArrangement(arrangement, shieldCount, styles) {
+    let totalHands = shieldCount;
+    let twoHandMelee = 0;
+    let twoHandMissile = 0;
+    let oneHandMelee = 0;
+    let oneHandMissile = 0;
+
+    for (const option of arrangement) {
+      totalHands += option.hands;
+      if (option.hands === 2) {
+        if (option.category === "missile") {
+          twoHandMissile += 1;
+        } else {
+          twoHandMelee += 1;
+        }
+      } else if (option.category === "missile") {
+        oneHandMissile += 1;
+      } else {
+        oneHandMelee += 1;
+      }
+    }
+
+    if (totalHands > 2) {
+      return { valid: false, reason: "Equipped weapons and shields require more than two hands." };
+    }
+
+    if (twoHandMelee > 1 || twoHandMissile > 1) {
+      return { valid: false, reason: "Cannot wield multiple two-handed weapons simultaneously." };
+    }
+
+    if (twoHandMelee && (oneHandMelee + oneHandMissile + shieldCount + twoHandMissile)) {
+      return { valid: false, reason: "Two-handed melee weapons leave no hands for other gear." };
+    }
+
+    if (twoHandMissile && (oneHandMelee + oneHandMissile + shieldCount + twoHandMelee)) {
+      return { valid: false, reason: "Two-handed missile weapons leave no hands for other gear." };
+    }
+
+    if (oneHandMelee > 0 && oneHandMissile > 0) {
+      return { valid: false, reason: "Cannot mix melee and missile weapons in hand simultaneously." };
+    }
+
+    const required = new Set();
+
+    if (twoHandMelee > 0) {
+      required.add("twoHanded");
+    }
+
+    if (twoHandMissile > 0 || oneHandMissile > 0) {
+      required.add("missile");
+    }
+
+    if (shieldCount > 0 && arrangement.length > 0) {
+      required.add("weaponShield");
+    }
+
+    if (oneHandMelee > 0 && shieldCount === 0 && twoHandMelee === 0 && twoHandMissile === 0) {
+      if (oneHandMelee === 1) {
+        required.add("single");
+      } else if (oneHandMelee === 2) {
+        required.add("dual");
+      } else {
+        return { valid: false, reason: "Too many one-handed melee weapons equipped." };
+      }
+    }
+
+    if (required.size === 0 && arrangement.length === 0) {
+      return { valid: true };
+    }
+
+    for (const key of required) {
+      if (!styles.has(key)) {
+        const label = STYLE_LABELS[key] ?? key;
+        return { valid: false, reason: `Missing fighting style: ${label}.` };
+      }
+    }
+
+    return { valid: true };
   }
   /*-------------------------------------------- */
   buildRollList() {
@@ -1182,19 +1930,23 @@ export class AcksActor extends Actor {
     }
     // Compute AC
     let baseAac = 0;
-    let AacShield = 0;
     const data = this.system;
     data.aac.naked = baseAac + data.scores.dex.mod;
+    const hasShieldStyle = this.knowsFightingStyle("weaponShield");
+    let shieldBonus = 0;
     const armors = this.items.filter((i) => i.type == "armor");
     armors.forEach((a) => {
       if (a.system.equipped && a.system.type != "shield") {
         baseAac = a.system.aac.value;
       } else if (a.system.equipped && a.system.type == "shield") {
-        AacShield = a.system.aac.value;
+        if (hasShieldStyle) {
+          shieldBonus = a.system.aac.value;
+        }
       }
     });
-    data.aac.value = baseAac + data.scores.dex.mod + AacShield + data.aac.mod;
-    data.aac.shield = AacShield;
+    const activeShield = hasShieldStyle ? shieldBonus : 0;
+    data.aac.value = baseAac + data.scores.dex.mod + activeShield + data.aac.mod;
+    data.aac.shield = activeShield;
   }
 
   /* -------------------------------------------- */

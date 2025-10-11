@@ -56,3 +56,111 @@
     {{/each}}
   </ol>
 </div>
+
+<div class="inventory abilities combat-training">
+  <div class="item-titles flexrow">
+    <div class="item-name">{{localize 'ACKS.combatProficiency.title'}}</div>
+  </div>
+  {{#with combatTraining}}
+  <div class="combat-training-body">
+    <div class="combat-row">
+      <label>{{localize 'ACKS.combatProficiency.tier'}}</label>
+      <select class="combat-tier">
+        {{#each tierOptions}}
+          <option value="{{id}}" {{#if selected}}selected{{/if}}>{{localize label}}</option>
+        {{/each}}
+      </select>
+      {{#if tierHint}}
+        <div class="hint">{{localize tierHint}}</div>
+      {{/if}}
+    </div>
+
+    {{#if (eq tier 'restricted')}}
+      <div class="combat-row">
+        <label>{{localize 'ACKS.combatProficiency.weaponsLabel'}} ({{counts.weapons}}/{{limits.restrictedWeapons}})</label>
+        <div class="combat-options">
+          {{#each restrictedOptions}}
+            <label>
+              <input type="checkbox" class="combat-choice" data-group="weapon" value="{{id}}" {{#if selected}}checked{{/if}} />
+              {{localize label}}
+            </label>
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+
+    {{#if (eq tier 'narrow')}}
+      <div class="combat-row">
+        <label>{{localize 'ACKS.combatProficiency.categoriesLabel'}} ({{counts.categories}}/{{limits.narrowCategories}})</label>
+        <div class="combat-options">
+          {{#each narrowCategories}}
+            <label>
+              <input type="checkbox" class="combat-choice" data-group="category" value="{{id}}" {{#if selected}}checked{{/if}} />
+              {{localize label}}
+            </label>
+          {{/each}}
+        </div>
+      </div>
+      {{#if narrowCombo}}
+        <div class="combat-row">
+          <label>{{localize 'ACKS.combatProficiency.comboWeaponsLabel'}} ({{counts.weapons}}/{{limits.narrowWeapons}})</label>
+          <div class="combat-options">
+            {{#each weaponOptions}}
+              <label>
+                <input type="checkbox" class="combat-choice" data-group="weapon" value="{{id}}" {{#if selected}}checked{{/if}} />
+                {{localize label}}
+              </label>
+            {{/each}}
+          </div>
+        </div>
+      {{/if}}
+    {{/if}}
+
+    {{#if (eq tier 'broad')}}
+      <div class="combat-row">
+        <label>{{localize 'ACKS.combatProficiency.categoriesLabel'}} ({{counts.categories}}/{{limits.broadCategories}})</label>
+        <div class="combat-options">
+          {{#each broadCategories}}
+            <label>
+              <input type="checkbox" class="combat-choice" data-group="category" value="{{id}}" {{#if selected}}checked{{/if}} />
+              {{localize label}}
+            </label>
+          {{/each}}
+        </div>
+      </div>
+      {{#if broadCombo}}
+        <div class="combat-row">
+          <label>{{localize 'ACKS.combatProficiency.comboWeaponsLabel'}} ({{counts.weapons}}/{{limits.broadWeapons}})</label>
+          <div class="combat-options">
+            {{#each weaponOptions}}
+              <label>
+                <input type="checkbox" class="combat-choice" data-group="weapon" value="{{id}}" {{#if selected}}checked{{/if}} />
+                {{localize label}}
+              </label>
+            {{/each}}
+          </div>
+        </div>
+      {{/if}}
+    {{/if}}
+
+    {{#if (eq tier 'unrestricted')}}
+      <div class="combat-row">
+        <div class="hint">{{localize 'ACKS.combatProficiency.unrestrictedHint'}}</div>
+      </div>
+    {{/if}}
+
+    <div class="combat-row">
+      <label>{{localize 'ACKS.combatProficiency.styles'}}</label>
+      <div class="combat-options">
+        {{#each styles}}
+          <label>
+            <input type="checkbox" class="combat-choice" data-group="style" value="{{id}}" {{#if selected}}checked{{/if}} />
+            {{localize label}}
+          </label>
+        {{/each}}
+      </div>
+      <div class="hint">{{localize 'ACKS.combatProficiency.stylesHint'}}</div>
+    </div>
+  </div>
+  {{/with}}
+</div>
