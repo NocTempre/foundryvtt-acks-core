@@ -30,6 +30,9 @@ export class AcksCharacterCreator extends FormApplication {
   getData() {
     const system = this.object.system;
 
+    system.details = system.details ?? {};
+    system.details.creation = system.details.creation ?? { order: [] };
+
     system.counters = system.counters ?? {
       str: 0,
       wis: 0,
@@ -45,7 +48,7 @@ export class AcksCharacterCreator extends FormApplication {
       std: 0,
     };
 
-    const creationOrder = Array.from(system.details?.creation?.order ?? []);
+    const creationOrder = Array.from(system.details.creation.order ?? []);
     this._creationOrder = creationOrder;
     const creationLocks = {};
     for (const ability of creationOrder) {
@@ -115,7 +118,9 @@ export class AcksCharacterCreator extends FormApplication {
       return null;
     }
 
-    this.object.system.counters[score]++;
+    this._ensureCounters();
+    const currentCount = Number(this.object.system.counters[score] ?? 0);
+    this.object.system.counters[score] = currentCount + 1;
 
     const label = game.i18n.localize(`ACKS.scores.${score}.long`);
     const minHint = rollConfig.minimum ? ` (min ${rollConfig.minimum})` : "";
@@ -164,6 +169,7 @@ export class AcksCharacterCreator extends FormApplication {
     });
 
     this.object.system.scores[score].value = total;
+    this.object.system.details.creation = this.object.system.details.creation ?? { order: [] };
     this.object.system.details.creation.order = Array.from(this._creationOrder);
 
     return total;
@@ -194,7 +200,9 @@ export class AcksCharacterCreator extends FormApplication {
   }
 
   async _rollGold(options = {}) {
-    this.object.system.counters.gold++;
+    this._ensureCounters();
+    const currentCount = Number(this.object.system.counters.gold ?? 0);
+    this.object.system.counters.gold = currentCount + 1;
     const data = {
       roll: {
         type: "result",
@@ -216,6 +224,20 @@ export class AcksCharacterCreator extends FormApplication {
       }),
     });
     return roll ? roll.total : null;
+  }
+
+  _ensureCounters() {
+    if (!this.object.system.counters) {
+      this.object.system.counters = {
+        str: 0,
+        wis: 0,
+        dex: 0,
+        int: 0,
+        cha: 0,
+        con: 0,
+        gold: 0,
+      };
+    }
   }
 
   _announceMinimum(score, rolledTotal, minimum) {
@@ -315,6 +337,7 @@ export class AcksCharacterCreator extends FormApplication {
       this.object.system.scores[ability].value = 0;
     }
     this._creationOrder = [];
+    this.object.system.details.creation = this.object.system.details.creation ?? { order: [] };
     this.object.system.details.creation.order = [];
     this.object.system.isNew = true;
     this.object.system.stats = { sum: 0, avg: 0, std: 0 };
