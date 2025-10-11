@@ -10,6 +10,7 @@ export const assetPath = (relativePath) => `${ASSETS_PATH}/${relativePath}`;
 export const modulePath = (relativePath) => `${MODULE_PATH}/${relativePath}`;
 export const TextEditorRef = foundry?.applications?.ux?.TextEditor?.implementation ?? globalThis.TextEditor;
 export const SOCKET_NAMESPACE = `system.${SYSTEM_ID}`;
+export const renderTemplate = foundry?.applications?.handlebars?.renderTemplate ?? globalThis.renderTemplate;
 
 export const ACKS = {
   hitDiceModifiers: {

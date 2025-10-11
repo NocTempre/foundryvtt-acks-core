@@ -1,6 +1,6 @@
 /* -------------------------------------------- */
 import { AcksUtility } from "./utility.js";
-import { templatePath, SYSTEM_ID } from "./config.js";
+import { templatePath, SYSTEM_ID, renderTemplate } from "./config.js";
 
 /* -------------------------------------------- */
 export class AcksTokenHud {

@@ -1,7 +1,7 @@
 import { AcksActorSheet } from "./actor-sheet.js";
 import { AcksCharacterModifiers } from "../dialog/character-modifiers.js";
 import { AcksCharacterCreator } from "../dialog/character-creation.js";
-import { templatePath, SYSTEM_ID } from "../config.js";
+import { templatePath, SYSTEM_ID, renderTemplate } from "../config.js";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications

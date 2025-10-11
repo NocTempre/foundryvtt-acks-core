@@ -1,5 +1,5 @@
 import { AcksDice } from "../dice.js";
-import { templatePath } from "../config.js";
+import { templatePath, renderTemplate } from "../config.js";
 
 export class AcksCharacterCreator extends FormApplication {
   static get defaultOptions() {

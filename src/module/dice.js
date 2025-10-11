@@ -1,4 +1,4 @@
-import { templatePath, SYSTEM_ID } from "./config.js";
+import { templatePath, SYSTEM_ID, renderTemplate } from "./config.js";
 
 export class AcksDice {
   static digestResult(data, roll) {

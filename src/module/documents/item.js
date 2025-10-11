@@ -1,6 +1,6 @@
 import { AcksDice } from "../dice.js";
 import { AcksUtility } from "../utility.js";
-import { assetPath, templatePath, TextEditorRef } from "../config.js";
+import { assetPath, templatePath, TextEditorRef, renderTemplate } from "../config.js";
 
 /**
  * Override and extend the basic :class:`Item` implementation

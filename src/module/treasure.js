@@ -1,4 +1,4 @@
-import { templatePath, assetPath, TextEditorRef, SYSTEM_ID } from "./config.js";
+import { templatePath, assetPath, TextEditorRef, SYSTEM_ID, renderTemplate } from "./config.js";
 
 export const augmentTable = (table, html, data) => {
   // Treasure Toggle

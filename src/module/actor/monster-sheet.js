@@ -1,5 +1,5 @@
 import { AcksActorSheet } from "./actor-sheet.js";
-import { templatePath, TextEditorRef, SYSTEM_ID } from "../config.js";
+import { templatePath, TextEditorRef, SYSTEM_ID, renderTemplate } from "../config.js";
 
 // Define the Item sheet default options
 const __DEFAULT_ITEM_TYPES = [

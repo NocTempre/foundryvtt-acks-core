@@ -1,6 +1,6 @@
 import { AcksTableManager } from "../apps/table-manager.js";
 import { AcksUtility } from "../utility.js";
-import { templatePath } from "../config.js";
+import { templatePath, renderTemplate } from "../config.js";
 
 export class AcksTamperingDialog extends FormApplication {
   /* -------------------------------------------- */
