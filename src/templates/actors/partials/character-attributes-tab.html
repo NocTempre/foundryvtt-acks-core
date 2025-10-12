@@ -78,17 +78,17 @@
     <div class="flexrow">
 
       <div class="health">
-        <input class="health-value health-top" name="system.hp.value" type="text" value="{{system.hp.value}}"
+        <input class="health-value health-top" name="system.hp.value" type="text" value="{{system.hp.value}}" 
           data-dtype="Number" placeholder="0" title="{{localize 'ACKS.Health'}}" />
         <input class="health-value health-bottom" name="system.hp.max" type="text" value="{{system.hp.max}}"
           data-dtype="Number" placeholder="0" title="{{localize 'ACKS.HealthMax'}}" />
-        <div class="health-empty" style="height:{{counter false system.hp.value system.hp.max}}%"></div>
-        <div class="health-full" style="height:{{counter true system.hp.value system.hp.max}}%"></div>
+        <div class="health-empty" style="{{healthBarStyle false system.hp.value system.hp.max}}"></div>
+        <div class="health-full" style="{{healthBarStyle true system.hp.value system.hp.max}}"></div>
       </div>
 
       <ul class="attributes flexrow">
         <li class="attribute ">
-          <h4 class="attribute-name box-title box-title-min-height" ">
+          <h4 class="attribute-name box-title box-title-min-height">
             <a class="hit-dice" data-tooltip="{{localize 'ACKS.HitDice' }}"><i class="acks-roll-small fa-solid fa-dice-d20"></i>{{ localize "ACKS.HitDiceShort" }}</a>
             {{#if (lte system.hp.value 0)}}
               <a class="mortal-wound-dialog" data-tooltip="Roll Mortal Wound"><i class="fa-regular fa-skull"></i></a>

@@ -2,7 +2,7 @@ import { AcksDice } from "../dice.js";
 import { AcksUtility } from "../utility.js";
 import { SYSTEM_ID } from "../config.js";
 
-const TARGET_NUMBER_PATTERN = /(\d+)/;
+const TARGET_NUMBER_PATTERN = /^(\d+)\+?$/;
 
 function parseTargetValue(value) {
   if (value === null || value === undefined) return null;
@@ -1402,7 +1402,8 @@ export class AcksActor extends Actor {
       details.title = activeLevel.title;
     }
 
-    const levelNumber = Number(activeLevel.level ?? details.level);
+    let levelValue = activeLevel.level !== undefined && activeLevel.level !== null ? activeLevel.level : details.level;
+    const levelNumber = levelValue !== undefined && levelValue !== null ? Number(levelValue) : NaN;
     if (!Number.isNaN(levelNumber)) {
       details.level = levelNumber;
     }

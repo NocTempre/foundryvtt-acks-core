@@ -98,6 +98,22 @@ export const registerHelpers = async function () {
     return str.split(separator)[keep];
   });
 
+  Handlebars.registerHelper("healthBarStyle", function (isFull, value, max) {
+    const numericMax = Number(max) || 0;
+    const numericValue = Number(value) || 0;
+    let height;
+
+    if (numericMax <= 0) {
+      height = isFull ? 0 : 100;
+    } else {
+      const percent = (100 * numericValue) / numericMax;
+      height = isFull ? percent : 100 - percent;
+    }
+
+    const clamped = myClamp(height, 0, 100);
+    return `height: ${clamped}%;`;
+  });
+
   // If you need to add Handlebars helpers, here are a few useful examples:
   Handlebars.registerHelper("concat", function () {
     let outStr = "";
