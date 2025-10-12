@@ -54,6 +54,9 @@ export class AcksActor extends Actor {
   }
 
   async _onUpdate(changed, options, userId) {
+    if (options?.skipClassHpAuto) {
+      return super._onUpdate(changed, options, userId);
+    }
     console.log("Regular update", changed, options, userId);
 
     if (this.type == "character" && this.system.retainer?.enabled && this.system.retainer?.managerid != "") {
@@ -1362,11 +1365,17 @@ export class AcksActor extends Actor {
     const data = this.system;
     const details = data?.details;
     if (!details?.classLock) {
+      if (data.hp?.auto?.active) {
+        data.hp.auto.active = false;
+      }
       return;
     }
 
     const classKey = details.classKey;
     if (!classKey) {
+      if (data.hp?.auto?.active) {
+        data.hp.auto.active = false;
+      }
       return;
     }
 
@@ -1460,5 +1469,221 @@ export class AcksActor extends Actor {
         save.value = parsed;
       }
     }
+
+    const targetLevel = Number(details.level) || 1;
+    // Ensure modifiers are calculated so CON modifier is applied to auto HP
+    this.computeModifiers();
+    const ensure = this._ensureClassHitPoints(classDef, targetLevel);
+    if (ensure instanceof Promise) {
+      ensure.catch((error) =>
+        console.error("ACKS | Failed to ensure class-based hit points", error, { actor: this.id }),
+      );
+    }
+  }
+
+  async _ensureClassHitPoints(classDef, targetLevel) {
+    if (!classDef || !targetLevel || targetLevel < 1) {
+      return;
+    }
+
+    const details = this.system.details ?? {};
+    const classKey = details.classKey;
+    const hpData = this.system.hp ?? {};
+    const autoData = hpData.auto ?? {};
+    const levelInfo =
+      classDef.levelIndex?.[targetLevel] ?? classDef.levels?.find((lv) => Number(lv.level) === targetLevel);
+    const expression = levelInfo?.hit_dice ?? classDef.hit_die ?? "";
+
+    const needsReroll =
+      !autoData?.active ||
+      autoData.classKey !== classKey ||
+      autoData.level !== targetLevel ||
+      autoData.expression !== expression;
+
+    let baseHp = Number(autoData?.baseHp);
+    let history = Array.isArray(autoData?.history) ? autoData.history : [];
+
+    if (needsReroll || !Number.isFinite(baseHp)) {
+      const rollResult = this._rollClassHitPointProgression(classDef, targetLevel);
+      if (!rollResult) return;
+      baseHp = rollResult.total;
+      history = rollResult.history;
+
+      if (history.length) {
+        const classLabel = classDef?.name ?? details.class ?? "Class";
+        const lines = history.map((entry) => {
+          const segments = [`Level ${entry.level} (${entry.expression})`];
+          if (entry.dice?.length) {
+            const diceSegments = entry.dice.map((die) => {
+              let fragment = "";
+              if (die.raw === null || die.raw === undefined) {
+                fragment = "?";
+              } else {
+                fragment = `${die.raw}`;
+              }
+              if (die.minOverride) {
+                fragment += "->4";
+              }
+              fragment += `=${die.adjusted}`;
+              return fragment;
+            });
+            segments.push(`Dice [${diceSegments.join(", ")}]`);
+          } else {
+            segments.push("Dice [none]");
+          }
+          if (entry.flatBonus) {
+            const starSuffix = entry.flatBonusStar ? "*" : "";
+            const sign = entry.flatBonus > 0 ? "+" : "";
+            segments.push(`Flat ${sign}${entry.flatBonus}${starSuffix}`);
+          }
+          segments.push(`Subtotal ${entry.subtotal}`);
+          if (entry.catchupApplied) {
+            segments.push(`Catch-up -> ${entry.catchupMinimum} (prev ${entry.previousTotal})`);
+          }
+          segments.push(`Running total ${entry.total}`);
+          return segments.join(" | ");
+        });
+        console.info(
+          `ACKS | HP roll for ${this.name} (${classLabel}, level ${targetLevel})\n${lines.join(
+            "\n",
+          )}\nResulting base HP: ${baseHp}`,
+        );
+      }
+    }
+
+    if (!Number.isFinite(baseHp)) {
+      baseHp = 0;
+    }
+
+    const conMod = Number(this.getConModifier());
+    const conLevels = Math.min(targetLevel, 9); // CON bonus capped at level 9
+    const conBonus = Number.isFinite(conMod) ? conMod * conLevels : 0;
+    const newMax = Math.max(0, baseHp + conBonus);
+
+    const currentMax = Number.isFinite(hpData.max) ? Number(hpData.max) : newMax;
+    const currentValue = Number.isFinite(hpData.value) ? Number(hpData.value) : currentMax;
+    const damage = Math.max(0, currentMax - currentValue);
+    let newValue = Math.max(0, Math.round(newMax - damage));
+    if (!Number.isFinite(newValue)) {
+      newValue = newMax;
+    }
+    newValue = Math.max(0, Math.min(newMax, newValue));
+
+    const currentBase = Number(this.system.hp?.base ?? this.system.hp?.baseMax ?? autoData?.baseHp);
+    const currentConBonus = Number(this.system.hp?.conBonus ?? autoData?.conBonus);
+    if (
+      !needsReroll &&
+      Number(hpData.max) === newMax &&
+      Number(hpData.value) === newValue &&
+      Number.isFinite(currentBase) &&
+      currentBase === baseHp &&
+      Number.isFinite(currentConBonus) &&
+      currentConBonus === conBonus
+    ) {
+      return;
+    }
+
+    const updateData = {
+      "system.hp.max": newMax,
+      "system.hp.value": newValue,
+      "system.hp.base": baseHp,
+      "system.hp.conBonus": conBonus,
+      "system.hp.auto": {
+        active: true,
+        classKey,
+        level: targetLevel,
+        expression,
+        baseHp,
+        history,
+        timestamp: Date.now(),
+      },
+    };
+
+    await this.update(updateData, { skipClassHpAuto: true });
+  }
+
+  _rollClassHitPointProgression(classDef, targetLevel) {
+    const history = [];
+    let runningTotal = 0;
+
+    for (let level = 1; level <= targetLevel; level++) {
+      const levelInfo = 
+        classDef.levelIndex?.[level] ?? classDef.levels?.find((lv) => Number(lv.level) === level);
+      if (!levelInfo?.hit_dice) break;
+
+      const hd = AcksActor._parseHitDiceExpression(levelInfo.hit_dice ?? classDef.hit_die);
+      if (!hd) continue;
+
+      const diceCount = Number(hd.diceCount ?? 0); 
+      const dieFaces = Number(hd.dieFaces ?? 0);
+      const flatBonus = Number(hd.flatBonus ?? 0);
+      const diceLog = [];
+
+      const uniform = 
+        typeof CONFIG.Dice?.randomUniform === "function" ? CONFIG.Dice.randomUniform : Math.random;
+      let subtotal = 0;
+
+      // Roll hit dice
+      for (let i = 0; i < diceCount; i++) {
+        const raw = Math.floor(uniform() * Math.max(dieFaces, 1)) + 1;
+        let adjusted = raw;
+        let minOverride = false;
+        
+        // First level minimum of 4 hp
+        if (level === 1 && diceCount === 1 && adjusted < 4) {
+          adjusted = 4;
+          minOverride = true;
+        }
+        
+        diceLog.push({ raw, adjusted, minOverride });
+        subtotal += adjusted;
+      }
+
+      if (diceCount === 0) {
+        diceLog.push({ raw: null, adjusted: 0, minOverride: false });
+      }
+
+      const subtotalWithFlat = subtotal + flatBonus;
+      let finalLevelTotal = subtotalWithFlat;
+      const previousTotal = runningTotal;
+      let catchupApplied = false;
+
+      // Minimum 1 HP per level after 1st
+      if (level > 1 && finalLevelTotal <= previousTotal) {
+        finalLevelTotal = previousTotal + 1;
+        catchupApplied = true;
+      }
+
+      runningTotal = finalLevelTotal;
+
+      history.push({
+        level,
+        expression: levelInfo.hit_dice ?? classDef.hit_die,
+        dice: diceLog,
+        flatBonus,
+        flatBonusStar: Boolean(hd.star),
+        subtotal: subtotalWithFlat,
+        previousTotal,
+        catchupApplied,
+        catchupMinimum: catchupApplied ? runningTotal : null, 
+        total: runningTotal
+      });
+    }
+
+    return { total: runningTotal, history };
+  }
+
+  static _parseHitDiceExpression(expression) {
+    if (!expression) return null;
+    const match = String(expression)
+      .trim()
+      .match(/^(\d+)\s*[dD]\s*(\d+)(?:\s*\+\s*(\d+)\s*(\*)?)?\s*$/);
+    if (!match) return null;
+    return {
+      diceCount: Number(match[1]),
+      dieFaces: Number(match[2]),
+      flatBonus: match[3] ? Number(match[3]) : 0,
+      star: Boolean(match[4]),
+    };
   }
 }

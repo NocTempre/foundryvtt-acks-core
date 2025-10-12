@@ -26,7 +26,18 @@ import WeaponData from "./module/data/item/weapon-data.mjs";
 import ArmorData from "./module/data/item/armor-data.mjs";
 import SpellData from "./module/data/item/spell-data.mjs";
 import AbilityData from "./module/data/item/ability-data.mjs";
-import { slugify } from "./module/utility.js";
+
+const slugify = (value) => {
+  if (typeof value !== "string" || value.trim() === "") return "";
+  if (foundry.utils?.slugify) {
+    return foundry.utils.slugify(value, { strict: true });
+  }
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+};
 
 async function loadClassDefinitions() {
   const fetchJson = foundry.utils?.fetchJsonWithTimeout ?? fetchJsonFallback;
