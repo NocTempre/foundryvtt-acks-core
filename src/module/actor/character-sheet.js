@@ -3,6 +3,9 @@ import { AcksCharacterModifiers } from "../dialog/character-modifiers.js";
 import { AcksCharacterCreator } from "../dialog/character-creation.js";
 import { templatePath, SYSTEM_ID, renderTemplate } from "../config.js";
 
+const NARROW_COMBO_ID = "narrow-combo";
+const BROAD_COMBO_ID = "broad-combo";
+
 /**
  * Extend the basic ActorSheet with some very simple modifications
  */
@@ -54,6 +57,71 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
     data.config.BHR = game.settings.get(SYSTEM_ID, "bhr");
     data.config.removeMagicBonus = game.settings.get(SYSTEM_ID, "removeMagicBonus");
     data.isGM = game.user.isGM;
+
+    const combatConfig = CONFIG.ACKS.combatTraining ?? {};
+    const combat = this.actor.getCombatTraining();
+    const limits = combatConfig.limits ?? {};
+
+    const selectedCategories = new Set(combat.categories ?? []);
+    const selectedWeapons = new Set(combat.weapons ?? []);
+    const selectedStyles = new Set(combat.styles ?? []);
+
+    const tierOptions = Object.entries(combatConfig.tiers ?? {}).map(([id, label]) => ({
+      id,
+      label,
+      selected: id === combat.tier,
+    }));
+
+    const restrictedOptions = (combatConfig.restrictedWeapons ?? []).map((opt) => ({
+      ...opt,
+      selected: selectedWeapons.has(opt.id),
+    }));
+
+    const weaponOptions = (combatConfig.weaponOptions ?? []).map((opt) => ({
+      ...opt,
+      selected: selectedWeapons.has(opt.id),
+    }));
+
+    const narrowCategories = (combatConfig.narrowCategories ?? []).map((opt) => ({
+      ...opt,
+      selected: selectedCategories.has(opt.id),
+      isCombo: opt.id === NARROW_COMBO_ID,
+    }));
+
+    const broadCategories = (combatConfig.broadCategories ?? []).map((opt) => ({
+      ...opt,
+      selected: selectedCategories.has(opt.id),
+      isCombo: opt.id === BROAD_COMBO_ID,
+    }));
+
+    const styles = (combatConfig.styles ?? []).map((opt) => ({
+      ...opt,
+      selected: selectedStyles.has(opt.id),
+    }));
+
+    const tier = combat.tier ?? "restricted";
+    const tierHint = combatConfig.tierHints?.[tier] ?? "";
+    const narrowCombo = selectedCategories.has(NARROW_COMBO_ID);
+    const broadCombo = selectedCategories.has(BROAD_COMBO_ID);
+
+    data.combatTraining = {
+      tier,
+      tierOptions,
+      restrictedOptions,
+      narrowCategories,
+      broadCategories,
+      weaponOptions,
+      styles,
+      limits,
+      counts: {
+        categories: selectedCategories.size,
+        weapons: selectedWeapons.size,
+        styles: selectedStyles.size,
+      },
+      narrowCombo,
+      broadCombo,
+      tierHint,
+    };
 
     data.isNew = this.actor.isNew();
     return data;
@@ -281,6 +349,22 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
       this._popLang(table, $(ev.currentTarget).closest(".item").data("lang"));
     });
 
+    html.find(".combat-tier").change(async (ev) => {
+      const value = ev.currentTarget.value;
+      await this.actor.setCombatTier(value);
+    });
+
+    html.find(".combat-choice").change(async (ev) => {
+      const input = ev.currentTarget;
+      const group = input.dataset.group;
+      const value = input.value;
+      const checked = input.checked;
+      const success = await this.actor.toggleCombatSelection(group, value, checked);
+      if (!success) {
+        input.checked = !checked;
+      }
+    });
+
     html.find(".item-create").click(async (event) => {
       event.preventDefault();
       const header = event.currentTarget;
@@ -300,14 +384,7 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
       const li = $(ev.currentTarget).parents(".item");
       const item = this.actor.items.get(li.data("itemId"));
       //console.log("item", item.system.equipped);
-      await this.actor.updateEmbeddedDocuments("Item", [
-        {
-          _id: li.data("itemId"),
-          system: {
-            equipped: !item.system.equipped,
-          },
-        },
-      ]);
+      await this.actor.toggleItemEquipped(item);
     });
 
     html.find(".item-favorite").click(async (ev) => {

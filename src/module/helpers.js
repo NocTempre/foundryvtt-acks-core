@@ -131,4 +131,19 @@ export const registerHelpers = async function () {
 
   Handlebars.registerHelper("acksPartial", (relativePath) => templatePath(relativePath));
   Handlebars.registerHelper("acksAsset", (relativePath) => assetPath(relativePath));
+
+  Handlebars.registerHelper("includes", (haystack, needle) => {
+    if (!Array.isArray(haystack)) return false;
+    return haystack.includes(needle);
+  });
+
+  Handlebars.registerHelper("length", (value) => {
+    if (Array.isArray(value) || typeof value === "string") {
+      return value.length;
+    }
+    if (value instanceof Set || value instanceof Map) {
+      return value.size;
+    }
+    return 0;
+  });
 };
