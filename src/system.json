@@ -1,6 +1,6 @@
 {
   "id": "acks-dev",
-  "title": "Adventurer Conqueror King System",
+  "title": "Adventurer Conqueror King System Dev",
   "description": "Play B/X or other OSR compatible content using the ACKS system",
   "version": "#{VERSION}#",
   "socket": true,
@@ -148,6 +148,15 @@
       "module": "acks-packs"
     },
     {
+      "name": "acks2_treasure_tome_items",
+      "banner": "systems/acks-dev/assets/ui/banners/p42_treasure_shelf.webp",
+      "label": "Treasure Tome Items",
+      "system": "acks-dev",
+      "path": "packs/acks2_treasure_tome_items.db",
+      "type": "Item",
+      "module": "acks-packs"
+    },
+    {
       "name": "acks-journals",
       "banner": "systems/acks-dev/assets/ui/banners/p108_proficiency_treatises2.webp",
       "label": "Game System Help",
@@ -194,7 +203,7 @@
           "name": "Equipment",
           "sorting": "m",
           "color": "#822638",
-          "packs": ["acks-clothing", "acks-adventuring-equipment"],
+          "packs": ["acks-clothing", "acks-adventuring-equipment", "acks2_treasure_tome_items"],
           "folders": []
         },
         {

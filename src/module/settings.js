@@ -141,4 +141,15 @@ export const registerMainSettings = async () => {
     config: true,
     onChange: (_) => window.location.reload(),
   });
+
+  // Hexplorer Integration Settings
+  await game.settings.register(SYSTEM_ID, "hexplorerIntegration", {
+    name: "Enable Hex Movement Calculator",
+    hint: "Adds a 'Hex Movement Calculator' button to character sheets for terrain-based movement calculations. The terrain API (game.acks.hexplorer) is always available regardless of this setting.",
+    default: false,
+    scope: "world",
+    type: Boolean,
+    config: true,
+    requiresReload: true
+  });
 };

@@ -35,11 +35,14 @@ export const normalizeAssetPath = (path) => {
   return cleaned;
 };
 
+import { TERRAIN_CONFIG } from "./terrain-config.js";
+
 export const ACKS = {
   classes: {},
   classList: [],
   classSources: [],
   classDefaultIcon: `${ASSETS_PATH}/ui/icons/class-placeholder.svg`,
+  terrain: TERRAIN_CONFIG,
   hitDiceModifiers: {
     d4: { value: 0, label: "d4 (0)" },
     d6: { value: 2, label: "d6 (2)" },

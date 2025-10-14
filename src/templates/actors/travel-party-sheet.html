@@ -1,0 +1,238 @@
+<form class="{{cssClass}}" autocomplete="off">
+  {{! Sheet Header }}
+  <header class="sheet-header flexrow">
+    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100"/>
+    <div class="header-fields flexcol">
+      <h1 class="charname">
+        <input name="name" type="text" value="{{actor.name}}" placeholder="Travel Party Name"/>
+      </h1>
+      <div class="flexrow">
+        <div>
+          <label>Members: <strong>{{members.length}}</strong></label>
+        </div>
+        <div>
+          <label>Speed: <strong>{{formatNumber movement.finalMilesPerHour decimals=2}}</strong> mi/h (<strong>{{movement.finalMilesPerDay}}</strong> mi/day)</label>
+        </div>
+        <div>
+          <label>Status: <strong>{{#if isActive}}Traveling{{else}}Resting{{/if}}</strong></label>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {{! Sheet Tab Navigation }}
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="members">Party Members</a>
+    <a class="item" data-tab="vehicles">Vehicles & Mounts</a>
+    <a class="item" data-tab="travel">Travel</a>
+    <a class="item" data-tab="encounters">Encounters</a>
+  </nav>
+
+  {{! Sheet Body }}
+  <section class="sheet-body">
+
+    {{! Members Tab }}
+    <div class="tab" data-group="primary" data-tab="members">
+      <div class="flexrow" style="margin-bottom: 10px;">
+        <button type="button" class="add-member">
+          <i class="fas fa-plus"></i> Add Member
+        </button>
+      </div>
+
+      {{#if slowestMember}}
+      <div class="notification" style="background: #f0f0f0; padding: 10px; margin-bottom: 10px; border-left: 4px solid #ff6600;">
+        <strong>Slowest Member:</strong> {{slowestMember.name}} ({{slowestMember.expeditionSpeed}} miles/day)
+        <br><em>Party speed limited to slowest member</em>
+      </div>
+      {{/if}}
+
+      <ol class="items-list">
+        {{#each members as |member|}}
+        <li class="item flexrow" data-actor-id="{{member.id}}">
+          <img src="{{member.img}}" title="{{member.name}}" width="24" height="24"/>
+          <h4 class="item-name">{{member.name}}</h4>
+          <div class="item-controls">
+            <span>{{member.expeditionSpeed}} mi/day</span>
+            <a class="item-control remove-member" data-actor-id="{{member.id}}" title="Remove">
+              <i class="fas fa-trash"></i>
+            </a>
+          </div>
+        </li>
+        {{/each}}
+      </ol>
+    </div>
+
+    {{! Vehicles Tab }}
+    <div class="tab" data-group="primary" data-tab="vehicles">
+      <div class="flexrow" style="margin-bottom: 10px;">
+        <button type="button" class="create-vehicle">
+          <i class="fas fa-plus"></i> Create Vehicle
+        </button>
+      </div>
+
+      <ol class="items-list">
+        {{#each vehicles as |vehicle|}}
+        <li class="item flexrow" data-item-id="{{vehicle.id}}">
+          <div class="item-image">
+            <img src="{{vehicle.item.img}}" title="{{vehicle.name}}" width="32" height="32"/>
+          </div>
+          <h4 class="item-name rollable" data-item-id="{{vehicle.id}}">
+            {{vehicle.name}}
+          </h4>
+          <div class="item-details" style="flex: 2; font-size: 0.9em;">
+            <div><strong>{{vehicle.animals}}</strong></div>
+            <div>Speed: <strong>{{vehicle.speed}}</strong> mi/day ({{vehicle.cargoLoad}})</div>
+            <div>Cargo: {{vehicle.cargo.current}}/{{vehicle.cargo.normal}} stone</div>
+            <div>Driver: {{#if vehicle.driver}}{{vehicle.driver.name}}{{else}}<em>None</em>{{/if}}</div>
+            <div>Passengers: {{vehicle.passengerCount}}/{{vehicle.passengerCapacity}}</div>
+          </div>
+          <div class="item-controls">
+            <a class="item-control edit-vehicle" data-item-id="{{vehicle.id}}" title="Edit Vehicle">
+              <i class="fas fa-edit"></i>
+            </a>
+            <a class="item-control delete-vehicle" data-item-id="{{vehicle.id}}" title="Delete Vehicle">
+              <i class="fas fa-trash"></i>
+            </a>
+          </div>
+        </li>
+        {{/each}}
+      </ol>
+
+      {{#unless vehicles.length}}
+      <p style="text-align: center; color: #999; padding: 20px;">
+        <em>No vehicles. Click "Create Vehicle" to add one.</em>
+      </p>
+      {{/unless}}
+    </div>
+
+    {{! Travel Tab }}
+    <div class="tab" data-group="primary" data-tab="travel">
+
+      {{! Movement Calculation Display }}
+      <div class="movement-display" style="background: #f9f9f9; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+        <h3>Movement Speed</h3>
+        <div class="flexrow">
+          <div style="flex: 1;">
+            <label>Base Speed:</label>
+            <div><strong>{{movement.baseMilesPerDay}}</strong> mi/day (<strong>{{formatNumber movement.baseMilesPerHour decimals=2}}</strong> mi/h)</div>
+          </div>
+          <div style="flex: 1;">
+            <label>Terrain:</label>
+            <div>{{movement.terrainLabel}} (×{{movement.terrainMultiplier}})</div>
+          </div>
+          <div style="flex: 1;">
+            <label>Road:</label>
+            <div>{{movement.roadLabel}} (×{{movement.roadMultiplier}})</div>
+          </div>
+          <div style="flex: 1;">
+            <label>Weather:</label>
+            <div>{{movement.weatherLabel}} (×{{movement.weatherMultiplier}})</div>
+          </div>
+        </div>
+        <hr>
+        <div class="flexrow">
+          <div style="flex: 1;">
+            <h2 style="color: #ff6600; margin: 0;">{{movement.finalMilesPerDay}} mi/day</h2>
+            <p style="margin: 5px 0 0 0;">{{formatNumber movement.finalMilesPerHour decimals=2}} mi/h over {{movement.hoursPerDay}} hours</p>
+          </div>
+          {{#if movement.timePerHex}}
+          <div style="flex: 1;">
+            <label>Time per Hex:</label>
+            <div><strong>{{formatNumber movement.timePerHex decimals=2}}</strong> hours</div>
+            <p class="hint" style="font-size: 0.9em; margin: 5px 0 0 0;">
+              ({{movement.hexDistance}} mi at {{formatNumber movement.finalMilesPerHour decimals=2}} mi/h)
+            </p>
+          </div>
+          {{/if}}
+        </div>
+      </div>
+
+      {{! Terrain/Road/Weather Selection }}
+      <div class="form-group">
+        <label>Current Terrain:</label>
+        <div class="flexrow">
+          <select name="system.travel.currentTerrain" style="flex: 1;">
+            {{#each terrainTypes as |terrain|}}
+            <option value="{{terrain.key}}" {{#if (eq terrain.key ../actor.system.travel.currentTerrain)}}selected{{/if}}>
+              {{terrain.label}}
+            </option>
+            {{/each}}
+          </select>
+          {{#if hexplorerActive}}
+          <button type="button" class="detect-terrain" title="Detect from Hexplorer hex">
+            <i class="fas fa-crosshairs"></i> Detect
+          </button>
+          {{/if}}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Current Road:</label>
+        <select name="system.travel.currentRoad" style="width: 100%;">
+          {{#each roadTypes as |road|}}
+          <option value="{{road.key}}" {{#if (eq road.key ../actor.system.travel.currentRoad)}}selected{{/if}}>
+            {{road.label}}
+          </option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Current Weather:</label>
+        <select name="system.travel.currentWeather" style="width: 100%;">
+          {{#each weatherTypes as |weather|}}
+          <option value="{{weather.key}}" {{#if (eq weather.key ../actor.system.travel.currentWeather)}}selected{{/if}}>
+            {{weather.label}}
+          </option>
+          {{/each}}
+        </select>
+      </div>
+
+      <hr>
+
+      {{! Travel Controls }}
+      <div class="form-group">
+        <button type="button" class="toggle-travel" style="width: 100%; padding: 10px; font-size: 16px; background: {{#if isActive}}#cc0000{{else}}#00cc00{{/if}}; color: white;">
+          {{#if isActive}}
+          <i class="fas fa-stop"></i> Stop Travel
+          {{else}}
+          <i class="fas fa-play"></i> Start Travel
+          {{/if}}
+        </button>
+      </div>
+
+      <div class="form-group">
+        <label>Hours Traveled Today:</label>
+        <div><strong>{{actor.system.travel.hoursToday}}</strong> / {{movement.hoursPerDay}} hours</div>
+      </div>
+
+      <div class="form-group">
+        <label>Total Days:</label>
+        <div><strong>{{actor.system.travel.daysTotal}}</strong> days</div>
+      </div>
+
+    </div>
+
+    {{! Encounters Tab }}
+    <div class="tab" data-group="primary" data-tab="encounters">
+      <h3>Today's Encounter Rolls</h3>
+
+      {{#if encountersToday.length}}
+      <ol class="items-list">
+        {{#each encountersToday as |roll|}}
+        <li class="item flexrow">
+          <div>Hour {{roll.hour}}</div>
+          <div>Roll: {{roll.roll}}</div>
+          <div>{{#if roll.success}}<span style="color: red;">ENCOUNTER!</span>{{else}}No encounter{{/if}}</div>
+        </li>
+        {{/each}}
+      </ol>
+      {{else}}
+      <p><em>No encounter rolls today</em></p>
+      {{/if}}
+
+      <p class="hint"><em>Automated hourly encounter rolls will be implemented in Phase 4</em></p>
+    </div>
+
+  </section>
+</form>

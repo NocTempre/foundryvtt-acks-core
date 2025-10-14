@@ -1,0 +1,192 @@
+<form class="{{cssClass}}" autocomplete="off">
+  <header class="sheet-header">
+    <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" />
+    <div class="header-col">
+      <h1 class="charname">
+        <input name="name" type="text" value="{{item.name}}" placeholder="Vehicle Name" />
+      </h1>
+      <div class="subtitle">
+        <label>Type: <strong>{{system.vehicleType}}</strong></label>
+      </div>
+    </div>
+  </header>
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="stats">Stats</a>
+    <a class="item" data-tab="crew">Crew & Passengers</a>
+    <a class="item" data-tab="description">Description</a>
+  </nav>
+
+  <section class="sheet-body">
+    {{! Stats Tab }}
+    <div class="tab" data-group="primary" data-tab="stats">
+      <div class="flexrow">
+        <div class="stats" style="flex: 1;">
+
+          {{! Vehicle Type }}
+          <div class="form-group">
+            <label>Vehicle Type</label>
+            <div class="form-fields">
+              <select name="system.vehicleType" data-dtype="String">
+                <option value="cart" {{#if (eq system.vehicleType "cart")}}selected{{/if}}>Cart</option>
+                <option value="chariot-light" {{#if (eq system.vehicleType "chariot-light")}}selected{{/if}}>Light Chariot</option>
+                <option value="chariot-medium" {{#if (eq system.vehicleType "chariot-medium")}}selected{{/if}}>Medium Chariot</option>
+                <option value="chariot-heavy" {{#if (eq system.vehicleType "chariot-heavy")}}selected{{/if}}>Heavy Chariot</option>
+                <option value="palanquin" {{#if (eq system.vehicleType "palanquin")}}selected{{/if}}>Palanquin</option>
+                <option value="howdah" {{#if (eq system.vehicleType "howdah")}}selected{{/if}}>Howdah</option>
+                <option value="wagon" {{#if (eq system.vehicleType "wagon")}}selected{{/if}}>Wagon</option>
+              </select>
+            </div>
+          </div>
+
+          {{! Crew }}
+          <div class="form-group">
+            <label>Crew Required</label>
+            <div class="form-fields">
+              <input type="number" name="system.crew.required" value="{{system.crew.required}}" data-dtype="Number" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Passenger Capacity</label>
+            <div class="form-fields">
+              <input type="number" name="system.crew.passengers" value="{{system.crew.passengers}}" data-dtype="Number" />
+            </div>
+          </div>
+
+          {{! Animals }}
+          <div class="form-group">
+            <label>Draft Animal Type</label>
+            <div class="form-fields">
+              <input type="text" name="system.animals.type" value="{{system.animals.type}}" placeholder="e.g., Heavy Horse" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Number of Animals</label>
+            <div class="form-fields">
+              <input type="number" name="system.animals.count" value="{{system.animals.count}}" data-dtype="Number" />
+            </div>
+          </div>
+
+          <hr>
+
+          {{! Speed }}
+          <h3>Movement Speed</h3>
+          <div class="flexrow">
+            <div class="form-group" style="flex: 1;">
+              <label>Encounter (Normal)</label>
+              <input type="number" name="system.speed.encounter" value="{{system.speed.encounter}}" data-dtype="Number" />
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Encounter (Heavy)</label>
+              <input type="number" name="system.speed.encounterHeavy" value="{{system.speed.encounterHeavy}}" data-dtype="Number" />
+            </div>
+          </div>
+
+          <div class="flexrow">
+            <div class="form-group" style="flex: 1;">
+              <label>Expedition (Normal)</label>
+              <input type="number" name="system.speed.expedition" value="{{system.speed.expedition}}" data-dtype="Number" />
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Expedition (Heavy)</label>
+              <input type="number" name="system.speed.expeditionHeavy" value="{{system.speed.expeditionHeavy}}" data-dtype="Number" />
+            </div>
+          </div>
+
+          <hr>
+
+          {{! Cargo }}
+          <h3>Cargo Capacity (stone)</h3>
+          <div class="flexrow">
+            <div class="form-group" style="flex: 1;">
+              <label>Normal Load</label>
+              <input type="number" name="system.cargo.normal" value="{{system.cargo.normal}}" data-dtype="Number" />
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Heavy Load</label>
+              <input type="number" name="system.cargo.heavy" value="{{system.cargo.heavy}}" data-dtype="Number" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Current Load</label>
+            <div class="form-fields">
+              <input type="number" name="system.cargo.current" value="{{system.cargo.current}}" data-dtype="Number" />
+            </div>
+          </div>
+
+          <hr>
+
+          {{! Combat Stats }}
+          <h3>Combat</h3>
+          <div class="flexrow">
+            <div class="form-group" style="flex: 1;">
+              <label>AC</label>
+              <input type="number" name="system.combat.ac" value="{{system.combat.ac}}" data-dtype="Number" />
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Structural HP</label>
+              <input type="number" name="system.combat.hp" value="{{system.combat.hp}}" data-dtype="Number" />
+            </div>
+          </div>
+
+          <hr>
+
+          {{! Cost }}
+          <div class="form-group">
+            <label>Cost</label>
+            <div class="form-fields">
+              <input type="number" name="system.cost.value" value="{{system.cost.value}}" data-dtype="Number" />
+              <select name="system.cost.currency" data-dtype="String">
+                <option value="gp" {{#if (eq system.cost.currency "gp")}}selected{{/if}}>gp</option>
+                <option value="sp" {{#if (eq system.cost.currency "sp")}}selected{{/if}}>sp</option>
+                <option value="cp" {{#if (eq system.cost.currency "cp")}}selected{{/if}}>cp</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    {{! Crew & Passengers Tab }}
+    <div class="tab" data-group="primary" data-tab="crew">
+      <h3>Driver</h3>
+      <div class="form-group">
+        <label>Current Driver</label>
+        <div class="form-fields">
+          {{#if system.slots.driver}}
+            <p>{{system.slots.driver.name}} <button type="button" class="remove-driver">Remove</button></p>
+          {{else}}
+            <p><em>No driver assigned</em></p>
+          {{/if}}
+        </div>
+      </div>
+
+      <h3>Passengers ({{system.slots.passengers.length}}/{{system.crew.passengers}})</h3>
+      <ol class="items-list">
+        {{#each system.slots.passengers as |passenger|}}
+        <li class="item flexrow">
+          <div class="item-name">{{passenger.name}}</div>
+          <button type="button" class="item-control remove-passenger" data-index="{{@index}}">
+            <i class="fas fa-times"></i>
+          </button>
+        </li>
+        {{/each}}
+      </ol>
+
+      <h3>Cargo Items</h3>
+      <p class="hint">Current load: {{system.cargo.current}} / {{system.cargo.normal}} stone (heavy at {{system.cargo.heavy}})</p>
+    </div>
+
+    {{! Description Tab }}
+    <div class="tab" data-group="primary" data-tab="description">
+      <div class="description">
+        {{editor description target="system.description" button=true owner=owner editable=editable}}
+      </div>
+    </div>
+
+  </section>
+</form>

@@ -1,6 +1,6 @@
 {
   "Actor": {
-    "types": ["character", "monster"],
+    "types": ["character", "monster", "travel-party"],
     "templates": {
       "common": {
         "isNew": false,
@@ -209,16 +209,82 @@
         "morale": 0
       },
       "attacks": ""
+    },
+    "travel-party": {
+      "details": {
+        "name": "",
+        "notes": ""
+      },
+      "members": [],
+      "vehicles": [],
+      "movement": {
+        "slowestSpeed": 24,
+        "terrainMultiplier": 1,
+        "roadMultiplier": 1,
+        "weatherMultiplier": 1,
+        "finalSpeed": 24,
+        "hoursPerDay": 8,
+        "milesPerDay": 24
+      },
+      "travel": {
+        "active": false,
+        "hoursToday": 0,
+        "daysTotal": 0,
+        "currentTerrain": "grassland",
+        "currentRoad": null,
+        "currentWeather": "clear"
+      },
+      "encounters": {
+        "rollsToday": [],
+        "history": []
+      },
+      "splitGroups": []
     }
   },
   "Item": {
-    "types": ["item", "weapon", "armor", "spell", "ability", "language", "money"],
+    "types": ["item", "weapon", "armor", "spell", "ability", "language", "money", "vehicle"],
     "money": {},
     "language": {},
     "item": {},
     "weapon": {},
     "armor": {},
     "spell": {},
-    "ability": {}
+    "ability": {},
+    "vehicle": {
+      "description": "",
+      "vehicleType": "cart",
+      "crew": {
+        "required": 1,
+        "passengers": 0
+      },
+      "animals": {
+        "type": "heavy horse",
+        "count": 1
+      },
+      "speed": {
+        "encounter": 60,
+        "encounterHeavy": 30,
+        "expedition": 12,
+        "expeditionHeavy": 6
+      },
+      "cargo": {
+        "normal": 80,
+        "heavy": 120,
+        "current": 0
+      },
+      "combat": {
+        "ac": 0,
+        "hp": 2
+      },
+      "cost": {
+        "value": 50,
+        "currency": "gp"
+      },
+      "slots": {
+        "driver": null,
+        "passengers": [],
+        "cargo": []
+      }
+    }
   }
 }

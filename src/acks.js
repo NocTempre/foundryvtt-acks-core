@@ -2,6 +2,7 @@
 import { AcksItemSheet } from "./module/item/item-sheet.js";
 import { AcksActorSheetCharacter } from "./module/actor/character-sheet.js";
 import { AcksActorSheetMonster } from "./module/actor/monster-sheet.js";
+import { AcksTravelPartySheet } from "./module/actor/travel-party-sheet.js";
 import { preloadHandlebarsTemplates } from "./module/preloadTemplates.js";
 import { AcksActor } from "./module/actor/entity.js";
 import { AcksItem } from "./module/documents/item.js";
@@ -26,6 +27,10 @@ import WeaponData from "./module/data/item/weapon-data.mjs";
 import ArmorData from "./module/data/item/armor-data.mjs";
 import SpellData from "./module/data/item/spell-data.mjs";
 import AbilityData from "./module/data/item/ability-data.mjs";
+import { ModuleIntegrations } from "./module/module-integrations.js";
+import { HexplorerIntegration } from "./module/hexplorer-integration.js";
+import { HexplorerBrushInjection } from "./module/hexplorer-brush-injection.js";
+import { RoadPainter } from "./module/road-painter.js";
 
 const slugify = (value) => {
   if (typeof value !== "string" || value.trim() === "") return "";
@@ -267,6 +272,7 @@ Hooks.once("init", async function () {
 
   game.acks = {
     rollItemMacro: macros.rollItemMacro,
+    brushes: HexplorerBrushInjection,
   };
 
   // Custom Handlebars helpers
@@ -296,6 +302,10 @@ Hooks.once("init", async function () {
     types: ["monster"],
     makeDefault: true,
   });
+  ActorsCollection.registerSheet(SYSTEM_ID, AcksTravelPartySheet, {
+    types: ["travel-party"],
+    makeDefault: true,
+  });
   // Unregister default item sheet
   ItemsCollection.unregisterSheet("core", ItemSheetV1);
   if (AcksUtility.isMinVersion(13)) {
@@ -317,6 +327,12 @@ Hooks.once("init", async function () {
 
   AcksTokenHud.init();
   AcksCommands.init();
+
+  // Initialize module integrations
+  ModuleIntegrations.init();
+  HexplorerIntegration.initialize();
+  HexplorerBrushInjection.init();
+  RoadPainter.init();
 
   // Ensure new effect transfer
   CONFIG.ActiveEffect.legacyTransferral = false;

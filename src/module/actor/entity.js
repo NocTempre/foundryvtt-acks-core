@@ -91,6 +91,11 @@ export class AcksActor extends Actor {
    * Extends data from base Actor class
    */
   computeAdditionnalData() {
+    // Skip derived data computation for travel-party
+    if (this.type === "travel-party") {
+      return;
+    }
+
     const data = this.system;
 
     // Compute modifiers from actor scores
@@ -445,6 +450,10 @@ export class AcksActor extends Actor {
 
   /* -------------------------------------------- */
   async updateImplements() {
+    // Skip for travel-party actors
+    if (this.type === "travel-party") {
+      return;
+    }
     if (this.system.saves.implements?.value == -1) {
       this.update({ "system.saves.implements.value": this.system.saves.wand.value });
     }
