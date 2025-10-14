@@ -1,12 +1,1 @@
-{
-  "permissions": {
-    "allow": [
-      "Read(//c/Users/benis/AppData/Local/FoundryVTT/Data/modules/hexplorer/scripts/canvas/**)",
-      "Read(//c/Users/benis/AppData/Local/FoundryVTT/Data/systems/**)",
-      "Bash(git add:*)",
-      "Read(//c/Users/benis/AppData/Local/FoundryVTT/Data/modules/hexplorer/**)"
-    ],
-    "deny": [],
-    "ask": []
-  }
-}
+
