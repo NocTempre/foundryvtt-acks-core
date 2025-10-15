@@ -8,7 +8,7 @@
       </h1>
       <div class="flexrow">
         <div>
-          <label>Members: <strong>{{members.length}}</strong></label>
+          <label>Members: <strong>{{totalMemberCount}}</strong></label>
         </div>
         <div>
           <label>Speed: <strong>{{formatNumber movement.finalMilesPerHour decimals=2}}</strong> mi/h (<strong>{{movement.finalMilesPerDay}}</strong> mi/day)</label>
@@ -50,9 +50,23 @@
         {{#each members as |member|}}
         <li class="item flexrow" data-actor-id="{{member.id}}">
           <img src="{{member.img}}" title="{{member.name}}" width="24" height="24"/>
-          <h4 class="item-name">{{member.name}}</h4>
+          <h4 class="item-name">
+            {{member.displayName}}
+            {{#if member.hasAssignments}}
+              <i class="fas fa-truck" style="color: #00cc00; margin-left: 5px;" title="{{member.assignmentSummary}}"></i>
+            {{/if}}
+          </h4>
           <div class="item-controls">
             <span>{{member.expeditionSpeed}} mi/day</span>
+            {{#if (gt member.count 1)}}
+              <span style="font-size: 0.85em; color: #666; margin-left: 5px;">
+                {{#if member.hasAssignments}}
+                  ({{member.assigned.length}}/{{member.count}} assigned)
+                {{else}}
+                  ({{member.count}} total)
+                {{/if}}
+              </span>
+            {{/if}}
             <a class="item-control remove-member" data-actor-id="{{member.id}}" title="Remove">
               <i class="fas fa-trash"></i>
             </a>
@@ -80,11 +94,53 @@
             {{vehicle.name}}
           </h4>
           <div class="item-details" style="flex: 2; font-size: 0.9em;">
-            <div><strong>{{vehicle.animals}}</strong></div>
+            <div>
+              Draft Animals: {{vehicle.animalPower}} stone ({{vehicle.animalMinLoad}}-{{vehicle.animalMaxLoad}} required, {{vehicle.animalCount}}/{{vehicle.animalMinCount}}-{{vehicle.animalMaxCount}} animals)
+              {{#unless vehicle.hasEnoughAnimals}}
+                <span style="color: #cc0000;" title="Insufficient pulling power or too few animals!">(!))</span>
+              {{/unless}}
+              {{#if vehicle.tooManyAnimals}}
+                <span style="color: #ff6600;" title="Too many animals or too much pulling power!">(!))</span>
+              {{/if}}
+              {{#unless (gte vehicle.animalCount vehicle.animalMaxCount)}}
+                <a class="inline-link add-animal" data-vehicle-id="{{vehicle.id}}" title="Add animal"><i class="fas fa-plus"></i></a>
+              {{/unless}}
+              {{#if vehicle.animals.length}}
+                <div style="margin-left: 10px; font-size: 0.9em;" data-vehicle-id="{{vehicle.id}}">
+                  {{#each vehicle.animals as |animal|}}
+                    <span>{{animal.name}} ({{animal.normalLoad}} st) <a class="inline-link remove-animal" data-animal-index="{{@index}}" title="Remove"><i class="fas fa-times"></i></a></span>{{#unless @last}}, {{/unless}}
+                  {{/each}}
+                </div>
+              {{/if}}
+            </div>
             <div>Speed: <strong>{{vehicle.speed}}</strong> mi/day ({{vehicle.cargoLoad}})</div>
             <div>Cargo: {{vehicle.cargo.current}}/{{vehicle.cargo.normal}} stone</div>
-            <div>Driver: {{#if vehicle.driver}}{{vehicle.driver.name}}{{else}}<em>None</em>{{/if}}</div>
-            <div>Passengers: {{vehicle.passengerCount}}/{{vehicle.passengerCapacity}}</div>
+            <div>
+              Crew: {{vehicle.crewCount}}/{{vehicle.crewRequired}}
+              {{#if (lt vehicle.crewCount vehicle.crewRequired)}}
+                <a class="inline-link add-crew" data-vehicle-id="{{vehicle.id}}" title="Add crew"><i class="fas fa-plus"></i></a>
+              {{/if}}
+              {{#if vehicle.crew.length}}
+                <div style="margin-left: 10px; font-size: 0.9em;">
+                  {{#each vehicle.crew as |crewMember|}}
+                    <span>{{crewMember.name}} <a class="inline-link remove-crew" data-vehicle-id="{{../vehicle.id}}" data-crew-index="{{@index}}" title="Remove"><i class="fas fa-times"></i></a></span>{{#unless @last}}, {{/unless}}
+                  {{/each}}
+                </div>
+              {{/if}}
+            </div>
+            <div>
+              Passengers: {{vehicle.passengerCount}}/{{vehicle.passengerCapacity}}
+              {{#if (lt vehicle.passengerCount vehicle.passengerCapacity)}}
+                <a class="inline-link add-passenger" data-vehicle-id="{{vehicle.id}}" title="Add passenger"><i class="fas fa-plus"></i></a>
+              {{/if}}
+              {{#if vehicle.passengers.length}}
+                <div style="margin-left: 10px; font-size: 0.9em;">
+                  {{#each vehicle.passengers as |passenger index|}}
+                    <span>{{passenger.name}} <a class="inline-link remove-passenger" data-vehicle-id="{{../vehicle.id}}" data-passenger-index="{{@index}}" title="Remove"><i class="fas fa-times"></i></a></span>{{#unless @last}}, {{/unless}}
+                  {{/each}}
+                </div>
+              {{/if}}
+            </div>
           </div>
           <div class="item-controls">
             <a class="item-control edit-vehicle" data-item-id="{{vehicle.id}}" title="Edit Vehicle">
@@ -115,6 +171,7 @@
           <div style="flex: 1;">
             <label>Base Speed:</label>
             <div><strong>{{movement.baseMilesPerDay}}</strong> mi/day (<strong>{{formatNumber movement.baseMilesPerHour decimals=2}}</strong> mi/h)</div>
+            <p class="hint" style="font-size: 0.85em; margin: 2px 0 0 0;"><em>Source: {{movement.speedSource}}</em></p>
           </div>
           <div style="flex: 1;">
             <label>Terrain:</label>

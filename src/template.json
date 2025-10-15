@@ -208,7 +208,11 @@
         },
         "morale": 0
       },
-      "attacks": ""
+      "attacks": "",
+      "draftAnimal": {
+        "enabled": false,
+        "normalLoad": 0
+      }
     },
     "travel-party": {
       "details": {
@@ -258,8 +262,10 @@
         "passengers": 0
       },
       "animals": {
-        "type": "heavy horse",
-        "count": 1
+        "minLoad": 40,
+        "maxLoad": 80,
+        "minCount": 1,
+        "maxCount": 2
       },
       "speed": {
         "encounter": 60,
@@ -281,8 +287,9 @@
         "currency": "gp"
       },
       "slots": {
-        "driver": null,
+        "crew": [],
         "passengers": [],
+        "animals": [],
         "cargo": []
       }
     }

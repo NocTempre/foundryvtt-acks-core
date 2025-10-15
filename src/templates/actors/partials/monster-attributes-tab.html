@@ -58,6 +58,26 @@
               </div>
           </li>
 
+          <li class="attribute flexrow">
+              <h4 class="attribute-name box-title" title="Mark as draft animal for vehicle pulling">
+                  Draft Animal
+              </h4>
+              <div class="attribute-value">
+                  <input name="system.draftAnimal.enabled" type="checkbox" {{checked system.draftAnimal.enabled}} data-dtype="Boolean" />
+              </div>
+          </li>
+
+          {{#if system.draftAnimal.enabled}}
+          <li class="attribute flexrow">
+              <h4 class="attribute-name box-title" title="Normal load capacity in stone">
+                  Load (stone)
+              </h4>
+              <div class="attribute-value">
+                  <input name="system.draftAnimal.normalLoad" type="text" value="{{system.draftAnimal.normalLoad}}" placeholder="40" data-dtype="Number" />
+              </div>
+          </li>
+          {{/if}}
+
           <li class="attribute flexrow" >
             <h4 class="attribute-name box-title" title="({{localize 'ACKS.bonuses.initiativebonus'}}) {{localize 'ACKS.exploration.ld.long'}}">
               {{ localize "ACKS.bonuses.initiativebonus" }}
