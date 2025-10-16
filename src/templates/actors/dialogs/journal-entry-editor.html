@@ -1,0 +1,309 @@
+<form class="journal-entry-form" autocomplete="off">
+  <div class="form-group">
+    <label>Entry Type:</label>
+    <input type="text" name="type" value="{{typeLabel}}" disabled style="background: #f0f0f0; font-weight: bold;" />
+  </div>
+
+  <div class="form-group">
+    <label>Game Date (optional):</label>
+    <input type="text" name="gameDate" value="{{gameDate}}" placeholder="e.g., Summer, Year 1050 or Session 5, Day 12" />
+    <small style="color: #666; font-style: italic;">Leave blank to only show real-world timestamp</small>
+  </div>
+
+  <div class="form-group">
+    <label>
+      <input type="checkbox" name="gmOnly" {{#if gmOnly}}checked{{/if}} />
+      GM Only (Hidden from players)
+    </label>
+  </div>
+
+  {{!-- Identity Fields --}}
+  {{#if (eq entryType "identity")}}
+    <div class="form-group">
+      <label>Name:</label>
+      <input type="text" name="data.name" value="{{data.name}}" placeholder="Your character's name" />
+    </div>
+    <div class="form-group">
+      <label>Appearance:</label>
+      {{editor data.appearance target="data.appearance" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Goal:</label>
+      {{editor data.goal target="data.goal" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Secret (GM Only):</label>
+      {{editor data.secret target="data.secret" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Quirk:</label>
+      {{editor data.quirk target="data.quirk" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Faction (Link to actors/journals):</label>
+      {{editor data.faction target="data.faction" button=true editable=true}}
+    </div>
+  {{/if}}
+
+  {{!-- Stash Fields --}}
+  {{#if (eq entryType "stash")}}
+    <div class="form-group">
+      <label>Location (Link to scene/journal):</label>
+      {{editor data.location target="data.location" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Stored Gear (Link to items):</label>
+      {{editor data.storedGear target="data.storedGear" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Wealth:</label>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <input type="number" name="data.wealthGold" value="{{data.wealthGold}}" placeholder="0" style="width: 80px;" />
+        <span>gp</span>
+        <input type="number" name="data.wealthSilver" value="{{data.wealthSilver}}" placeholder="0" style="width: 80px;" />
+        <span>sp</span>
+        <input type="number" name="data.wealthCopper" value="{{data.wealthCopper}}" placeholder="0" style="width: 80px;" />
+        <span>cp</span>
+      </div>
+      <small style="color: #666; font-style: italic;">These values can be aggregated across all stashes</small>
+    </div>
+    <div class="form-group">
+      <label>Wealth Notes (other valuables):</label>
+      {{editor data.wealthNotes target="data.wealthNotes" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Property (Land, buildings, storage):</label>
+      {{editor data.property target="data.property" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Shared With (Link to actors):</label>
+      {{editor data.sharedWith target="data.sharedWith" button=true editable=true}}
+      <small style="color: #666; font-style: italic;">Link to other characters who have access</small>
+    </div>
+    <div class="form-group">
+      <label>Notes:</label>
+      {{editor data.notes target="data.notes" button=true editable=true}}
+    </div>
+  {{/if}}
+
+  {{!-- Bond Fields --}}
+  {{#if (eq entryType "bond")}}
+    <div class="form-group">
+      <label>Name (Link to actor/journal):</label>
+      {{editor data.name target="data.name" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Role:</label>
+      {{editor data.role target="data.role" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Bond (How you're connected):</label>
+      {{editor data.bond target="data.bond" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Notes:</label>
+      {{editor data.notes target="data.notes" button=true editable=true}}
+    </div>
+  {{/if}}
+
+  {{!-- Advancement Fields --}}
+  {{#if (eq entryType "advancement")}}
+    <div class="form-group">
+      <label>Session:</label>
+      <input type="text" name="data.session" value="{{data.session}}" placeholder="Session number or date" />
+    </div>
+    <div class="form-group">
+      <label>Change (What improved):</label>
+      {{editor data.change target="data.change" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Notes (Story reason):</label>
+      {{editor data.notes target="data.notes" button=true editable=true}}
+    </div>
+  {{/if}}
+
+  {{!-- Downtime Fields --}}
+  {{#if (eq entryType "downtime")}}
+    <div class="form-group">
+      <label>Activity:</label>
+      {{editor data.activity target="data.activity" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Outcome:</label>
+      {{editor data.outcome target="data.outcome" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Status (Ongoing progress):</label>
+      {{editor data.status target="data.status" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Notes:</label>
+      {{editor data.notes target="data.notes" button=true editable=true}}
+    </div>
+  {{/if}}
+
+  {{!-- Desire/Quest Fields --}}
+  {{#if (eq entryType "desire")}}
+    <div class="form-group">
+      <label>Quest (Link to journal/location):</label>
+      {{editor data.quest target="data.quest" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Reward:</label>
+      {{editor data.reward target="data.reward" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Status:</label>
+      <select name="data.status">
+        <option value="">Select status...</option>
+        <option value="active" {{#if (eq data.status "active")}}selected{{/if}}>Active</option>
+        <option value="completed" {{#if (eq data.status "completed")}}selected{{/if}}>Completed</option>
+        <option value="failed" {{#if (eq data.status "failed")}}selected{{/if}}>Failed</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Notes:</label>
+      {{editor data.notes target="data.notes" button=true editable=true}}
+    </div>
+  {{/if}}
+
+  {{!-- Lead Fields --}}
+  {{#if (eq entryType "lead")}}
+    <div class="form-group">
+      <label>Lead (What you discovered):</label>
+      {{editor data.lead target="data.lead" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Source (Link to actor/location):</label>
+      {{editor data.source target="data.source" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Notes (Why it matters):</label>
+      {{editor data.notes target="data.notes" button=true editable=true}}
+    </div>
+  {{/if}}
+
+  {{!-- Grudge Fields --}}
+  {{#if (eq entryType "grudge")}}
+    <div class="form-group">
+      <label>Name (Link to actor):</label>
+      {{editor data.name target="data.name" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Offense (What they did):</label>
+      {{editor data.offense target="data.offense" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>When/Where:</label>
+      {{editor data.when target="data.when" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Response (What you did/plan to do):</label>
+      {{editor data.response target="data.response" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Notes:</label>
+      {{editor data.notes target="data.notes" button=true editable=true}}
+    </div>
+  {{/if}}
+
+  {{!-- Travel Fields --}}
+  {{#if (eq entryType "travel")}}
+    <div class="form-group">
+      <label>Session:</label>
+      <input type="text" name="data.session" value="{{data.session}}" placeholder="Session number" />
+    </div>
+    <div class="form-group">
+      <label>Route (Link to locations):</label>
+      {{editor data.route target="data.route" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Events (What happened):</label>
+      {{editor data.events target="data.events" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Notes:</label>
+      {{editor data.notes target="data.notes" button=true editable=true}}
+    </div>
+  {{/if}}
+
+  {{!-- Legacy Fields --}}
+  {{#if (eq entryType "legacy")}}
+    <div class="form-group">
+      <label>Deeds (What you were known for):</label>
+      {{editor data.deeds target="data.deeds" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Allies (Link to actors):</label>
+      {{editor data.allies target="data.allies" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Impact (What changed):</label>
+      {{editor data.impact target="data.impact" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Landmarks (Places named after you):</label>
+      {{editor data.landmarks target="data.landmarks" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Song or Tale:</label>
+      {{editor data.song target="data.song" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Who Mourns (Link to actors):</label>
+      {{editor data.mourns target="data.mourns" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Who Rejoices (Link to actors):</label>
+      {{editor data.rejoices target="data.rejoices" button=true editable=true}}
+    </div>
+    <div class="form-group">
+      <label>Other:</label>
+      {{editor data.other target="data.other" button=true editable=true}}
+    </div>
+  {{/if}}
+
+  <div class="form-footer" style="margin-top: 20px; text-align: right; border-top: 1px solid #ccc; padding-top: 10px;">
+    <button type="submit" name="submit" style="margin-right: 5px;">
+      <i class="fas fa-save"></i> Save Entry
+    </button>
+    <button type="button" name="cancel">
+      <i class="fas fa-times"></i> Cancel
+    </button>
+  </div>
+</form>
+
+<style>
+  .journal-entry-form .form-group {
+    margin-bottom: 15px;
+  }
+  .journal-entry-form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  .journal-entry-form input[type="text"],
+  .journal-entry-form input[type="number"],
+  .journal-entry-form select {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+  .journal-entry-form input[type="number"] {
+    width: auto;
+  }
+  .journal-entry-form input::placeholder {
+    color: #999;
+    font-style: italic;
+  }
+  .journal-entry-form .editor {
+    min-height: 100px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+  .journal-entry-form small {
+    display: block;
+    margin-top: 3px;
+  }
+</style>

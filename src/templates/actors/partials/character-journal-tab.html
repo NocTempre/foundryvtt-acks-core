@@ -1,0 +1,256 @@
+<section class="journal-tab">
+  <div class="journal-header flexrow" style="margin-bottom: 10px; padding: 5px; background: #f0f0f0; border-radius: 3px;">
+    <div style="flex: 1;">
+      <h3 style="margin: 0;">Character Journal</h3>
+      <p style="margin: 0; font-size: 0.9em; color: #666;">Chronicle your adventures, bonds, and legacy</p>
+    </div>
+    <div class="journal-controls" style="display: flex; gap: 5px; align-items: center;">
+      {{#if journalLinked}}
+        <button class="journal-open" data-tooltip="Open Journal" style="cursor: pointer;">
+          <i class="fas fa-book-open"></i> View Full Journal
+        </button>
+        {{#if simpleQuestActive}}
+        <button class="journal-simple-quest" data-tooltip="Open in Simple Quest" style="cursor: pointer;">
+          <i class="fas fa-scroll"></i> Simple Quest
+        </button>
+        {{/if}}
+      {{else}}
+        <button class="journal-create" data-tooltip="Create Character Journal" style="cursor: pointer;">
+          <i class="fas fa-plus-circle"></i> Create Journal
+        </button>
+      {{/if}}
+    </div>
+  </div>
+
+  {{#if journalLinked}}
+  <div class="journal-entries">
+
+    {{!-- Entry Type Selector --}}
+    <div class="entry-add-section" style="margin-bottom: 10px; padding: 10px; background: #e8e8e8; border-radius: 3px;">
+      <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+        <div style="display: flex; gap: 5px; align-items: center;">
+          <label style="font-weight: bold; margin: 0;">Add New Entry:</label>
+          <select class="journal-entry-type" style="padding: 5px;">
+            <option value="">-- Select Entry Type --</option>
+            <option value="identity">Identity</option>
+            <option value="stash">Stash</option>
+            <option value="bond">Bond</option>
+            <option value="advancement">Advancement</option>
+            <option value="downtime">Downtime</option>
+            <option value="desire">Desire / Quest</option>
+            <option value="lead">Lead</option>
+            <option value="grudge">Grudge</option>
+            <option value="travel">Travel</option>
+            <option value="legacy">Legacy</option>
+          </select>
+          <button class="journal-add-entry" style="cursor: pointer;">
+            <i class="fas fa-plus"></i> Add Entry
+          </button>
+        </div>
+        <div style="margin-left: auto; font-size: 0.9em; color: #666;">
+          Total: {{journalEntries.length}} entries
+        </div>
+      </div>
+    </div>
+
+    {{!-- Filters and Sort Controls --}}
+    <div class="journal-filters" style="margin-bottom: 10px; padding: 8px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 3px;">
+      <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 300px;">
+          <div style="margin-bottom: 5px;">
+            <label style="font-weight: bold; font-size: 0.9em; margin: 0;">Filter Types:</label>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 4px; font-size: 0.85em;">
+            <label style="display: flex; align-items: center; gap: 3px; cursor: pointer;">
+              <input type="checkbox" class="journal-type-filter" value="identity" checked> Identity
+            </label>
+            <label style="display: flex; align-items: center; gap: 3px; cursor: pointer;">
+              <input type="checkbox" class="journal-type-filter" value="stash" checked> Stash
+            </label>
+            <label style="display: flex; align-items: center; gap: 3px; cursor: pointer;">
+              <input type="checkbox" class="journal-type-filter" value="bond" checked> Bond
+            </label>
+            <label style="display: flex; align-items: center; gap: 3px; cursor: pointer;">
+              <input type="checkbox" class="journal-type-filter" value="advancement" checked> Advancement
+            </label>
+            <label style="display: flex; align-items: center; gap: 3px; cursor: pointer;">
+              <input type="checkbox" class="journal-type-filter" value="downtime" checked> Downtime
+            </label>
+            <label style="display: flex; align-items: center; gap: 3px; cursor: pointer;">
+              <input type="checkbox" class="journal-type-filter" value="desire" checked> Desire/Quest
+            </label>
+            <label style="display: flex; align-items: center; gap: 3px; cursor: pointer;">
+              <input type="checkbox" class="journal-type-filter" value="lead" checked> Lead
+            </label>
+            <label style="display: flex; align-items: center; gap: 3px; cursor: pointer;">
+              <input type="checkbox" class="journal-type-filter" value="grudge" checked> Grudge
+            </label>
+            <label style="display: flex; align-items: center; gap: 3px; cursor: pointer;">
+              <input type="checkbox" class="journal-type-filter" value="travel" checked> Travel
+            </label>
+            <label style="display: flex; align-items: center; gap: 3px; cursor: pointer;">
+              <input type="checkbox" class="journal-type-filter" value="legacy" checked> Legacy
+            </label>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+          <div style="display: flex; gap: 5px; align-items: center;">
+            <label style="font-weight: bold; font-size: 0.9em; margin: 0;">Sort:</label>
+            <select class="journal-sort-order" style="padding: 4px; font-size: 0.9em;">
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="type">By Type</option>
+            </select>
+          </div>
+          <button class="journal-clear-filters" style="cursor: pointer; padding: 4px 8px; font-size: 0.9em;" data-tooltip="Reset filters and sort">
+            <i class="fas fa-undo"></i> Reset
+          </button>
+        </div>
+      </div>
+    </div>
+
+    {{!-- Entry List with Scrollbar --}}
+    <div class="journal-entry-list-container" style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
+      <div class="journal-entry-list">
+        {{#each journalEntries as |entry|}}
+        <div class="journal-entry-card" data-entry-id="{{entry.id}}" data-entry-type="{{entry.type}}" style="margin-bottom: 15px; padding: 10px; border: 2px solid #ccc; border-radius: 5px; background: white;">
+
+          <div class="entry-header flexrow" style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #ddd;">
+            <div style="flex: 1;">
+              <span class="entry-type-badge" style="display: inline-block; padding: 2px 8px; background: {{entry.badgeColor}}; color: white; border-radius: 3px; font-size: 0.85em; font-weight: bold; text-transform: uppercase;">
+                {{entry.typeLabel}}
+              </span>
+              {{#if entry.gameDate}}
+              <span style="margin-left: 8px; font-size: 0.85em; color: #666;">
+                <i class="far fa-calendar"></i> {{entry.gameDate}}
+              </span>
+              {{/if}}
+              {{#if entry.session}}
+              <span style="margin-left: 8px; font-size: 0.85em; color: #666;">
+                <i class="fas fa-dice-d20"></i> Session {{entry.session}}
+              </span>
+              {{/if}}
+              <span style="margin-left: 8px; font-size: 0.8em; color: #999;">
+                <i class="far fa-clock"></i> {{entry.timestampFormatted}}
+              </span>
+            </div>
+            <div class="entry-controls" style="display: flex; gap: 5px;">
+              <a class="entry-edit" data-entry-id="{{entry.id}}" title="Edit Entry" style="cursor: pointer;"><i class="fas fa-edit"></i></a>
+              <a class="entry-view-page" data-page-id="{{entry.pageId}}" title="View Journal Page" style="cursor: pointer;"><i class="fas fa-book"></i></a>
+              <a class="entry-delete" data-entry-id="{{entry.id}}" title="Delete Entry" style="cursor: pointer; color: #a00;"><i class="fas fa-trash"></i></a>
+            </div>
+          </div>
+
+          <div class="entry-content" style="font-size: 0.95em;">
+
+            {{!-- Identity Entry --}}
+            {{#if (eq entry.type "identity")}}
+              {{#if entry.data.name}}<div><strong>Name:</strong> {{{entry.data.name}}}</div>{{/if}}
+              {{#if entry.data.appearance}}<div><strong>Appearance:</strong> {{{entry.data.appearance}}}</div>{{/if}}
+              {{#if entry.data.goal}}<div><strong>Goal:</strong> {{{entry.data.goal}}}</div>{{/if}}
+              {{#if entry.data.secret}}<div><strong>Secret:</strong> {{{entry.data.secret}}}</div>{{/if}}
+              {{#if entry.data.quirk}}<div><strong>Quirk:</strong> {{{entry.data.quirk}}}</div>{{/if}}
+              {{#if entry.data.faction}}<div><strong>Faction:</strong> {{{entry.data.faction}}}</div>{{/if}}
+            {{/if}}
+
+            {{!-- Stash Entry --}}
+            {{#if (eq entry.type "stash")}}
+              {{#if entry.data.location}}<div><strong>Location:</strong> {{{entry.data.location}}}</div>{{/if}}
+              {{#if entry.data.storedGear}}<div><strong>Stored Gear:</strong> {{{entry.data.storedGear}}}</div>{{/if}}
+              {{#if entry.data.wealthGold}}<div><strong>Gold:</strong> {{entry.data.wealthGold}}</div>{{/if}}
+              {{#if entry.data.wealthSilver}}<div><strong>Silver:</strong> {{entry.data.wealthSilver}}</div>{{/if}}
+              {{#if entry.data.wealthCopper}}<div><strong>Copper:</strong> {{entry.data.wealthCopper}}</div>{{/if}}
+              {{#if entry.data.wealthNotes}}<div><strong>Other Valuables:</strong> {{{entry.data.wealthNotes}}}</div>{{/if}}
+              {{#if entry.data.property}}<div><strong>Property:</strong> {{{entry.data.property}}}</div>{{/if}}
+              {{#if entry.data.sharedWith}}<div><strong>Shared With:</strong> {{{entry.data.sharedWith}}}</div>{{/if}}
+              {{#if entry.data.notes}}<div><strong>Notes:</strong> {{{entry.data.notes}}}</div>{{/if}}
+            {{/if}}
+
+            {{!-- Bond Entry --}}
+            {{#if (eq entry.type "bond")}}
+              {{#if entry.data.name}}<div><strong>Name:</strong> {{{entry.data.name}}}</div>{{/if}}
+              {{#if entry.data.role}}<div><strong>Role:</strong> {{{entry.data.role}}}</div>{{/if}}
+              {{#if entry.data.bond}}<div><strong>Bond:</strong> {{{entry.data.bond}}}</div>{{/if}}
+              {{#if entry.data.notes}}<div><strong>Notes:</strong> {{{entry.data.notes}}}</div>{{/if}}
+            {{/if}}
+
+            {{!-- Advancement Entry --}}
+            {{#if (eq entry.type "advancement")}}
+              {{#if entry.data.session}}<div><strong>Session:</strong> {{{entry.data.session}}}</div>{{/if}}
+              {{#if entry.data.change}}<div><strong>Change:</strong> {{{entry.data.change}}}</div>{{/if}}
+              {{#if entry.data.notes}}<div><strong>Notes:</strong> {{{entry.data.notes}}}</div>{{/if}}
+            {{/if}}
+
+            {{!-- Downtime Entry --}}
+            {{#if (eq entry.type "downtime")}}
+              {{#if entry.data.activity}}<div><strong>Activity:</strong> {{{entry.data.activity}}}</div>{{/if}}
+              {{#if entry.data.outcome}}<div><strong>Outcome:</strong> {{{entry.data.outcome}}}</div>{{/if}}
+              {{#if entry.data.status}}<div><strong>Status:</strong> {{{entry.data.status}}}</div>{{/if}}
+              {{#if entry.data.notes}}<div><strong>Notes:</strong> {{{entry.data.notes}}}</div>{{/if}}
+            {{/if}}
+
+            {{!-- Desire Entry --}}
+            {{#if (eq entry.type "desire")}}
+              {{#if entry.data.quest}}<div><strong>Quest:</strong> {{{entry.data.quest}}}</div>{{/if}}
+              {{#if entry.data.reward}}<div><strong>Reward:</strong> {{{entry.data.reward}}}</div>{{/if}}
+              {{#if entry.data.status}}<div><strong>Status:</strong> <span class="quest-status-{{entry.data.status}}">{{{entry.data.status}}}</span></div>{{/if}}
+              {{#if entry.data.notes}}<div><strong>Notes:</strong> {{{entry.data.notes}}}</div>{{/if}}
+            {{/if}}
+
+            {{!-- Lead Entry --}}
+            {{#if (eq entry.type "lead")}}
+              {{#if entry.data.lead}}<div><strong>Lead:</strong> {{{entry.data.lead}}}</div>{{/if}}
+              {{#if entry.data.source}}<div><strong>Source:</strong> {{{entry.data.source}}}</div>{{/if}}
+              {{#if entry.data.notes}}<div><strong>Notes:</strong> {{{entry.data.notes}}}</div>{{/if}}
+            {{/if}}
+
+            {{!-- Grudge Entry --}}
+            {{#if (eq entry.type "grudge")}}
+              {{#if entry.data.name}}<div><strong>Name:</strong> {{{entry.data.name}}}</div>{{/if}}
+              {{#if entry.data.offense}}<div><strong>Offense:</strong> {{{entry.data.offense}}}</div>{{/if}}
+              {{#if entry.data.when}}<div><strong>When:</strong> {{{entry.data.when}}}</div>{{/if}}
+              {{#if entry.data.response}}<div><strong>Response:</strong> {{{entry.data.response}}}</div>{{/if}}
+              {{#if entry.data.notes}}<div><strong>Notes:</strong> {{{entry.data.notes}}}</div>{{/if}}
+            {{/if}}
+
+            {{!-- Travel Entry --}}
+            {{#if (eq entry.type "travel")}}
+              {{#if entry.data.session}}<div><strong>Session:</strong> {{{entry.data.session}}}</div>{{/if}}
+              {{#if entry.data.route}}<div><strong>Route:</strong> {{{entry.data.route}}}</div>{{/if}}
+              {{#if entry.data.events}}<div><strong>Events:</strong> {{{entry.data.events}}}</div>{{/if}}
+              {{#if entry.data.notes}}<div><strong>Notes:</strong> {{{entry.data.notes}}}</div>{{/if}}
+            {{/if}}
+
+            {{!-- Legacy Entry --}}
+            {{#if (eq entry.type "legacy")}}
+              {{#if entry.data.deeds}}<div><strong>Deeds:</strong> {{{entry.data.deeds}}}</div>{{/if}}
+              {{#if entry.data.allies}}<div><strong>Allies:</strong> {{{entry.data.allies}}}</div>{{/if}}
+              {{#if entry.data.impact}}<div><strong>Impact:</strong> {{{entry.data.impact}}}</div>{{/if}}
+              {{#if entry.data.landmarks}}<div><strong>Landmarks:</strong> {{{entry.data.landmarks}}}</div>{{/if}}
+              {{#if entry.data.song}}<div><strong>Song or Tale:</strong> {{{entry.data.song}}}</div>{{/if}}
+              {{#if entry.data.mourns}}<div><strong>Who Mourns:</strong> {{{entry.data.mourns}}}</div>{{/if}}
+              {{#if entry.data.rejoices}}<div><strong>Who Rejoices:</strong> {{{entry.data.rejoices}}}</div>{{/if}}
+              {{#if entry.data.other}}<div><strong>Other:</strong> {{{entry.data.other}}}</div>{{/if}}
+            {{/if}}
+
+          </div>
+        </div>
+        {{/each}}
+
+        {{#unless journalEntries.length}}
+        <div class="no-entries" style="padding: 20px; text-align: center; color: #999; font-style: italic;">
+          No journal entries yet. Add your first entry above to begin your chronicle.
+        </div>
+        {{/unless}}
+      </div>
+    </div>
+
+  </div>
+  {{else}}
+  <div class="no-journal" style="padding: 30px; text-align: center; color: #999;">
+    <i class="fas fa-book" style="font-size: 3em; margin-bottom: 10px; opacity: 0.5;"></i>
+    <p style="font-size: 1.1em;">No journal linked to this character yet.</p>
+    <p style="font-size: 0.9em;">Click "Create Journal" above to begin chronicling your adventures.</p>
+  </div>
+  {{/if}}
+</section>

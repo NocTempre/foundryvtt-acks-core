@@ -1,6 +1,7 @@
 import { AcksActorSheet } from "./actor-sheet.js";
 import { AcksCharacterModifiers } from "../dialog/character-modifiers.js";
 import { AcksCharacterCreator } from "../dialog/character-creation.js";
+import { AcksJournalEntryEditor } from "../dialog/journal-entry-editor.js";
 import { templatePath, SYSTEM_ID, renderTemplate } from "../config.js";
 
 /**
@@ -56,6 +57,12 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
     data.isGM = game.user.isGM;
 
     data.isNew = this.actor.isNew();
+
+    // Prepare journal data
+    data.journalLinked = !!this.actor.system.journal?.journalId;
+    data.simpleQuestActive = game.modules.get("simple-quest")?.active || false;
+    data.journalEntries = await this._prepareJournalEntries();
+
     return data;
   }
 
@@ -131,6 +138,254 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
       top: this.position.top + 40,
       left: this.position.left + (this.position.width - 400) / 2,
     }).render(true);
+  }
+
+  /* -------------------------------------------- */
+  // Journal methods
+  async _prepareJournalEntries() {
+    // Defensive checks for undefined/null journal structure
+    if (!this.actor?.system?.journal) return [];
+
+    const entries = this.actor.system.journal.entries || [];
+    const journalId = this.actor.system.journal.journalId;
+
+    if (!journalId || !entries.length) return [];
+
+    // Ensure entries is actually an array
+    if (!Array.isArray(entries)) return [];
+
+    const journal = game.journal.get(journalId);
+    if (!journal) return [];
+
+    const typeLabels = {
+      identity: "Identity",
+      stash: "Stash",
+      bond: "Bond",
+      advancement: "Advancement",
+      downtime: "Downtime",
+      desire: "Desire / Quest",
+      lead: "Lead",
+      grudge: "Grudge",
+      travel: "Travel",
+      legacy: "Legacy",
+    };
+
+    const badgeColors = {
+      identity: "#620630",
+      stash: "#2c5aa0",
+      bond: "#a05c2c",
+      advancement: "#2ca05c",
+      downtime: "#5c2ca0",
+      desire: "#a0862c",
+      lead: "#2c8da0",
+      grudge: "#a02c5c",
+      travel: "#5ca02c",
+      legacy: "#333333",
+    };
+
+    const preparedEntries = [];
+    for (const entry of entries) {
+      if (!entry || !entry.pageId) continue;
+
+      const page = journal.pages.get(entry.pageId);
+      if (!page) continue;
+
+      const entryData = page.getFlag(SYSTEM_ID, "entryData") || {};
+      const gameDate = page.getFlag(SYSTEM_ID, "gameDate") || null;
+      const realDate = new Date(entry.timestamp || Date.now());
+
+      // Enrich HTML content for all text fields
+      const enrichedData = {};
+      if (entryData && typeof entryData === 'object') {
+        for (const [key, value] of Object.entries(entryData)) {
+          if (typeof value === 'string' && value.trim()) {
+            // Enrich HTML to convert entity links (@UUID) to clickable links
+            enrichedData[key] = await TextEditor.enrichHTML(value, {
+              async: true,
+              relativeTo: this.actor,
+            });
+          } else {
+            enrichedData[key] = value;
+          }
+        }
+      }
+
+      preparedEntries.push({
+        id: entry.id,
+        type: entry.type,
+        pageId: entry.pageId,
+        typeLabel: typeLabels[entry.type] || entry.type,
+        badgeColor: badgeColors[entry.type] || "#666666",
+        session: entryData.session || null,
+        gameDate: gameDate,
+        data: enrichedData,
+        timestamp: entry.timestamp,
+        timestampFormatted: realDate.toLocaleDateString() + " " + realDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      });
+    }
+
+    // Sort by timestamp (newest first)
+    preparedEntries.sort((a, b) => b.timestamp - a.timestamp);
+
+    return preparedEntries;
+  }
+
+  async _onJournalCreate() {
+    const journalData = {
+      name: `${this.actor.name}'s Journal`,
+      ownership: {
+        [game.user.id]: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER,
+      },
+    };
+
+    // Copy actor ownership to journal
+    if (this.actor.ownership && typeof this.actor.ownership === 'object') {
+      for (const [userId, level] of Object.entries(this.actor.ownership)) {
+        if (userId !== "default") {
+          journalData.ownership[userId] = level;
+        }
+      }
+    }
+
+    const journal = await JournalEntry.create(journalData);
+
+    await this.actor.update({
+      "system.journal.journalId": journal.id,
+    });
+
+    ui.notifications.info(`Journal created for ${this.actor.name}`);
+    this.render(false);
+  }
+
+  async _onJournalOpen() {
+    const journalId = this.actor.system.journal?.journalId;
+    if (!journalId) return;
+
+    const journal = game.journal.get(journalId);
+    if (journal) {
+      journal.sheet.render(true);
+    }
+  }
+
+  async _onJournalSimpleQuest() {
+    const journalId = this.actor.system.journal?.journalId;
+    if (!journalId) return;
+
+    const journal = game.journal.get(journalId);
+    if (!journal) return;
+
+    // Check if simple-quest is active
+    if (!game.modules.get("simple-quest")?.active) {
+      ui.notifications.warn("Simple Quest module is not active");
+      return;
+    }
+
+    // Open the journal in simple-quest
+    if (ui.simpleQuest) {
+      ui.simpleQuest.openToPage(journal.uuid);
+    }
+  }
+
+  async _onJournalAddEntry(entryType) {
+    if (!entryType) return;
+
+    const entryData = {
+      type: entryType,
+      data: {},
+    };
+
+    new AcksJournalEntryEditor(this.actor, entryData, {
+      top: this.position.top + 40,
+      left: this.position.left + (this.position.width - 500) / 2,
+    }).render(true);
+  }
+
+  async _onJournalEditEntry(entryId) {
+    const entries = this.actor.system.journal?.entries || [];
+    const entry = entries.find(e => e.id === entryId);
+
+    if (!entry) return;
+
+    const journalId = this.actor.system.journal?.journalId;
+    const journal = game.journal.get(journalId);
+    if (!journal) return;
+
+    const page = journal.pages.get(entry.pageId);
+    if (!page) return;
+
+    const entryData = {
+      id: entry.id,
+      type: entry.type,
+      data: page.getFlag(SYSTEM_ID, "entryData") || {},
+      timestamp: entry.timestamp,
+      gameDate: page.getFlag(SYSTEM_ID, "gameDate") || "",
+    };
+
+    new AcksJournalEntryEditor(this.actor, entryData, {
+      top: this.position.top + 40,
+      left: this.position.left + (this.position.width - 500) / 2,
+    }).render(true);
+  }
+
+  async _onJournalDeleteEntry(entryId) {
+    const confirmed = await Dialog.confirm({
+      title: "Delete Journal Entry",
+      content: "<p>Are you sure you want to delete this journal entry?</p>",
+    });
+
+    if (!confirmed) return;
+
+    const entries = this.actor.system.journal?.entries || [];
+    const entry = entries.find(e => e.id === entryId);
+
+    if (!entry) return;
+
+    // Delete the journal page
+    const journalId = this.actor.system.journal?.journalId;
+    const journal = game.journal.get(journalId);
+    if (journal) {
+      const page = journal.pages.get(entry.pageId);
+      if (page) {
+        await page.delete();
+      }
+    }
+
+    // Remove from actor's entry list
+    const updatedEntries = entries.filter(e => e.id !== entryId);
+    await this.actor.update({
+      "system.journal.entries": updatedEntries,
+    });
+
+    ui.notifications.info("Journal entry deleted");
+    this.render(false);
+  }
+
+  async _onJournalViewPage(pageId) {
+    const journalId = this.actor.system.journal?.journalId;
+    if (!journalId) return;
+
+    const journal = game.journal.get(journalId);
+    if (!journal || !journal.pages) return;
+
+    const page = journal.pages.get(pageId);
+    if (!page) return;
+
+    // Use page's show method instead of rendering journal with pageId
+    // This avoids Foundry's iteration issues when the journal structure is complex
+    if (page.sheet) {
+      page.sheet.render(true);
+    } else {
+      // Fallback: render journal sheet without pageId option, then navigate
+      const sheet = journal.sheet;
+      sheet.render(true);
+      // Wait for sheet to render, then try to navigate to the page
+      setTimeout(() => {
+        if (sheet._pages) {
+          sheet._pages.pageIndex = journal.pages.contents.indexOf(page);
+          sheet.render(false);
+        }
+      }, 100);
+    }
   }
 
   /* -------------------------------------------- */
@@ -332,6 +587,110 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
     html.find("a[data-action='generate-scores']").click((ev) => {
       this.generateScores(ev);
     });
+
+    // Journal tab listeners
+    html.find(".journal-create").click((ev) => {
+      ev.preventDefault();
+      this._onJournalCreate();
+    });
+
+    html.find(".journal-open").click((ev) => {
+      ev.preventDefault();
+      this._onJournalOpen();
+    });
+
+    html.find(".journal-simple-quest").click((ev) => {
+      ev.preventDefault();
+      this._onJournalSimpleQuest();
+    });
+
+    html.find(".journal-add-entry").click((ev) => {
+      ev.preventDefault();
+      const entryType = html.find(".journal-entry-type").val();
+      if (!entryType) {
+        ui.notifications.warn("Please select an entry type");
+        return;
+      }
+      this._onJournalAddEntry(entryType);
+      // Reset the selector
+      html.find(".journal-entry-type").val("");
+    });
+
+    html.find(".entry-edit").click((ev) => {
+      ev.preventDefault();
+      const entryId = $(ev.currentTarget).data("entryId");
+      this._onJournalEditEntry(entryId);
+    });
+
+    html.find(".entry-delete").click((ev) => {
+      ev.preventDefault();
+      const entryId = $(ev.currentTarget).data("entryId");
+      this._onJournalDeleteEntry(entryId);
+    });
+
+    html.find(".entry-view-page").click((ev) => {
+      ev.preventDefault();
+      const pageId = $(ev.currentTarget).data("pageId");
+      this._onJournalViewPage(pageId);
+    });
+
+    // Journal filter and sort listeners
+    html.find(".journal-filter-type").change((ev) => {
+      this._onJournalFilter(html, ev.target.value);
+    });
+
+    html.find(".journal-sort-order").change((ev) => {
+      this._onJournalSort(html, ev.target.value);
+    });
+
+    html.find(".journal-clear-filters").click((ev) => {
+      ev.preventDefault();
+      html.find(".journal-filter-type").val("all");
+      html.find(".journal-sort-order").val("newest");
+      this._onJournalFilter(html, "all");
+      this._onJournalSort(html, "newest");
+    });
+  }
+
+  /* -------------------------------------------- */
+  // Journal filter and sort methods
+  _onJournalFilter(html, filterType) {
+    const entries = html.find(".journal-entry-card");
+    entries.each(function() {
+      const entryType = $(this).data("entryType");
+      if (filterType === "all" || entryType === filterType) {
+        $(this).show();
+      } else {
+        $(this).hide();
+      }
+    });
+  }
+
+  _onJournalSort(html, sortOrder) {
+    const container = html.find(".journal-entry-list");
+    const entries = container.find(".journal-entry-card").get();
+
+    entries.sort((a, b) => {
+      const aCard = $(a);
+      const bCard = $(b);
+
+      if (sortOrder === "newest") {
+        // Already sorted by timestamp in getData
+        return 0;
+      } else if (sortOrder === "oldest") {
+        // Reverse current order
+        return aCard.index() > bCard.index() ? -1 : 1;
+      } else if (sortOrder === "type") {
+        // Sort by entry type
+        const aType = aCard.data("entryType");
+        const bType = bCard.data("entryType");
+        return aType.localeCompare(bType);
+      }
+      return 0;
+    });
+
+    // Reorder DOM elements
+    container.append(entries);
   }
 
   async _onSelectClass(event) {

@@ -190,6 +190,10 @@
       "encumbrance": {
         "max": 20,
         "forcemax": -1
+      },
+      "journal": {
+        "journalId": "",
+        "entries": []
       }
     },
     "monster": {

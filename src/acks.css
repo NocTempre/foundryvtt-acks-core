@@ -1918,3 +1918,152 @@
   min-width: 1100px;
   min-height: 850px;
 }
+
+
+/*------------------------------------*  #Journal Tab Styles
+\*------------------------------------*/
+
+.journal-tab {
+  padding: 10px;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.journal-tab .journal-header {
+  margin-bottom: 10px;
+}
+
+.journal-tab .entry-add-section {
+  margin-bottom: 15px;
+  padding: 10px;
+  background: #e8e8e8;
+  border-radius: 3px;
+}
+
+.journal-tab .entry-add-section label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.journal-tab .entry-add-section select {
+  padding: 5px;
+  margin-right: 10px;
+  border: 1px solid #7a7971;
+}
+
+.journal-tab .journal-entry-card {
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  background: white;
+}
+
+.journal-tab .entry-header {
+  margin-bottom: 8px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #ddd;
+}
+
+.journal-tab .entry-type-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  color: white;
+  border-radius: 3px;
+  font-size: 0.85em;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.journal-tab .entry-controls {
+  display: flex;
+  gap: 5px;
+}
+
+.journal-tab .entry-controls a {
+  cursor: pointer;
+}
+
+.journal-tab .entry-controls a:hover {
+  color: var(--acks-purple);
+}
+
+.journal-tab .entry-content {
+  font-size: 0.95em;
+}
+
+.journal-tab .entry-content > div {
+  margin-bottom: 5px;
+}
+
+.journal-tab .no-entries {
+  padding: 20px;
+  text-align: center;
+  color: #999;
+  font-style: italic;
+}
+
+.journal-tab .no-journal {
+  padding: 30px;
+  text-align: center;
+  color: #999;
+}
+
+.journal-tab .no-journal i {
+  font-size: 3em;
+  margin-bottom: 10px;
+  opacity: 0.5;
+}
+
+.journal-tab .quest-status-active {
+  color: #2ca05c;
+  font-weight: bold;
+}
+
+.journal-tab .quest-status-completed {
+  color: #2c5aa0;
+  font-weight: bold;
+}
+
+.journal-tab .quest-status-failed {
+  color: #a02c5c;
+  font-weight: bold;
+}
+
+
+.journal-tab .journal-entry-list-container {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.journal-tab .journal-entry-list-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.journal-tab .journal-entry-list-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.journal-tab .journal-entry-list-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.journal-tab .journal-entry-list-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.journal-tab .journal-filters {
+  margin-bottom: 10px;
+  padding: 8px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+}
+
+.journal-tab .entry-add-section {
+  margin-bottom: 10px;
+}
+

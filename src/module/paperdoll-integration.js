@@ -21,35 +21,35 @@ export const ACKS_PAPER_DOLL_CONFIG = {
     LEFT: {
       HEAD: [
         {
-          img: `${ASSETS_PATH}/icons/helmet.svg`,
+          img: "icons/svg/helmet.svg",
           simpleFilter: ["armor"],
           filter: "return item.system.slot === 'head';",
         },
       ],
       CAPE: [
         {
-          img: `${ASSETS_PATH}/icons/cloak.svg`,
+          img: "icons/svg/cloak.svg",
           simpleFilter: ["armor", "item"],
           filter: "return item.system.slot === 'cloak';",
         },
       ],
       BODY: [
         {
-          img: `${ASSETS_PATH}/icons/armor.svg`,
+          img: "icons/svg/chest.svg",
           simpleFilter: ["armor"],
           filter: "return item.system.slot === 'torso' && item.system.type !== 'shield';",
         },
       ],
       GLOVES: [
         {
-          img: `${ASSETS_PATH}/icons/gauntlet.svg`,
+          img: "icons/svg/item-bag.svg",
           simpleFilter: ["armor", "item"],
           filter: "return item.system.slot === 'gloves';",
         },
       ],
       BOOTS: [
         {
-          img: `${ASSETS_PATH}/icons/boots.svg`,
+          img: "icons/svg/boots.svg",
           simpleFilter: ["armor", "item"],
           filter: "return item.system.slot === 'boots';",
         },
@@ -58,33 +58,33 @@ export const ACKS_PAPER_DOLL_CONFIG = {
     RIGHT: {
       PENDANT: [
         {
-          img: `${ASSETS_PATH}/icons/necklace.svg`,
+          img: "icons/svg/aura.svg",
           simpleFilter: ["item"],
           filter: "return item.system.slot === 'neck';",
         },
       ],
       BELT: [
         {
-          img: `${ASSETS_PATH}/icons/belt.svg`,
+          img: "icons/svg/item-bag.svg",
           simpleFilter: ["item"],
           filter: "return item.system.slot === 'belt';",
         },
       ],
       BRACERS: [
         {
-          img: `${ASSETS_PATH}/icons/bracers.svg`,
+          img: "icons/svg/shield.svg",
           simpleFilter: ["armor", "item"],
           filter: "return item.system.slot === 'bracers';",
         },
       ],
       RING: [
         {
-          img: `${ASSETS_PATH}/icons/ring.svg`,
+          img: "icons/svg/ring.svg",
           simpleFilter: ["item"],
           filter: "return item.system.slot === 'ring';",
         },
         {
-          img: `${ASSETS_PATH}/icons/ring.svg`,
+          img: "icons/svg/ring.svg",
           simpleFilter: ["item"],
           filter: "return item.system.slot === 'ring';",
         },
@@ -93,7 +93,7 @@ export const ACKS_PAPER_DOLL_CONFIG = {
     BOTTOM_LEFT_MAIN: {
       MAIN_LEFT: [
         {
-          img: `${ASSETS_PATH}/icons/weapon.svg`,
+          img: "icons/svg/sword.svg",
           simpleFilter: ["weapon", "armor"],
           filter: "return (item.type === 'weapon' && item.system.hand === 'mainHand') || (item.type === 'armor' && item.system.type === 'shield');",
         },
@@ -102,7 +102,7 @@ export const ACKS_PAPER_DOLL_CONFIG = {
     BOTTOM_RIGHT_MAIN: {
       MAIN_RIGHT: [
         {
-          img: `${ASSETS_PATH}/icons/weapon.svg`,
+          img: "icons/svg/sword.svg",
           simpleFilter: ["weapon", "armor"],
           filter: "return (item.type === 'weapon' && item.system.hand === 'offHand') || (item.type === 'armor' && item.system.type === 'shield');",
         },
@@ -112,7 +112,7 @@ export const ACKS_PAPER_DOLL_CONFIG = {
     BOTTOM_LEFT_WRIST: {
       WRIST_LEFT: [
         {
-          img: `${ASSETS_PATH}/icons/torch.svg`,
+          img: "icons/svg/light.svg",
           simpleFilter: ["item"],
           filter: "return item.system.slot === 'offHand' || item.name.toLowerCase().includes('torch') || item.name.toLowerCase().includes('lantern');",
         },
@@ -121,7 +121,7 @@ export const ACKS_PAPER_DOLL_CONFIG = {
     BOTTOM_RIGHT_WRIST: {
       WRIST_RIGHT: [
         {
-          img: `${ASSETS_PATH}/icons/holy-symbol.svg`,
+          img: "icons/svg/book.svg",
           simpleFilter: ["item"],
           filter: "return item.system.slot === 'offHand' || item.name.toLowerCase().includes('holy') || item.name.toLowerCase().includes('symbol');",
         },
