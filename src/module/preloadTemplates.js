@@ -19,6 +19,19 @@ export const preloadHandlebarsTemplates = async function () {
     "actors/partials/monster-header.html",
     "actors/partials/monster-attributes-tab.html",
 
+    // Character Sheet V2 partials
+    "actors/partials-v2/character-header-v2.html",
+    "actors/partials-v2/character-attributes-hexagon-v2.html",
+    "actors/partials-v2/character-level-xp-v2.html",
+    "actors/partials-v2/character-saving-throws-v2.html",
+    "actors/partials-v2/character-armor-class-v2.html",
+    "actors/partials-v2/character-movement-v2.html",
+    "actors/partials-v2/character-encumbrance-v2.html",
+    "actors/partials-v2/character-healing-cleaves-v2.html",
+    "actors/partials-v2/character-initiative-v2.html",
+    "actors/partials-v2/character-adventuring-v2.html",
+    "actors/partials-v2/character-weapons-v2.html",
+
     "items/partials/item-generic-effects-tab.html",
 
     // v2 sheet parts

@@ -1907,3 +1907,14 @@
   display: flex;
   align-items: center;
 }
+
+
+/*------------------------------------*  #ACKS II Official Character Sheet (V2)
+\*------------------------------------*/
+
+.acks-v2-sheet {
+  background: #d4d3d3;
+  font-family: "ebgaramond-regular", serif;
+  min-width: 1100px;
+  min-height: 850px;
+}

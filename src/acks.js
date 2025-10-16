@@ -1,6 +1,7 @@
 // Import Modules
 import { AcksItemSheet } from "./module/item/item-sheet.js";
 import { AcksActorSheetCharacter } from "./module/actor/character-sheet.js";
+import { AcksActorSheetCharacterV2 } from "./module/actor/character-sheet-v2.js";
 import { AcksActorSheetMonster } from "./module/actor/monster-sheet.js";
 import { AcksTravelPartySheet } from "./module/actor/travel-party-sheet.js";
 import { preloadHandlebarsTemplates } from "./module/preloadTemplates.js";
@@ -297,6 +298,12 @@ Hooks.once("init", async function () {
   ActorsCollection.registerSheet(SYSTEM_ID, AcksActorSheetCharacter, {
     types: ["character"],
     makeDefault: true,
+    label: "ACKS Character Sheet (Classic)",
+  });
+  ActorsCollection.registerSheet(SYSTEM_ID, AcksActorSheetCharacterV2, {
+    types: ["character"],
+    makeDefault: false,
+    label: "ACKS II Character Sheet (Official Layout)",
   });
   ActorsCollection.registerSheet(SYSTEM_ID, AcksActorSheetMonster, {
     types: ["monster"],

@@ -1,0 +1,98 @@
+<div class="attributes-hexagon">
+  <!-- Top Row: STR and INT -->
+  <div class="attribute-circle attr-str" data-attribute="str">
+    <div class="attribute-label">STR</div>
+    <input
+      class="attribute-value"
+      type="text"
+      name="system.scores.str.value"
+      value="{{system.scores.str.value}}"
+      data-dtype="Number"
+    />
+    <div class="attribute-modifier">{{numberFormat system.scores.str.mod decimals=0 sign=true}}</div>
+  </div>
+
+  <div class="attribute-circle attr-int" data-attribute="int">
+    <div class="attribute-label">INT</div>
+    <input
+      class="attribute-value"
+      type="text"
+      name="system.scores.int.value"
+      value="{{system.scores.int.value}}"
+      data-dtype="Number"
+    />
+    <div class="attribute-modifier">{{numberFormat system.scores.int.mod decimals=0 sign=true}}</div>
+  </div>
+
+  <!-- Middle Row: DEX, Attribute Modifiers, WIL -->
+  <div class="attribute-circle attr-dex" data-attribute="dex">
+    <div class="attribute-label">DEX</div>
+    <input
+      class="attribute-value"
+      type="text"
+      name="system.scores.dex.value"
+      value="{{system.scores.dex.value}}"
+      data-dtype="Number"
+    />
+    <div class="attribute-modifier">{{numberFormat system.scores.dex.mod decimals=0 sign=true}}</div>
+  </div>
+
+  <!-- Center hexagons for attribute modifiers -->
+  <div class="center-hexagons">
+    <div class="mod-hex top-hex">
+      <label>Mod.</label>
+    </div>
+    <div class="attribute-label-hex">Attribute</div>
+    <div class="mod-hex bottom-hex">
+      <label>Mod.</label>
+    </div>
+  </div>
+
+  <div class="attribute-circle attr-wil" data-attribute="wil">
+    <div class="attribute-label">WIL</div>
+    <input
+      class="attribute-value"
+      type="text"
+      name="system.scores.wis.value"
+      value="{{system.scores.wis.value}}"
+      data-dtype="Number"
+    />
+    <div class="attribute-modifier">{{numberFormat system.scores.wis.mod decimals=0 sign=true}}</div>
+  </div>
+
+  <!-- Bottom Row: CON, XP, CHA -->
+  <div class="attribute-circle attr-con" data-attribute="con">
+    <div class="attribute-label">CON</div>
+    <input
+      class="attribute-value"
+      type="text"
+      name="system.scores.con.value"
+      value="{{system.scores.con.value}}"
+      data-dtype="Number"
+    />
+    <div class="attribute-modifier">{{numberFormat system.scores.con.mod decimals=0 sign=true}}</div>
+  </div>
+
+  <div class="xp-circle">
+    <div class="xp-label">XP</div>
+    <input
+      class="xp-value"
+      type="text"
+      name="system.details.xp.value"
+      value="{{system.details.xp.value}}"
+      data-dtype="Number"
+    />
+  </div>
+
+  <div class="attribute-circle attr-cha" data-attribute="cha">
+    <div class="attribute-label">CHA</div>
+    <input
+      class="attribute-value"
+      type="text"
+      name="system.scores.cha.value"
+      value="{{system.scores.cha.value}}"
+      data-dtype="Number"
+    />
+    <div class="attribute-modifier">{{numberFormat system.scores.cha.mod decimals=0 sign=true}}</div>
+  </div>
+</div>

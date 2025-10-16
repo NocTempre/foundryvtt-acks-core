@@ -34,7 +34,7 @@
     }
   ],
   "esmodules": ["acks.js"],
-  "styles": ["acks.css"],
+  "styles": ["acks.css", "acks-v2-sheet.css"],
   "packs": [
     {
       "name": "acks-class-abilities",

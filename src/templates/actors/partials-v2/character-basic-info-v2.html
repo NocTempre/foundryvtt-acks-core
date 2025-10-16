@@ -1,0 +1,75 @@
+<div class="basic-info-section">
+  <div class="info-row">
+    <div class="info-field">
+      <label>Alignment</label>
+      <input
+        type="text"
+        name="system.details.alignment"
+        value="{{system.details.alignment}}"
+        data-dtype="String"
+      />
+    </div>
+    <div class="info-field">
+      <label>Age</label>
+      <input
+        type="text"
+        name="system.details.age"
+        value="{{system.details.age}}"
+        data-dtype="String"
+      />
+    </div>
+    <div class="info-field">
+      <label>Size</label>
+      <input
+        type="text"
+        name="system.details.size"
+        value="{{system.details.size}}"
+        data-dtype="String"
+      />
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-field">
+      <label>Gender</label>
+      <input
+        type="text"
+        name="system.details.gender"
+        value="{{system.details.gender}}"
+        data-dtype="String"
+      />
+    </div>
+    <div class="info-field">
+      <label>Hit Die</label>
+      <input
+        type="text"
+        name="system.hp.hd"
+        value="{{system.hp.hd}}"
+        data-dtype="String"
+      />
+    </div>
+  </div>
+
+  <div class="hit-points-section">
+    <label>Hit Points</label>
+    <div class="hp-input-group">
+      <input
+        class="hp-current"
+        type="text"
+        name="system.hp.value"
+        value="{{system.hp.value}}"
+        data-dtype="Number"
+        placeholder="Current"
+      />
+      <span class="hp-separator">/</span>
+      <input
+        class="hp-max"
+        type="text"
+        name="system.hp.max"
+        value="{{system.hp.max}}"
+        data-dtype="Number"
+        placeholder="Maximum"
+      />
+    </div>
+  </div>
+</div>

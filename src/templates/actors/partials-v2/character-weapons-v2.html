@@ -1,0 +1,105 @@
+<div class="weapons-section">
+  <h3 class="section-title">Weapons</h3>
+
+  <table class="weapons-table">
+    <thead>
+      <tr>
+        <th>Weapon & Fighting Style</th>
+        <th>Init. Bonus</th>
+        <th>Attack Throw</th>
+        <th>Damage</th>
+        <th colspan="3">Range</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each items as |item|}}
+        {{#if (eq item.type "weapon")}}
+          <tr class="weapon-row" data-item-id="{{item._id}}">
+            <td class="weapon-name">
+              <input
+                type="text"
+                value="{{item.name}}"
+                placeholder="Weapon name"
+              />
+            </td>
+            <td class="weapon-init">
+              <input
+                type="text"
+                name="items.{{item._id}}.system.initBonus"
+                value="{{item.system.initBonus}}"
+                data-dtype="Number"
+              />
+            </td>
+            <td class="weapon-attack">
+              <input
+                type="text"
+                name="items.{{item._id}}.system.attackThrow"
+                value="{{item.system.attackThrow}}"
+                data-dtype="String"
+              />
+            </td>
+            <td class="weapon-damage">
+              <input
+                type="text"
+                name="items.{{item._id}}.system.damage"
+                value="{{item.system.damage}}"
+                data-dtype="String"
+              />
+            </td>
+            <td class="weapon-range-short">
+              <input
+                type="text"
+                name="items.{{item._id}}.system.range.short"
+                value="{{item.system.range.short}}"
+                data-dtype="Number"
+              />
+            </td>
+            <td class="weapon-range-medium">
+              <input
+                type="text"
+                name="items.{{item._id}}.system.range.medium"
+                value="{{item.system.range.medium}}"
+                data-dtype="Number"
+              />
+            </td>
+            <td class="weapon-range-long">
+              <input
+                type="text"
+                name="items.{{item._id}}.system.range.long"
+                value="{{item.system.range.long}}"
+                data-dtype="Number"
+              />
+            </td>
+          </tr>
+        {{/if}}
+      {{/each}}
+      <!-- Empty rows for adding weapons -->
+      <tr class="weapon-row weapon-empty">
+        <td><input type="text" placeholder="Add weapon..." /></td>
+        <td><input type="text" /></td>
+        <td><input type="text" /></td>
+        <td><input type="text" /></td>
+        <td><input type="text" /></td>
+        <td><input type="text" /></td>
+        <td><input type="text" /></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="attack-throw-section">
+    <h4>Attack Throw</h4>
+    <div class="attack-throw-grid">
+      <div class="ac-box"><label>AC0</label><input type="text" readonly /></div>
+      <div class="ac-box"><label>AC1</label><input type="text" readonly /></div>
+      <div class="ac-box"><label>AC2</label><input type="text" readonly /></div>
+      <div class="ac-box"><label>AC3</label><input type="text" readonly /></div>
+      <div class="ac-box"><label>AC4</label><input type="text" readonly /></div>
+      <div class="ac-box"><label>AC5</label><input type="text" readonly /></div>
+      <div class="ac-box"><label>AC6</label><input type="text" readonly /></div>
+      <div class="ac-box"><label>AC7</label><input type="text" readonly /></div>
+      <div class="ac-box"><label>AC8</label><input type="text" readonly /></div>
+      <div class="ac-box"><label>AC9</label><input type="text" readonly /></div>
+      <div class="ac-box"><label>AC10</label><input type="text" readonly /></div>
+    </div>
+  </div>
+</div>

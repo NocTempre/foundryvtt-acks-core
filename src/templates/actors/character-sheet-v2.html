@@ -1,0 +1,519 @@
+<form class="{{cssClass}}" autocomplete="off">
+  {{! ACKS II Header }}
+  <header class="acks-v2-header" style="background: linear-gradient(to bottom, #620630 0%, #620630 85%, #4a0424 100%); color: white; padding: 8px 15px; border-bottom: 3px solid #333;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div style="flex: 1; text-align: left;">
+        <div style="font-size: 16px; font-weight: bold; letter-spacing: 0.5px; font-family: 'Trajan Pro', Georgia, serif;">ADVENTURER CONQUEROR KING SYSTEM II</div>
+        <div style="font-size: 10px; margin-top: 2px; letter-spacing: 0.3px;">www.autarch.co</div>
+      </div>
+      <div style="flex: 0 0 auto; font-size: 18px; font-weight: bold; letter-spacing: 1px; padding: 0 20px; font-family: 'Trajan Pro', Georgia, serif;">CHARACTER SHEET</div>
+      <div style="flex: 1;"></div>
+    </div>
+  </header>
+
+  {{! Character Details Section }}
+  <div style="background: #d0d0d0; padding: 10px 15px; border-bottom: 2px solid #333;">
+    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; font-size: 13px;">
+      <span style="font-weight: bold;">The Chronicles of</span>
+      <input type="text" name="name" value="{{actor.name}}" placeholder="Character Name" style="width: 140px; background: white; border: 1px solid #666; padding: 3px 6px; font-weight: bold; text-align: center;" />
+      <span style="font-weight: bold;">of</span>
+      <input type="text" name="system.details.birthplace" value="{{system.details.birthplace}}" placeholder="Birthplace" style="width: 110px; background: white; border: 1px solid #666; padding: 3px 6px; text-align: center;" />
+      <span>,</span>
+      <input type="text" name="system.details.class" value="{{system.details.class}}" placeholder="Class" style="width: 100px; background: white; border: 1px solid #666; padding: 3px 6px; text-align: center;" />
+      <span>, and</span>
+      <input type="text" name="system.details.title" value="{{system.details.title}}" placeholder="Title" style="width: 110px; background: white; border: 1px solid #666; padding: 3px 6px; text-align: center;" />
+    </div>
+    <div style="font-size: 11px; margin-top: 8px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+      <span><strong>Alignment:</strong> <input type="text" name="system.details.alignment" value="{{system.details.alignment}}" style="width: 70px; background: white; border: 1px solid #666; padding: 2px 4px; text-align: center;" /></span>
+      <span><strong>Age:</strong> <input type="text" name="system.details.age" value="{{system.details.age}}" style="width: 35px; background: white; border: 1px solid #666; padding: 2px 4px; text-align: center;" /></span>
+      <span><strong>Size:</strong> <input type="text" name="system.details.size" value="{{system.details.size}}" style="width: 55px; background: white; border: 1px solid #666; padding: 2px 4px; text-align: center;" /></span>
+      <span><strong>Gender:</strong> <input type="text" name="system.details.gender" value="{{system.details.gender}}" style="width: 55px; background: white; border: 1px solid #666; padding: 2px 4px; text-align: center;" /></span>
+    </div>
+  </div>
+
+  {{! Sheet Tab Navigation }}
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="attributes">
+      {{localize "ACKS.category.attributes"}}
+    </a>
+    <a class="item" data-tab="abilities">
+      {{localize "ACKS.category.abilities"}}
+    </a>
+    {{#if system.spells.enabled}}
+    <a class="item" data-tab="spells">
+      {{localize "ACKS.category.spells"}}
+    </a>
+    {{/if}}
+    <a class="item" data-tab="inventory">
+      {{localize "ACKS.category.inventory"}}
+    </a>
+    <a class="item" data-tab="notes">
+      {{localize "ACKS.category.notes"}}
+    </a>
+    <a class="item" data-tab="hirelings">
+      {{localize "ACKS.category.hirelings"}}
+    </a>
+    <a class="item" data-tab="effects">
+      {{localize "ACKS.category.effects"}}
+    </a>
+  </nav>
+  {{! Sheet Body }}
+  <section class="sheet-body" style="overflow-y: auto; overflow-x: hidden;">
+    {{! Attributes Tab }}
+    <div class="tab" data-group="primary" data-tab="attributes">
+      <div class="acks-v2-content" style="display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 6px; padding: 6px; background: #f5f5f5;">
+
+        {{! Left Column }}
+        <div class="left-column">
+          {{! Hit Points Box }}
+          <div style="border: 2px solid #333; padding: 6px; margin-bottom: 6px; background: white;">
+            <h4 style="margin: 0 0 4px 0; font-size: 11px; font-weight: bold;">Hit Points</h4>
+            <div style="font-size: 10px; margin-bottom: 2px;">
+              <label style="font-weight: bold;">Hit Die:</label> <input type="text" name="system.hp.hd" value="{{system.hp.hd}}" style="width: 40px; font-size: 10px; padding: 1px;" />
+            </div>
+            <div style="font-size: 10px;">
+              <label style="font-weight: bold;">Current:</label> <input type="text" name="system.hp.value" value="{{system.hp.value}}" style="width: 35px; font-size: 10px; padding: 1px;" /> / <input type="text" name="system.hp.max" value="{{system.hp.max}}" style="width: 35px; font-size: 10px; padding: 1px;" placeholder="Maximum" />
+            </div>
+          </div>
+
+          {{! Movement Box }}
+          <div class="movement" style="border: 2px solid #333; padding: 6px; margin-bottom: 6px; background: white;">
+            <h4 style="margin: 0 0 4px 0; font-size: 11px; font-weight: bold;">Movement</h4>
+            <table style="width: 100%; font-size: 9px; border-collapse: collapse;">
+              <tbody>
+                <tr>
+                  <td style="padding: 1px;"><strong>Exploration</strong></td>
+                  <td style="padding: 1px; text-align: right;"><input type="text" name="system.movementacks.exploration" value="{{system.movementacks.exploration}}" style="width: 35px; font-size: 9px; padding: 1px; text-align: center;" readonly/></td>
+                  <td style="padding: 1px;">ft/turn</td>
+                </tr>
+                <tr>
+                  <td style="padding: 1px;"><strong>Combat</strong></td>
+                  <td style="padding: 1px; text-align: right;"><input type="text" name="system.movementacks.combat" value="{{system.movementacks.combat}}" style="width: 35px; font-size: 9px; padding: 1px; text-align: center;" readonly/></td>
+                  <td style="padding: 1px;">ft/round</td>
+                </tr>
+                <tr>
+                  <td style="padding: 1px;"><strong>Charge/Run</strong></td>
+                  <td style="padding: 1px; text-align: right;"><input type="text" name="system.movementacks.chargerun" value="{{system.movementacks.chargerun}}" style="width: 35px; font-size: 9px; padding: 1px; text-align: center;" readonly/></td>
+                  <td style="padding: 1px;">ft/round</td>
+                </tr>
+                <tr>
+                  <td style="padding: 1px;"><strong>Expedition</strong></td>
+                  <td style="padding: 1px; text-align: right;"><input type="text" name="system.movementacks.expedition" value="{{system.movementacks.expedition}}" style="width: 35px; font-size: 9px; padding: 1px; text-align: center;" readonly/></td>
+                  <td style="padding: 1px;">mi/day</td>
+                </tr>
+                <tr>
+                  <td style="padding: 1px;"><strong>Stealth</strong></td>
+                  <td style="padding: 1px; text-align: right;"><input type="text" name="system.movementacks.stealth" value="{{system.movementacks.stealth}}" style="width: 35px; font-size: 9px; padding: 1px; text-align: center;" readonly/></td>
+                  <td style="padding: 1px;">ft/round</td>
+                </tr>
+                <tr>
+                  <td style="padding: 1px;"><strong>Climb</strong></td>
+                  <td style="padding: 1px; text-align: right;"><input type="text" name="system.movementacks.climb" value="{{system.movementacks.climb}}" style="width: 35px; font-size: 9px; padding: 1px; text-align: center;" readonly/></td>
+                  <td style="padding: 1px;">ft/round</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {{! Encumbrance Box }}
+          <div style="border: 2px solid #333; padding: 8px; margin-bottom: 10px; background: #d0d0d0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <h4 style="margin: 0; font-size: 14px; font-weight: bold; letter-spacing: 1px;">ENCUMBRANCE</h4>
+              <div style="background: #e8e8e8; border: 2px solid #333; padding: 4px 8px;">
+                <label style="font-weight: bold; font-size: 11px;">Stone (ST)</label>
+                <input type="text" name="system.encumbrance.value" value="{{system.encumbrance.value}}" style="width: 45px; text-align: center; border: 1px solid #333; padding: 2px; font-weight: bold;" />
+              </div>
+            </div>
+            <table style="width: 100%; font-size: 10px; border-collapse: collapse; background: white;">
+              <thead>
+                <tr style="background: #e8e8e8; font-weight: bold;">
+                  <th style="border: 1px solid #333; padding: 3px; text-align: left;">Stone (ST)</th>
+                  <th style="border: 1px solid #333; padding: 3px; text-align: center; {{#if (lte system.encumbrance.value 5)}}background: #620630; color: white;{{/if}}">0+</th>
+                  <th style="border: 1px solid #333; padding: 3px; text-align: center; {{#if (and (gt system.encumbrance.value 5) (lte system.encumbrance.value 7))}}background: #620630; color: white;{{/if}}">&gt;5</th>
+                  <th style="border: 1px solid #333; padding: 3px; text-align: center; {{#if (and (gt system.encumbrance.value 7) (lte system.encumbrance.value 10))}}background: #620630; color: white;{{/if}}">&gt;7</th>
+                  <th style="border: 1px solid #333; padding: 3px; text-align: center; {{#if (gt system.encumbrance.value 10)}}background: #620630; color: white;{{/if}}">&gt;10</th>
+                  <th style="border: 1px solid #333; padding: 3px; text-align: left;">Units</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="border: 1px solid #333; padding: 3px; font-style: italic;">Combat</td>
+                  <td style="border: 1px solid #333; padding: 3px; text-align: center; {{#if (lte system.encumbrance.value 5)}}background: #620630; color: white; font-weight: bold;{{/if}}">40</td>
+                  <td style="border: 1px solid #333; padding: 3px; text-align: center; {{#if (and (gt system.encumbrance.value 5) (lte system.encumbrance.value 7))}}background: #620630; color: white; font-weight: bold;{{/if}}">30</td>
+                  <td style="border: 1px solid #333; padding: 3px; text-align: center; {{#if (and (gt system.encumbrance.value 7) (lte system.encumbrance.value 10))}}background: #620630; color: white; font-weight: bold;{{/if}}">20</td>
+                  <td style="border: 1px solid #333; padding: 3px; text-align: center; {{#if (gt system.encumbrance.value 10)}}background: #620630; color: white; font-weight: bold;{{/if}}">10</td>
+                  <td style="border: 1px solid #333; padding: 3px;">Feet/Round</td>
+                </tr>
+                <tr>
+                  <td style="border: 1px solid #333; padding: 3px; font-style: italic;">Exploration</td>
+                  <td style="border: 1px solid #333; padding: 3px; text-align: center; {{#if (lte system.encumbrance.value 5)}}background: #620630; color: white; font-weight: bold;{{/if}}">120</td>
+                  <td style="border: 1px solid #333; padding: 3px; text-align: center; {{#if (and (gt system.encumbrance.value 5) (lte system.encumbrance.value 7))}}background: #620630; color: white; font-weight: bold;{{/if}}">90</td>
+                  <td style="border: 1px solid #333; padding: 3px; text-align: center; {{#if (and (gt system.encumbrance.value 7) (lte system.encumbrance.value 10))}}background: #620630; color: white; font-weight: bold;{{/if}}">60</td>
+                  <td style="border: 1px solid #333; padding: 3px; text-align: center; {{#if (gt system.encumbrance.value 10)}}background: #620630; color: white; font-weight: bold;{{/if}}">30</td>
+                  <td style="border: 1px solid #333; padding: 3px;">Feet/Turn</td>
+                </tr>
+                <tr>
+                  <td style="border: 1px solid #333; padding: 3px; font-style: italic;">Expedition</td>
+                  <td style="border: 1px solid #333; padding: 3px; text-align: center; {{#if (lte system.encumbrance.value 5)}}background: #620630; color: white; font-weight: bold;{{/if}}">24</td>
+                  <td style="border: 1px solid #333; padding: 3px; text-align: center; {{#if (and (gt system.encumbrance.value 5) (lte system.encumbrance.value 7))}}background: #620630; color: white; font-weight: bold;{{/if}}">18</td>
+                  <td style="border: 1px solid #333; padding: 3px; text-align: center; {{#if (and (gt system.encumbrance.value 7) (lte system.encumbrance.value 10))}}background: #620630; color: white; font-weight: bold;{{/if}}">12</td>
+                  <td style="border: 1px solid #333; padding: 3px; text-align: center; {{#if (gt system.encumbrance.value 10)}}background: #620630; color: white; font-weight: bold;{{/if}}">6</td>
+                  <td style="border: 1px solid #333; padding: 3px;">Miles/Day</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {{! Recovery Box }}
+          <div style="border: 2px solid #333; padding: 6px; margin-bottom: 6px; background: white;">
+            <h4 style="margin: 0 0 4px 0; font-size: 11px; font-weight: bold;">Recovery</h4>
+            <table style="width: 100%; font-size: 9px; border-collapse: collapse;">
+              <tbody>
+                <tr>
+                  <td style="padding: 1px;"><strong>Healing Rate:</strong></td>
+                  <td style="padding: 1px;"><input type="text" name="system.hp.bhr" value="{{system.hp.bhr}}" style="width: 40px; font-size: 9px; padding: 1px; text-align: center;" /></td>
+                </tr>
+                <tr>
+                  <td style="padding: 1px;"><strong>Mortal Wounds:</strong></td>
+                  <td style="padding: 1px;"><input type="text" name="system.fight.mortalwounds" value="{{system.fight.mortalwounds}}" style="width: 40px; font-size: 9px; padding: 1px; text-align: center;" /></td>
+                </tr>
+                <tr>
+                  <td style="padding: 1px;"><strong>Cleaves:</strong></td>
+                  <td style="padding: 1px;"><input type="text" name="system.fight.cleaves" value="{{system.fight.cleaves}}" style="width: 40px; font-size: 9px; padding: 1px; text-align: center;" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {{! Center Column - Attributes }}
+        <div class="center-column">
+          {{! Attributes Box }}
+          <div style="border: 2px solid #333; padding: 6px; margin-bottom: 6px; background: white;">
+            <h4 style="margin: 0 0 4px 0; font-size: 11px; font-weight: bold; text-align: center;">Attributes</h4>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 6px;">
+            <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+              <div style="font-weight: bold; margin-bottom: 3px;">STR</div>
+              <div style="width: 60px; height: 60px; border: 2px solid #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: white;">
+                <input type="text" name="system.scores.str.value" value="{{system.scores.str.value}}" style="width: 35px; text-align: center; border: none; font-size: 16px; font-weight: bold;" />
+              </div>
+              <div style="margin-top: 3px; font-size: 12px;">{{numberFormat system.scores.str.mod decimals=0 sign=true}}</div>
+            </div>
+            <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+              <div style="font-weight: bold; margin-bottom: 3px;">INT</div>
+              <div style="width: 60px; height: 60px; border: 2px solid #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: white;">
+                <input type="text" name="system.scores.int.value" value="{{system.scores.int.value}}" style="width: 35px; text-align: center; border: none; font-size: 16px; font-weight: bold;" />
+              </div>
+              <div style="margin-top: 3px; font-size: 12px;">{{numberFormat system.scores.int.mod decimals=0 sign=true}}</div>
+            </div>
+            <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+              <div style="font-weight: bold; margin-bottom: 3px;">WIS</div>
+              <div style="width: 60px; height: 60px; border: 2px solid #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: white;">
+                <input type="text" name="system.scores.wis.value" value="{{system.scores.wis.value}}" style="width: 35px; text-align: center; border: none; font-size: 16px; font-weight: bold;" />
+              </div>
+              <div style="margin-top: 3px; font-size: 12px;">{{numberFormat system.scores.wis.mod decimals=0 sign=true}}</div>
+            </div>
+            <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+              <div style="font-weight: bold; margin-bottom: 3px;">DEX</div>
+              <div style="width: 60px; height: 60px; border: 2px solid #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: white;">
+                <input type="text" name="system.scores.dex.value" value="{{system.scores.dex.value}}" style="width: 35px; text-align: center; border: none; font-size: 16px; font-weight: bold;" />
+              </div>
+              <div style="margin-top: 3px; font-size: 12px;">{{numberFormat system.scores.dex.mod decimals=0 sign=true}}</div>
+            </div>
+            <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+              <div style="font-weight: bold; margin-bottom: 3px;">CON</div>
+              <div style="width: 60px; height: 60px; border: 2px solid #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: white;">
+                <input type="text" name="system.scores.con.value" value="{{system.scores.con.value}}" style="width: 35px; text-align: center; border: none; font-size: 16px; font-weight: bold;" />
+              </div>
+              <div style="margin-top: 3px; font-size: 12px;">{{numberFormat system.scores.con.mod decimals=0 sign=true}}</div>
+            </div>
+            <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+              <div style="font-weight: bold; margin-bottom: 3px;">CHA</div>
+              <div style="width: 60px; height: 60px; border: 2px solid #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: white;">
+                <input type="text" name="system.scores.cha.value" value="{{system.scores.cha.value}}" style="width: 35px; text-align: center; border: none; font-size: 16px; font-weight: bold;" />
+              </div>
+              <div style="margin-top: 3px; font-size: 12px;">{{numberFormat system.scores.cha.mod decimals=0 sign=true}}</div>
+            </div>
+            </div>
+          </div>
+
+          {{! Initiative Box }}
+          <div style="border: 2px solid #333; padding: 6px; margin-bottom: 6px; background: white;">
+            <h4 style="margin: 0 0 4px 0; font-size: 11px; font-weight: bold; text-align: center;">Initiative</h4>
+            <div style="text-align: center; display: flex; justify-content: center; padding: 4px;">
+              <div style="width: 60px; height: 60px; border: 3px solid #620630; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: white;">
+                <input type="text" name="system.initiative.value" value="{{system.initiative.value}}" style="width: 40px; text-align: center; border: none; font-size: 20px; font-weight: bold; color: #620630;" />
+              </div>
+            </div>
+          </div>
+
+          {{! Adventuring Proficiencies Box }}
+          <div style="border: 2px solid #333; padding: 6px; margin-bottom: 6px; background: #d0d0d0;">
+            <h4 style="margin: 0 0 4px 0; text-align: center; font-size: 10px; font-weight: bold; letter-spacing: 0.5px;">ADVENTURING<br/>PROFICIENCIES</h4>
+            <table style="width: 100%; font-size: 9px; border-collapse: collapse;">
+              <thead>
+                <tr style="background: #a8a8a8; font-weight: bold;">
+                  <th style="border: 2px solid #333; padding: 2px 4px; text-align: left;">Proficiency</th>
+                  <th style="border: 2px solid #333; padding: 2px 4px; text-align: center; width: 60px;">Throw</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="border: 2px solid #333; padding: 2px 4px; background: white;">Climbing</td>
+                  <td style="border: 2px solid #333; padding: 2px; text-align: center; background: white;"><input type="text" name="system.adventuring.climbing" value="{{system.adventuring.climbing}}" style="width: 45px; text-align: center; border: 1px solid #999; padding: 1px; font-size: 9px;" /></td>
+                </tr>
+                <tr>
+                  <td style="border: 2px solid #333; padding: 2px 4px; background: white;">Dungeonbashing</td>
+                  <td style="border: 2px solid #333; padding: 2px; text-align: center; background: white;"><input type="text" name="system.adventuring.dungeonbashing" value="{{system.adventuring.dungeonbashing}}" style="width: 45px; text-align: center; border: 1px solid #999; padding: 1px; font-size: 9px;" /></td>
+                </tr>
+                <tr>
+                  <td style="border: 2px solid #333; padding: 2px 4px; background: white;">Listening</td>
+                  <td style="border: 2px solid #333; padding: 2px; text-align: center; background: white;"><input type="text" name="system.adventuring.listening" value="{{system.adventuring.listening}}" style="width: 45px; text-align: center; border: 1px solid #999; padding: 1px; font-size: 9px;" /></td>
+                </tr>
+                <tr>
+                  <td style="border: 2px solid #333; padding: 2px 4px; background: white;">Searching</td>
+                  <td style="border: 2px solid #333; padding: 2px; text-align: center; background: white;"><input type="text" name="system.adventuring.searching" value="{{system.adventuring.searching}}" style="width: 45px; text-align: center; border: 1px solid #999; padding: 1px; font-size: 9px;" /></td>
+                </tr>
+                <tr>
+                  <td style="border: 2px solid #333; padding: 2px 4px; background: white;">Trapbreaking</td>
+                  <td style="border: 2px solid #333; padding: 2px; text-align: center; background: white;"><input type="text" name="system.adventuring.trapbreaking" value="{{system.adventuring.trapbreaking}}" style="width: 45px; text-align: center; border: 1px solid #999; padding: 1px; font-size: 9px;" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {{! Right Column }}
+        <div class="right-column">
+          {{! Level & XP Box }}
+          <div style="border: 2px solid #333; padding: 6px; margin-bottom: 6px; background: white;">
+            <h4 style="margin: 0 0 4px 0; font-size: 11px; font-weight: bold;">Level & XP</h4>
+            <table style="width: 100%; font-size: 9px; border-collapse: collapse;">
+              <tbody>
+                <tr>
+                  <td style="padding: 1px;"><strong>Level:</strong></td>
+                  <td style="padding: 1px;"><input type="text" name="system.details.level" value="{{system.details.level}}" style="width: 40px; font-size: 9px; padding: 1px; text-align: center;" /></td>
+                </tr>
+                <tr>
+                  <td style="padding: 1px;"><strong>XP:</strong></td>
+                  <td style="padding: 1px;"><input type="text" name="system.details.xp.value" value="{{system.details.xp.value}}" style="width: 60px; font-size: 9px; padding: 1px; text-align: center;" /></td>
+                </tr>
+                <tr>
+                  <td style="padding: 1px;"><strong>XP Mod:</strong></td>
+                  <td style="padding: 1px;"><input type="text" name="system.details.xp.bonus" value="{{system.details.xp.bonus}}" style="width: 35px; font-size: 9px; padding: 1px; text-align: center;" />%</td>
+                </tr>
+                <tr>
+                  <td style="padding: 1px;"><strong>Next Level:</strong></td>
+                  <td style="padding: 1px;"><input type="text" name="system.details.xp.next" value="{{system.details.xp.next}}" style="width: 60px; font-size: 9px; padding: 1px; text-align: center;" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {{! Surprise Box }}
+          <div style="border: 2px solid #333; padding: 6px; margin-bottom: 6px; background: white;">
+            <h4 style="margin: 0 0 4px 0; font-size: 11px; font-weight: bold;">Surprise</h4>
+            <table style="width: 100%; font-size: 9px; border-collapse: collapse;">
+              <tbody>
+                <tr>
+                  <td style="padding: 1px;"><strong>Surprise Others:</strong></td>
+                  <td style="padding: 1px;"><input type="text" name="system.surprise.strike" value="{{system.surprise.strike}}" style="width: 40px; font-size: 9px; padding: 1px; text-align: center;" /></td>
+                </tr>
+                <tr>
+                  <td style="padding: 1px;"><strong>Avoid Surprise:</strong></td>
+                  <td style="padding: 1px;"><input type="text" name="system.surprise.elude" value="{{system.surprise.elude}}" style="width: 40px; font-size: 9px; padding: 1px; text-align: center;" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {{! Saving Throws Box }}
+          <div style="border: 2px solid #333; padding: 6px; margin-bottom: 6px; background: #d0d0d0;">
+            <h4 style="margin: 0 0 4px 0; text-align: center; font-size: 11px; font-weight: bold; letter-spacing: 1px;">SAVING THROWS</h4>
+            <div style="padding: 4px; background: #e8e8e8; border: 2px solid #333;">
+              <table style="width: 100%; font-size: 9px; border-collapse: collapse;">
+                <thead>
+                  <tr style="background: #d0d0d0; font-weight: bold;">
+                    <th style="border: 2px solid #333; padding: 2px 4px; text-align: left;">Save</th>
+                    <th style="border: 2px solid #333; padding: 2px 4px; text-align: center;">Value</th>
+                    <th style="border: 2px solid #333; padding: 2px 4px; text-align: center;">Mod</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="border: 2px solid #333; padding: 2px 4px; background: white;">Paralysis</td>
+                    <td style="border: 2px solid #333; padding: 2px; text-align: center; background: white;"><input type="text" name="system.saves.paralysis.value" value="{{system.saves.paralysis.value}}" style="width: 35px; text-align: center; border: none; font-size: 9px;" /></td>
+                    <td style="border: 2px solid #333; padding: 2px; text-align: center; background: white;"><input type="text" name="system.saves.paralysis.mod" value="{{system.saves.paralysis.mod}}" style="width: 30px; text-align: center; border: none; font-size: 9px;" /></td>
+                  </tr>
+                  <tr>
+                    <td style="border: 2px solid #333; padding: 2px 4px; background: white;">Death</td>
+                    <td style="border: 2px solid #333; padding: 2px; text-align: center; background: white;"><input type="text" name="system.saves.death.value" value="{{system.saves.death.value}}" style="width: 35px; text-align: center; border: none; font-size: 9px;" /></td>
+                    <td style="border: 2px solid #333; padding: 2px; text-align: center; background: white;"><input type="text" name="system.saves.death.mod" value="{{system.saves.death.mod}}" style="width: 30px; text-align: center; border: none; font-size: 9px;" /></td>
+                  </tr>
+                  <tr>
+                    <td style="border: 2px solid #333; padding: 2px 4px; background: white;">Blast</td>
+                    <td style="border: 2px solid #333; padding: 2px; text-align: center; background: white;"><input type="text" name="system.saves.breath.value" value="{{system.saves.breath.value}}" style="width: 35px; text-align: center; border: none; font-size: 9px;" /></td>
+                    <td style="border: 2px solid #333; padding: 2px; text-align: center; background: white;"><input type="text" name="system.saves.breath.mod" value="{{system.saves.breath.mod}}" style="width: 30px; text-align: center; border: none; font-size: 9px;" /></td>
+                  </tr>
+                  <tr>
+                    <td style="border: 2px solid #333; padding: 2px 4px; background: white;">Implements</td>
+                    <td style="border: 2px solid #333; padding: 2px; text-align: center; background: white;"><input type="text" name="system.saves.wand.value" value="{{system.saves.wand.value}}" style="width: 35px; text-align: center; border: none; font-size: 9px;" /></td>
+                    <td style="border: 2px solid #333; padding: 2px; text-align: center; background: white;"><input type="text" name="system.saves.wand.mod" value="{{system.saves.wand.mod}}" style="width: 30px; text-align: center; border: none; font-size: 9px;" /></td>
+                  </tr>
+                  <tr>
+                    <td style="border: 2px solid #333; padding: 2px 4px; background: white;">Spells</td>
+                    <td style="border: 2px solid #333; padding: 2px; text-align: center; background: white;"><input type="text" name="system.saves.spell.value" value="{{system.saves.spell.value}}" style="width: 35px; text-align: center; border: none; font-size: 9px;" /></td>
+                    <td style="border: 2px solid #333; padding: 2px; text-align: center; background: white;"><input type="text" name="system.saves.spell.mod" value="{{system.saves.spell.mod}}" style="width: 30px; text-align: center; border: none; font-size: 9px;" /></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {{! Armor Class Box }}
+          <div style="border: 2px solid #333; padding: 8px; margin-bottom: 10px; background: #d0d0d0; position: relative;">
+            <h4 style="margin: 0 0  10px 0; text-align: center; font-size: 14px; font-weight: bold; letter-spacing: 1px;">ARMOR CLASS</h4>
+            <div style="position: relative; padding: 10px; background: #e8e8e8; border: 3px solid #333; border-radius: 0 0 50% 50% / 0 0 30% 30%; min-height: 200px;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                {{! With Shield - Top Left }}
+                <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                  <div style="width: 70px; height: 70px; border: 3px solid #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: white;">
+                    <input type="text" name="system.aac.value" value="{{system.aac.value}}" style="width: 45px; text-align: center; border: none; font-size: 22px; font-weight: bold;" />
+                  </div>
+                  <div style="margin-top: 5px; text-align: center;">
+                    <div style="font-size: 11px; font-weight: bold; line-height: 1.2;">With Shield</div>
+                    <div style="font-size: 9px; color: #555; line-height: 1.2;">Armor + Shield +<br/>Dex Bonus</div>
+                  </div>
+                </div>
+                {{! No Shield - Top Right }}
+                <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                  <div style="width: 70px; height: 70px; border: 3px solid #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: white;">
+                    <input type="text" name="system.aac.noshield" value="{{system.aac.noshield}}" style="width: 45px; text-align: center; border: none; font-size: 22px; font-weight: bold;" />
+                  </div>
+                  <div style="margin-top: 5px; text-align: center;">
+                    <div style="font-size: 11px; font-weight: bold; line-height: 1.2;">No Shield</div>
+                    <div style="font-size: 9px; color: #555; line-height: 1.2;">Armor +<br/>Dex Bonus</div>
+                  </div>
+                </div>
+              </div>
+              {{! No Armor - Bottom Center }}
+              <div style="text-align: center; display: flex; flex-direction: column; align-items: center; margin-top: 5px;">
+                <div style="width: 70px; height: 70px; border: 3px dashed #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: white;">
+                  <input type="text" name="system.aac.noarmor" value="{{system.aac.noarmor}}" style="width: 45px; text-align: center; border: none; font-size: 22px; font-weight: bold;" />
+                </div>
+                <div style="margin-top: 5px; text-align: center;">
+                  <div style="font-size: 11px; font-weight: bold; line-height: 1.2;">No Armor</div>
+                  <div style="font-size: 9px; color: #555; line-height: 1.2;">Dex Bonus only</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      {{! Weapons Section - Full Width Below }}
+      <div style="margin-top: 20px; padding: 10px; border-top: 2px solid #620630;">
+        <h3 style="display: flex; justify-content: space-between; align-items: center;">
+          <span>Weapons & Attack Throws</span>
+          <a class="item-create" data-type="weapon" title="Add Weapon" style="cursor: pointer; color: #620630; font-size: 20px;">
+            <i class="fas fa-plus-circle"></i>
+          </a>
+        </h3>
+        <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
+          <thead>
+            <tr style="background: #f0f0f0;">
+              <th style="border: 1px solid #ccc; padding: 4px; width: 30px;">⋮⋮</th>
+              <th style="border: 1px solid #ccc; padding: 4px;">Weapon & Fighting Style</th>
+              <th style="border: 1px solid #ccc; padding: 4px;">Init. Bonus</th>
+              <th style="border: 1px solid #ccc; padding: 4px;">Attack Throw</th>
+              <th style="border: 1px solid #ccc; padding: 4px;">Damage</th>
+              <th style="border: 1px solid #ccc; padding: 4px;">Range Short</th>
+              <th style="border: 1px solid #ccc; padding: 4px;">Range Med.</th>
+              <th style="border: 1px solid #ccc; padding: 4px;">Range Long</th>
+              <th style="border: 1px solid #ccc; padding: 4px; width: 60px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each items as |item|}}
+            {{#if (eq item.type "weapon")}}
+            <tr class="item" data-item-id="{{item._id}}">
+              <td style="border: 1px solid #ccc; padding: 4px; text-align: center; cursor: grab;">⋮⋮</td>
+              <td style="border: 1px solid #ccc; padding: 4px;">{{item.name}}</td>
+              <td style="border: 1px solid #ccc; padding: 4px; text-align: center;">{{item.system.initiativeBonus}}</td>
+              <td style="border: 1px solid #ccc; padding: 4px; text-align: center;">{{item.system.bonus}}</td>
+              <td style="border: 1px solid #ccc; padding: 4px; text-align: center;">{{item.system.damage}}</td>
+              <td style="border: 1px solid #ccc; padding: 4px; text-align: center;">{{item.system.range.short}}</td>
+              <td style="border: 1px solid #ccc; padding: 4px; text-align: center;">{{item.system.range.medium}}</td>
+              <td style="border: 1px solid #ccc; padding: 4px; text-align: center;">{{item.system.range.long}}</td>
+              <td style="border: 1px solid #ccc; padding: 4px; text-align: center;">
+                <a class="item-edit" title="Edit Weapon" style="cursor: pointer; margin-right: 5px;"><i class="fas fa-edit"></i></a>
+                <a class="item-delete" title="Delete Weapon" style="cursor: pointer; color: #a00;"><i class="fas fa-trash"></i></a>
+              </td>
+            </tr>
+            {{/if}}
+            {{/each}}
+          </tbody>
+        </table>
+
+        <h4 style="margin-top: 15px;">Attack Throw by Armor Class</h4>
+        <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
+          <thead>
+            <tr style="background: #f0f0f0;">
+              <th style="border: 1px solid #ccc; padding: 4px;">AC 0</th>
+              <th style="border: 1px solid #ccc; padding: 4px;">AC 1</th>
+              <th style="border: 1px solid #ccc; padding: 4px;">AC 2</th>
+              <th style="border: 1px solid #ccc; padding: 4px;">AC 3</th>
+              <th style="border: 1px solid #ccc; padding: 4px;">AC 4</th>
+              <th style="border: 1px solid #ccc; padding: 4px;">AC 5</th>
+              <th style="border: 1px solid #ccc; padding: 4px;">AC 6</th>
+              <th style="border: 1px solid #ccc; padding: 4px;">AC 7</th>
+              <th style="border: 1px solid #ccc; padding: 4px;">AC 8</th>
+              <th style="border: 1px solid #ccc; padding: 4px;">AC 9</th>
+              <th style="border: 1px solid #ccc; padding: 4px;">AC 10</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="border: 1px solid #ccc; padding: 4px; text-align: center;"><input type="text" name="system.thac0.ac0" value="{{system.thac0.ac0}}" style="width: 40px; text-align: center;" /></td>
+              <td style="border: 1px solid #ccc; padding: 4px; text-align: center;"><input type="text" name="system.thac0.ac1" value="{{system.thac0.ac1}}" style="width: 40px; text-align: center;" /></td>
+              <td style="border: 1px solid #ccc; padding: 4px; text-align: center;"><input type="text" name="system.thac0.ac2" value="{{system.thac0.ac2}}" style="width: 40px; text-align: center;" /></td>
+              <td style="border: 1px solid #ccc; padding: 4px; text-align: center;"><input type="text" name="system.thac0.ac3" value="{{system.thac0.ac3}}" style="width: 40px; text-align: center;" /></td>
+              <td style="border: 1px solid #ccc; padding: 4px; text-align: center;"><input type="text" name="system.thac0.ac4" value="{{system.thac0.ac4}}" style="width: 40px; text-align: center;" /></td>
+              <td style="border: 1px solid #ccc; padding: 4px; text-align: center;"><input type="text" name="system.thac0.ac5" value="{{system.thac0.ac5}}" style="width: 40px; text-align: center;" /></td>
+              <td style="border: 1px solid #ccc; padding: 4px; text-align: center;"><input type="text" name="system.thac0.ac6" value="{{system.thac0.ac6}}" style="width: 40px; text-align: center;" /></td>
+              <td style="border: 1px solid #ccc; padding: 4px; text-align: center;"><input type="text" name="system.thac0.ac7" value="{{system.thac0.ac7}}" style="width: 40px; text-align: center;" /></td>
+              <td style="border: 1px solid #ccc; padding: 4px; text-align: center;"><input type="text" name="system.thac0.ac8" value="{{system.thac0.ac8}}" style="width: 40px; text-align: center;" /></td>
+              <td style="border: 1px solid #ccc; padding: 4px; text-align: center;"><input type="text" name="system.thac0.ac9" value="{{system.thac0.ac9}}" style="width: 40px; text-align: center;" /></td>
+              <td style="border: 1px solid #ccc; padding: 4px; text-align: center;"><input type="text" name="system.thac0.ac10" value="{{system.thac0.ac10}}" style="width: 40px; text-align: center;" /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+    <div class="tab" data-group="primary" data-tab="abilities">
+      {{> (acksPartial "actors/partials/character-abilities-tab.html")}}
+    </div>
+    {{#if system.spells.enabled}}
+    <div class="tab" data-group="primary" data-tab="spells">
+      {{> (acksPartial "actors/partials/character-spells-tab.html")}}
+    </div>
+    {{/if}}
+    <div class="tab" data-group="primary" data-tab="inventory">
+      {{> (acksPartial "actors/partials/character-inventory-tab.html")}}
+    </div>
+    <div class="tab" data-group="primary" data-tab="hirelings">
+      {{> (acksPartial "actors/partials/character-hirelings-tab.html")}}
+    </div>
+    <div class="tab" data-group="primary" data-tab="bonuses">
+      {{> (acksPartial "actors/partials/character-bonuses-tab.html")}}
+    </div>
+    <div class="tab" data-group="primary" data-tab="notes">
+      {{> (acksPartial "actors/partials/character-notes-tab.html")}}
+    </div>
+    <div class="tab" data-group="primary" data-tab="effects">
+      {{> (acksPartial "actors/partials/character-effects-tab.html")}}
+    </div>
+  </section>
+</form>

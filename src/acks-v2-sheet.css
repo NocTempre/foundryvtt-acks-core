@@ -1,0 +1,848 @@
+/*------------------------------------*\
+  #ACKS II Official Character Sheet (V2)
+  Based on the official ACKS II character sheet design
+\*------------------------------------*/
+
+.acks-v2-sheet {
+  background: #d4d3d3;
+  font-family: "ebgaramond-regular", serif;
+  min-width: 1100px;
+  min-height: 850px;
+}
+
+/* Header Section */
+.acks-v2-header {
+  background: var(--acks-purple);
+  color: white;
+  padding: 8px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid black;
+}
+
+.acks-v2-header .header-text {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  font-size: 12px;
+  align-items: center;
+}
+
+.acks-v2-header .header-label,
+.acks-v2-header .header-title {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* Chronicles Header */
+.chronicles-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.chronicles-header .chronicles-label {
+  font-style: italic;
+}
+
+.chronicles-header input {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #7a7971;
+  padding: 4px 8px;
+  font-family: "oranienbaum", serif;
+  color: var(--input-text-color);
+}
+
+.chronicles-header .character-name {
+  min-width: 150px;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.chronicles-header .birthplace,
+.chronicles-header .character-class,
+.chronicles-header .character-title {
+  min-width: 120px;
+}
+
+/* Main Layout */
+.acks-v2-sheet .sheet-body {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 16px;
+}
+
+.acks-v2-sheet .sheet-content {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 20px;
+}
+
+.acks-v2-sheet .left-column,
+.acks-v2-sheet .center-column,
+.acks-v2-sheet .right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Basic Info Section */
+.basic-info-section {
+  border: 2px solid #7a7971;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.basic-info-section .info-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.basic-info-section .info-field {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.basic-info-section label {
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 2px;
+  color: #4b4a44;
+}
+
+.basic-info-section input {
+  border: 1px solid #7a7971;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px;
+  text-align: center;
+}
+
+.hit-points-section {
+  margin-top: 12px;
+  border-top: 1px solid #7a7971;
+  padding-top: 12px;
+}
+
+.hit-points-section label {
+  font-size: 13px;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.hp-input-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: center;
+}
+
+.hp-input-group input {
+  width: 50px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Hexagonal Attribute Layout */
+.attributes-hexagon {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 20px;
+  padding: 40px 20px;
+  justify-items: center;
+  align-items: center;
+  position: relative;
+}
+
+.attribute-circle {
+  width: 90px;
+  height: 90px;
+  border: 3px solid #000;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  position: relative;
+}
+
+.attribute-circle .attribute-label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #4b4a44;
+  margin-bottom: 4px;
+}
+
+.attribute-circle .attribute-value {
+  width: 40px;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  border: none;
+  background: transparent;
+  color: #4b4a44;
+}
+
+.attribute-circle .attribute-modifier {
+  font-size: 12px;
+  color: #620630;
+  font-weight: bold;
+  margin-top: 2px;
+}
+
+/* Hexagon positioning */
+.attr-str {  grid-column: 1;  grid-row: 1;
+}
+.attr-int {  grid-column: 3;  grid-row: 1;
+}
+.attr-dex {  grid-column: 1;  grid-row: 2;
+}
+.attr-wil {  grid-column: 3;  grid-row: 2;
+}
+.attr-con {  grid-column: 1;  grid-row: 3;
+}
+.attr-cha {  grid-column: 3;  grid-row: 3;
+}
+
+/* Center hexagons and XP */
+.center-hexagons {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.mod-hex {
+  width: 50px;
+  height: 50px;
+  background: rgba(200, 200, 200, 0.5);
+  clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.attribute-label-hex {
+  font-size: 11px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.xp-circle {
+  grid-column: 2;
+  grid-row: 3;
+  width: 80px;
+  height: 80px;
+  border: 3px solid #000;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.xp-circle .xp-label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.xp-circle .xp-value {
+  width: 60px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  background: transparent;
+}
+
+/* Level Section */
+.level-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.level-circle {
+  width: 120px;
+  height: 120px;
+  border: 4px solid #4b4a44;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  position: relative;
+}
+
+.level-circle::before,
+.level-circle::after {
+  content: "";
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border: 2px solid #4b4a44;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.level-wreath {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.level-wreath .level-label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #4b4a44;
+  margin-bottom: 4px;
+}
+
+.level-wreath .level-value {
+  width: 50px;
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  border: none;
+  background: transparent;
+  color: #620630;
+}
+
+.xp-next-level {
+  text-align: center;
+}
+
+.xp-next-level label {
+  font-size: 11px;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.xp-next-level input {
+  width: 100px;
+  text-align: center;
+  padding: 4px;
+  border: 1px solid #7a7971;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* Surprise Section */
+.surprise-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.surprise-section label {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.surprise-diamonds {
+  display: flex;
+  gap: 12px;
+}
+
+.surprise-diamond {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #4b4a44;
+  transform: rotate(45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.surprise-diamond label {
+  position: absolute;
+  top: -25px;
+  font-size: 9px;
+  transform: rotate(-45deg);
+  white-space: nowrap;
+}
+
+.surprise-diamond input {
+  width: 30px;
+  text-align: center;
+  transform: rotate(-45deg);
+  border: none;
+  background: transparent;
+  font-weight: bold;
+}
+
+/* Saving Throws Section */
+.saving-throws-section {
+  border: 2px solid #7a7971;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.saving-throws-section .section-title {
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 12px;
+  color: #620630;
+}
+
+.saves-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.save-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.save-row label {
+  font-size: 12px;
+  font-weight: bold;
+  flex: 0 0 80px;
+}
+
+.save-circles {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.save-circle {
+  width: 50px;
+  height: 50px;
+  border: 2px solid #4b4a44;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  position: relative;
+}
+
+.save-circle label {
+  font-size: 8px;
+  position: absolute;
+  top: 4px;
+  flex: none;
+}
+
+.save-circle input {
+  width: 35px;
+  text-align: center;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+.save-circle.save-value a {
+  font-size: 16px;
+  font-weight: bold;
+  color: #620630;
+  cursor: pointer;
+}
+
+.save-circle.save-value a:hover {
+  color: #000;
+}
+
+/* Armor Class Section */
+.armor-class-section {
+  border: 2px solid #7a7971;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.armor-class-section .section-title {
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 12px;
+  color: #620630;
+}
+
+.armor-circles {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ac-circle {
+  width: 100px;
+  height: 100px;
+  border: 3px solid #4b4a44;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  margin: 0 auto;
+}
+
+.ac-circle .ac-label {
+  font-size: 11px;
+  font-weight: bold;
+  color: #4b4a44;
+  text-align: center;
+}
+
+.ac-circle .ac-sub-label {
+  font-size: 8px;
+  color: #7a7971;
+  text-align: center;
+  margin: 2px 0;
+  max-width: 80px;
+}
+
+.ac-circle .ac-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #620630;
+  margin-top: 4px;
+}
+
+/* Movement Section */
+.movement-section {
+  border: 2px solid #7a7971;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.movement-section .section-title {
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 12px;
+  color: #620630;
+}
+
+.movement-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.movement-row label {
+  font-size: 11px;
+  font-weight: bold;
+  flex: 0 0 80px;
+}
+
+.movement-row input {
+  flex: 1;
+  text-align: center;
+  padding: 4px;
+  border: 1px solid #7a7971;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.movement-row .movement-unit {
+  font-size: 9px;
+  color: #7a7971;
+  flex: 0 0 70px;
+}
+
+/* Encumbrance Section */
+.encumbrance-section {
+  border: 2px solid #7a7971;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.encumbrance-section .section-title {
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 12px;
+  color: #620630;
+}
+
+.encumbrance-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10px;
+  margin-bottom: 12px;
+}
+
+.encumbrance-table th,
+.encumbrance-table td {
+  border: 1px solid #7a7971;
+  padding: 4px;
+  text-align: center;
+}
+
+.encumbrance-table th {
+  background: rgba(98, 6, 48, 0.1);
+  font-weight: bold;
+}
+
+.current-encumbrance {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.current-encumbrance label {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.current-encumbrance input {
+  width: 60px;
+  text-align: center;
+  padding: 4px;
+  border: 1px solid #7a7971;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* Healing/Cleaves Section */
+.healing-cleaves-section {
+  display: flex;
+  gap: 12px;
+  justify-content: space-around;
+}
+
+.healing-hexagon,
+.mortal-wounds-hexagon,
+.cleaves-hexagon {
+  width: 70px;
+  height: 70px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #4b4a44;
+  clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.healing-hexagon .hexagon-label,
+.mortal-wounds-hexagon .hexagon-label,
+.cleaves-hexagon .hexagon-label {
+  font-size: 9px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.healing-hexagon .hexagon-value,
+.mortal-wounds-hexagon .hexagon-value,
+.cleaves-hexagon .hexagon-value {
+  width: 40px;
+  text-align: center;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Initiative Section */
+.initiative-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.initiative-triangle {
+  width: 0;
+  height: 0;
+  border-left: 60px solid transparent;
+  border-right: 60px solid transparent;
+  border-bottom: 100px solid rgba(255, 255, 255, 0.9);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 0 3px #4b4a44);
+}
+
+.initiative-triangle .initiative-label {
+  position: absolute;
+  top: 50px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #4b4a44;
+}
+
+.initiative-triangle .initiative-value {
+  position: absolute;
+  top: 65px;
+  width: 50px;
+  text-align: center;
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  font-weight: bold;
+  color: #620630;
+}
+
+/* Adventuring Proficiencies Section */
+.adventuring-proficiencies-section {
+  border: 2px solid #7a7971;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.adventuring-proficiencies-section .section-title {
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 12px;
+  color: #620630;
+}
+
+.adventuring-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.adventuring-table th,
+.adventuring-table td {
+  border: 1px solid #7a7971;
+  padding: 6px 8px;
+  text-align: left;
+}
+
+.adventuring-table th {
+  background: rgba(98, 6, 48, 0.1);
+  font-weight: bold;
+  text-align: center;
+}
+
+.adventuring-table input {
+  width: 100%;
+  text-align: center;
+  padding: 2px;
+  border: none;
+  background: transparent;
+  font-weight: bold;
+}
+
+/* Weapons Section */
+.weapons-section {
+  border: 2px solid #7a7971;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.3);
+  margin-top: 16px;
+}
+
+.weapons-section .section-title {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 16px;
+  color: #620630;
+}
+
+.weapons-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  margin-bottom: 16px;
+}
+
+.weapons-table th,
+.weapons-table td {
+  border: 1px solid #7a7971;
+  padding: 6px 8px;
+  text-align: center;
+}
+
+.weapons-table th {
+  background: rgba(98, 6, 48, 0.1);
+  font-weight: bold;
+}
+
+.weapons-table td.weapon-name {
+  text-align: left;
+}
+
+.weapons-table input {
+  width: 100%;
+  text-align: center;
+  padding: 2px 4px;
+  border: none;
+  background: transparent;
+}
+
+.weapons-table .weapon-empty input {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px dashed #7a7971;
+}
+
+/* Attack Throw Section */
+.attack-throw-section {
+  margin-top: 16px;
+}
+
+.attack-throw-section h4 {
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 8px;
+  color: #620630;
+}
+
+.attack-throw-grid {
+  display: grid;
+  grid-template-columns: repeat(11, 1fr);
+  gap: 4px;
+}
+
+.ac-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #7a7971;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.ac-box label {
+  font-size: 10px;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.ac-box input {
+  width: 100%;
+  text-align: center;
+  border: none;
+  background: transparent;
+  font-size: 11px;
+}
