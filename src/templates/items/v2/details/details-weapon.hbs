@@ -55,6 +55,25 @@
     </div>
   </div>
 
+  <div class="form-group">
+    <label class="form-group__label">{{localize 'ACKS.equipment.hand'}}</label>
+    <div class="form-group__fields">
+      <select name="system.hand">
+        <option value="mainHand" {{#if (eq system.hand "mainHand")}}selected{{/if}}>{{localize 'ACKS.equipmentSlots.mainHand'}}</option>
+        <option value="offHand" {{#if (eq system.hand "offHand")}}selected{{/if}}>{{localize 'ACKS.equipmentSlots.offHand'}}</option>
+        <option value="none" {{#if (eq system.hand "none")}}selected{{/if}}>{{localize 'ACKS.equipmentSlots.none'}}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group form-group--row">
+    <label class="form-group__label">{{localize 'ACKS.items.Slow'}}</label>
+    <div class="form-group__fields">
+      <input type="checkbox" name="system.slow" value="{{system.slow}}" {{checked system.slow}}
+             data-dtype="Boolean"/>
+    </div>
+  </div>
+
   <div class="form-group form-group--row">
     <label class="form-group__label">{{localize 'ACKS.favorite'}}</label>
     <div class="form-group__fields">

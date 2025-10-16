@@ -1212,25 +1212,130 @@ export class AcksActor extends Actor {
     return rolls;
   }
 
+  /**
+   * Validate equipment slots and return warnings
+   * @returns {Array} Array of validation warnings
+   */
+  validateEquipmentSlots() {
+    if (this.type !== "character") {
+      return [];
+    }
+
+    const warnings = [];
+    const slotCounts = {};
+    const equippedItems = this.items.filter((i) =>
+      (i.type === "armor" || i.type === "item" || i.type === "weapon") && i.system.equipped
+    );
+
+    // Count items in each slot
+    equippedItems.forEach((item) => {
+      let slot = null;
+
+      if (item.type === "armor") {
+        slot = item.system.slot || "torso";
+      } else if (item.type === "item") {
+        slot = item.system.slot || "none";
+      } else if (item.type === "weapon") {
+        slot = item.system.hand || "mainHand";
+      }
+
+      if (slot && slot !== "none") {
+        slotCounts[slot] = (slotCounts[slot] || 0) + 1;
+      }
+    });
+
+    // Check slot limits
+    const limits = CONFIG.ACKS?.slotLimits || {};
+    for (const [slot, count] of Object.entries(slotCounts)) {
+      const limit = limits[slot];
+      if (limit && count > limit) {
+        warnings.push({
+          type: "slot_overflow",
+          slot: slot,
+          count: count,
+          limit: limit,
+          message: `Too many items in ${slot} slot: ${count}/${limit}`
+        });
+      }
+    }
+
+    return warnings;
+  }
+
   computeAC() {
     if (this.type != "character") {
       return;
     }
-    // Compute AC
-    let baseAac = 0;
-    let AacShield = 0;
+
     const data = this.system;
-    data.aac.naked = baseAac + data.scores.dex.mod;
-    const armors = this.items.filter((i) => i.type == "armor");
-    armors.forEach((a) => {
-      if (a.system.equipped && a.system.type != "shield") {
-        baseAac = a.system.aac.value;
-      } else if (a.system.equipped && a.system.type == "shield") {
-        AacShield = a.system.aac.value;
+    const armors = this.items.filter((i) => i.type === "armor" && i.system.equipped);
+    const items = this.items.filter((i) => i.type === "item" && i.system.equipped);
+
+    // Base AAC (naked)
+    let baseAac = 0;
+    let shieldAac = 0;
+    let itemAcBonus = 0;
+
+    // Track best AC from torso and bracers slots (they don't stack)
+    let torsoAac = 0;
+    let bracersAac = 0;
+
+    // Process armor items
+    armors.forEach((armor) => {
+      const slot = armor.system.slot || "torso";
+      const type = armor.system.type;
+      const aac = armor.system.aac?.value || 0;
+
+      if (type === "shield") {
+        // Shield AC (only one should be equipped per slot rules)
+        shieldAac = Math.max(shieldAac, aac);
+      } else if (slot === "torso") {
+        // Torso armor (only use highest AAC if multiple somehow equipped)
+        torsoAac = Math.max(torsoAac, aac);
+      } else if (slot === "bracers") {
+        // Bracers slot items (don't stack with torso armor per ACKS II rules)
+        bracersAac = Math.max(bracersAac, aac);
+      } else {
+        // Other armor pieces (head, boots, gloves, etc.) add to AC
+        itemAcBonus += aac;
       }
     });
-    data.aac.value = baseAac + data.scores.dex.mod + AacShield + data.aac.mod;
-    data.aac.shield = AacShield;
+
+    // Process magic items with AC bonuses (rings of protection, etc.)
+    const equippedRings = items.filter((i) => i.system.slot === "ring");
+    const ringAcBonus = equippedRings.reduce((sum, ring) => {
+      // Check for non-stacking items
+      if (ring.system.noStackWith) {
+        const conflicts = items.filter((other) =>
+          other.id !== ring.id &&
+          other.name.toLowerCase().includes(ring.system.noStackWith.toLowerCase())
+        );
+        if (conflicts.length > 0) {
+          return sum; // Don't add this ring's bonus
+        }
+      }
+      return sum + (ring.system.acBonus || 0);
+    }, 0);
+
+    // Other equipped items (neck, belt, cloak, etc.)
+    const otherItemAcBonus = items
+      .filter((i) => i.system.slot !== "ring" && i.system.slot !== "none")
+      .reduce((sum, item) => sum + (item.system.acBonus || 0), 0);
+
+    // Torso armor and bracers don't stack - use whichever provides better AC
+    // This handles the ACKS II rule where bracers-of-armor type items don't stack with worn armor
+    baseAac = Math.max(torsoAac, bracersAac);
+
+    // Calculate final AC
+    data.aac.naked = data.scores.dex.mod;
+    data.aac.value = baseAac + data.scores.dex.mod + shieldAac + itemAcBonus + ringAcBonus + otherItemAcBonus + data.aac.mod;
+    data.aac.shield = shieldAac;
+    data.aac.base = baseAac;
+    data.aac.items = itemAcBonus + ringAcBonus + otherItemAcBonus;
+
+    // Store validation warnings
+    data.equipment = data.equipment || {};
+    data.equipment.warnings = this.validateEquipmentSlots();
   }
 
   /* -------------------------------------------- */

@@ -51,6 +51,12 @@ export default class WeaponData extends foundry.abstract.TypeDataModel {
       melee: new BooleanField({ initial: false }),
       // Is weapon equipped
       equipped: new BooleanField({ initial: false }),
+      // Hand slot: mainHand, offHand, or none
+      hand: new StringField({ choices: ["mainHand", "offHand", "none"], required: false, initial: "mainHand" }),
+      // Attack bonus from magic (for multi-arm benefit calculation)
+      attackBonus: new NumberField({ initial: 0 }),
+      // Damage bonus from magic (for multi-arm benefit calculation)
+      damageBonus: new NumberField({ initial: 0 }),
       // counter?
       counter: new SchemaField({
         // current value

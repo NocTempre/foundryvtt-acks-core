@@ -26,7 +26,15 @@
           <label>{{localize 'ACKS.items.subtype'}}</label>
           <div class="form-fields">
             <select name="system.subtype" value="{{system.subtype}}" data-dtype="String">
-              {{selectOptions config.item_subtypes selected=system.subtype localize=true}}  
+              {{selectOptions config.item_subtypes selected=system.subtype localize=true}}
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>{{localize 'ACKS.equipment.slot'}}</label>
+          <div class="form-fields">
+            <select name="system.slot">
+              {{selectOptions config.equipmentSlots selected=system.slot}}
             </select>
           </div>
         </div>
@@ -36,7 +44,25 @@
             <input type="text" name="system.quantity.value" value="{{system.quantity.value}}" data-dtype="Number" />/<input type="text" name="system.quantity.max" value="{{system.quantity.max}}" data-dtype="Number" />
           </div>
         </div>
-        
+        <div class="form-group">
+          <label>{{localize 'ACKS.items.acBonus'}}</label>
+          <div class="form-fields">
+            <input type="text" name="system.acBonus" value="{{system.acBonus}}" data-dtype="Number" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>{{localize 'ACKS.items.saveBonus'}}</label>
+          <div class="form-fields">
+            <input type="text" name="system.saveBonus" value="{{system.saveBonus}}" data-dtype="Number" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>{{localize 'ACKS.items.noStackWith'}}</label>
+          <div class="form-fields">
+            <input type="text" name="system.noStackWith" value="{{system.noStackWith}}" data-dtype="String" placeholder="e.g., ring of protection" />
+          </div>
+        </div>
+
         <!--<div class="form-group">
           <label>{{localize 'ACKS.items.Treasure'}}</label>
           <div class="form-fields">

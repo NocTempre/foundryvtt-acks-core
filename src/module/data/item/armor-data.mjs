@@ -26,6 +26,8 @@ export default class ArmorData extends foundry.abstract.TypeDataModel {
       }),
       // Armor type
       type: new StringField({ choices: CONFIG.ACKS.armor, required: true, initial: "light" }),
+      // Equipment slot (for armor: torso, head, bracers, gloves, boots, cloak)
+      slot: new StringField({ choices: CONFIG.ACKS.equipmentSlots, required: false, initial: "torso" }),
       // Is armor equipped
       equipped: new BooleanField({ initial: false }),
     };

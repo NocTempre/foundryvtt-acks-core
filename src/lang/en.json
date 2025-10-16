@@ -345,6 +345,28 @@
   "ACKS.armor.heavy": "Heavy",
   "ACKS.armor.shield": "Shield",
 
+  "ACKS.equipmentSlots.head": "Head",
+  "ACKS.equipmentSlots.neck": "Neck",
+  "ACKS.equipmentSlots.cloak": "Cloak",
+  "ACKS.equipmentSlots.torso": "Torso",
+  "ACKS.equipmentSlots.bracers": "Bracers",
+  "ACKS.equipmentSlots.gloves": "Gloves",
+  "ACKS.equipmentSlots.belt": "Belt",
+  "ACKS.equipmentSlots.boots": "Boots",
+  "ACKS.equipmentSlots.ring": "Ring/Earring",
+  "ACKS.equipmentSlots.mainHand": "Main Hand",
+  "ACKS.equipmentSlots.offHand": "Off Hand",
+  "ACKS.equipmentSlots.none": "None",
+
+  "ACKS.equipment.slotOverflow": "Too many items equipped in {slot} slot: {count}/{limit}",
+  "ACKS.equipment.slot": "Equipment Slot",
+  "ACKS.equipment.hand": "Hand",
+  "ACKS.equipment.equipped": "Equipped",
+
+  "ACKS.items.acBonus": "AC Bonus",
+  "ACKS.items.saveBonus": "Save Bonus",
+  "ACKS.items.noStackWith": "Does Not Stack With",
+
   "ACKS.spells.spend": "{speaker} is casting {name}!",
   "ACKS.spells.Memorized": "Memorized",
   "ACKS.spells.Cast": "Cast",

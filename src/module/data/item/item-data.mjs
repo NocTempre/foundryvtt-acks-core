@@ -29,6 +29,16 @@ export default class ItemData extends foundry.abstract.TypeDataModel {
         // max value
         max: new NumberField({ initial: 0, min: 0 }),
       }),
+      // Equipment slot (for accessories: head, neck, cloak, belt, ring, none)
+      slot: new StringField({ choices: CONFIG.ACKS.equipmentSlots, required: false, initial: "none" }),
+      // Is item equipped
+      equipped: new BooleanField({ initial: false }),
+      // AC bonus (for rings of protection, etc.)
+      acBonus: new NumberField({ initial: 0 }),
+      // Save bonus (for various protective items)
+      saveBonus: new NumberField({ initial: 0 }),
+      // Does not stack with similar items (e.g., earring of protection vs ring of protection)
+      noStackWith: new StringField({ blank: true, initial: "" }),
       //TODO: not used? remove?
       treasure: new BooleanField({ initial: false }),
       // TODO: not used anywhere. Remove and add license information to license file?

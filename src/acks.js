@@ -32,6 +32,7 @@ import { ModuleIntegrations } from "./module/module-integrations.js";
 import { HexplorerIntegration } from "./module/hexplorer-integration.js";
 import { HexplorerBrushInjection } from "./module/hexplorer-brush-injection.js";
 import { RoadPainter } from "./module/road-painter.js";
+import { initPaperDollIntegration, isPaperDollActive, ACKS_PAPER_DOLL_CONFIG } from "./module/paperdoll-integration.js";
 
 const slugify = (value) => {
   if (typeof value !== "string" || value.trim() === "") return "";
@@ -340,6 +341,12 @@ Hooks.once("init", async function () {
   HexplorerIntegration.initialize();
   HexplorerBrushInjection.init();
   RoadPainter.init();
+
+  // Initialize Paper Doll UI integration if module is active
+  if (isPaperDollActive()) {
+    initPaperDollIntegration();
+    console.log("ACKS | Paper Doll UI module detected and integrated");
+  }
 
   // Ensure new effect transfer
   CONFIG.ActiveEffect.legacyTransferral = false;
