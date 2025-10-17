@@ -246,7 +246,11 @@
         "rollsToday": [],
         "history": []
       },
-      "splitGroups": []
+      "splitGroups": [],
+      "journal": {
+        "journalId": "",
+        "entries": []
+      }
     },
     "location": {
       "kind": "settlement",

@@ -9,6 +9,7 @@ import { RoadPainter } from "../road-painter.js";
 import { HexplorerIntegration } from "../hexplorer-integration.js";
 import { TERRAIN_CONFIG } from "../terrain-config.js";
 import { templatePath, SYSTEM_ID } from "../config.js";
+import { AcksPartyJournalEntryEditor } from "../dialog/party-journal-entry-editor.js";
 
 // Use Foundry v13 compatible ActorSheet
 const BaseActorSheet = foundry.appv1?.sheets?.ActorSheet ?? ActorSheet;
@@ -64,6 +65,11 @@ export class AcksTravelPartySheet extends BaseActorSheet {
 
     // Current location
     context.currentLocationName = this.actor.getFlag(SYSTEM_ID, "currentLocationName") || null;
+
+    // Prepare journal data
+    context.journalLinked = !!this.actor.system.journal?.journalId;
+    context.simpleQuestActive = game.modules.get("simple-quest")?.active || false;
+    context.journalEntries = await this._prepareJournalEntries();
 
     // Auto-sync token speed when sheet is rendered
     if (context.hexplorerActive && canvas?.tokens) {
@@ -476,6 +482,70 @@ export class AcksTravelPartySheet extends BaseActorSheet {
       this._onWeatherChange.bind(this)
     );
     html.find(".detect-terrain").click(this._onDetectTerrain.bind(this));
+
+    // Journal tab listeners
+    html.find(".journal-create").click((ev) => {
+      ev.preventDefault();
+      this._onJournalCreate();
+    });
+
+    html.find(".journal-open").click((ev) => {
+      ev.preventDefault();
+      this._onJournalOpen();
+    });
+
+    html.find(".journal-simple-quest").click((ev) => {
+      ev.preventDefault();
+      this._onJournalSimpleQuest();
+    });
+
+    html.find(".journal-add-entry").click((ev) => {
+      ev.preventDefault();
+      const entryType = html.find(".journal-entry-type").val();
+      if (!entryType) {
+        ui.notifications.warn("Please select an entry type");
+        return;
+      }
+      this._onJournalAddEntry(entryType);
+      // Reset the selector
+      html.find(".journal-entry-type").val("");
+    });
+
+    html.find(".entry-edit").click((ev) => {
+      ev.preventDefault();
+      const entryId = $(ev.currentTarget).data("entryId");
+      this._onJournalEditEntry(entryId);
+    });
+
+    html.find(".entry-delete").click((ev) => {
+      ev.preventDefault();
+      const entryId = $(ev.currentTarget).data("entryId");
+      this._onJournalDeleteEntry(entryId);
+    });
+
+    html.find(".entry-view-page").click((ev) => {
+      ev.preventDefault();
+      const pageId = $(ev.currentTarget).data("pageId");
+      this._onJournalViewPage(pageId);
+    });
+
+    // Journal filter and sort listeners
+    html.find(".journal-type-filter").change((ev) => {
+      this._onJournalFilter(html);
+    });
+
+    html.find(".journal-sort-order").change((ev) => {
+      this._onJournalSort(html, ev.target.value);
+    });
+
+    html.find(".journal-clear-filters").click((ev) => {
+      ev.preventDefault();
+      // Check all checkboxes
+      html.find(".journal-type-filter").prop("checked", true);
+      html.find(".journal-sort-order").val("newest");
+      this._onJournalFilter(html);
+      this._onJournalSort(html, "newest");
+    });
   }
 
   /**

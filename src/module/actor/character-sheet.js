@@ -638,8 +638,8 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
     });
 
     // Journal filter and sort listeners
-    html.find(".journal-filter-type").change((ev) => {
-      this._onJournalFilter(html, ev.target.value);
+    html.find(".journal-type-filter").change((ev) => {
+      this._onJournalFilter(html);
     });
 
     html.find(".journal-sort-order").change((ev) => {
@@ -648,20 +648,28 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
 
     html.find(".journal-clear-filters").click((ev) => {
       ev.preventDefault();
-      html.find(".journal-filter-type").val("all");
+      // Check all checkboxes
+      html.find(".journal-type-filter").prop("checked", true);
       html.find(".journal-sort-order").val("newest");
-      this._onJournalFilter(html, "all");
+      this._onJournalFilter(html);
       this._onJournalSort(html, "newest");
     });
   }
 
   /* -------------------------------------------- */
   // Journal filter and sort methods
-  _onJournalFilter(html, filterType) {
+  _onJournalFilter(html) {
+    // Get all checked filter values
+    const checkedTypes = [];
+    html.find(".journal-type-filter:checked").each(function() {
+      checkedTypes.push($(this).val());
+    });
+
+    // Show/hide entries based on checked filters
     const entries = html.find(".journal-entry-card");
     entries.each(function() {
       const entryType = $(this).data("entryType");
-      if (filterType === "all" || entryType === filterType) {
+      if (checkedTypes.includes(entryType)) {
         $(this).show();
       } else {
         $(this).hide();

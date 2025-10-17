@@ -31,6 +31,7 @@
     <a class="item" data-tab="vehicles">Vehicles & Mounts</a>
     <a class="item" data-tab="travel">Travel</a>
     <a class="item" data-tab="encounters">Encounters</a>
+    <a class="item" data-tab="journal">Journal</a>
   </nav>
 
   {{! Sheet Body }}
@@ -294,6 +295,11 @@
       {{/if}}
 
       <p class="hint"><em>Automated hourly encounter rolls will be implemented in Phase 4</em></p>
+    </div>
+
+    {{! Journal Tab }}
+    <div class="tab" data-group="primary" data-tab="journal">
+      {{> (acksPartial "actors/partials/party-journal-tab.html")}}
     </div>
 
   </section>
