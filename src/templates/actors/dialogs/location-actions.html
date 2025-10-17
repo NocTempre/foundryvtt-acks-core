@@ -1,0 +1,63 @@
+<form class="{{cssClass}}" autocomplete="off">
+  <div class="dialog-content">
+
+    <div class="location-info" style="background: #f0f0f0; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+      <div class="flexrow">
+        <div class="flexcol" style="flex: 1;">
+          <strong>Location:</strong> {{location.name}}
+        </div>
+        <div class="flexcol" style="flex: 1;">
+          <strong>Actor:</strong> {{actor.name}}
+        </div>
+      </div>
+    </div>
+
+    {{#if actions}}
+    <div class="actions-list">
+      <h3>Available Actions</h3>
+
+      {{#each actions as |action|}}
+      <div class="action-item {{#unless action.available}}disabled{{/unless}}" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 4px; {{#unless action.available}}opacity: 0.5;{{/unless}}">
+        <div class="flexrow" style="align-items: center;">
+          <div class="flexcol" style="flex: 1;">
+            <h4 style="margin: 0;">{{action.name}}</h4>
+            {{#if action.description}}
+            <p style="margin: 5px 0; font-size: 0.9em;">{{action.description}}</p>
+            {{/if}}
+            <div class="action-meta" style="font-size: 0.85em; color: #666;">
+              {{#if action.timeCost}}
+              <span><i class="fas fa-clock"></i> {{action.timeCostLabel}}</span>
+              {{/if}}
+              {{#if action.requirements.gold}}
+              <span style="margin-left: 10px;"><i class="fas fa-coins"></i> {{action.requirements.gold}} gp</span>
+              {{/if}}
+            </div>
+            {{#unless action.available}}
+            <div class="requirements-warning" style="color: #c00; font-size: 0.85em; margin-top: 5px;">
+              <i class="fas fa-exclamation-triangle"></i> Requirements not met
+            </div>
+            {{/unless}}
+          </div>
+          <div class="flexcol">
+            <button type="button" class="execute-action" data-action-id="{{action.id}}" {{#unless action.available}}disabled{{/unless}}>
+              <i class="fas fa-play"></i> Execute
+            </button>
+          </div>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+    {{else}}
+    <div class="no-actions" style="text-align: center; padding: 20px; color: #666;">
+      <i class="fas fa-info-circle"></i> No actions available at this location
+    </div>
+    {{/if}}
+
+  </div>
+
+  <footer class="dialog-buttons" style="margin-top: 15px; text-align: right;">
+    <button type="button" name="close">
+      <i class="fas fa-times"></i> Close
+    </button>
+  </footer>
+</form>

@@ -5,6 +5,11 @@
     <div class="header-fields flexcol">
       <h1 class="charname">
         <input name="name" type="text" value="{{actor.name}}" placeholder="Travel Party Name"/>
+        {{#if currentLocationName}}
+        <span class="current-location" title="Current Location" style="font-size: 0.8em; font-weight: normal; margin-left: 10px;">
+          <i class="fas fa-map-marker-alt"></i> {{currentLocationName}}
+        </span>
+        {{/if}}
       </h1>
       <div class="flexrow">
         <div>

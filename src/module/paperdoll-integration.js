@@ -169,7 +169,7 @@ export function initPaperDollIntegration() {
 
   // Hook into Paper Doll render to add visual feedback
   Hooks.on("renderApplication", (app, html, data) => {
-    if (app.constructor.name === "PaperDoll") {
+    if (app.constructor.name === "PaperDoll" && app.actor?.type === "character") {
       addSlotValidationVisuals(app, html);
     }
   });

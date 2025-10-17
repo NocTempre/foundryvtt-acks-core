@@ -1,0 +1,512 @@
+<form class="{{cssClass}}" autocomplete="off">
+  {{! Sheet Header }}
+  <header class="sheet-header flexrow">
+    <img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
+    <div class="header-fields">
+      <h1 class="charname">
+        <input name="name" type="text" value="{{actor.name}}" placeholder="Location Name" />
+      </h1>
+      <div class="flexrow">
+        <div class="flexcol">
+          <label>Kind</label>
+          <select name="system.kind" class="kind-select">
+            <option value="settlement" {{#if isSettlement}}selected{{/if}}>Settlement</option>
+            <option value="lair" {{#if isLair}}selected{{/if}}>Lair</option>
+            <option value="vessel" {{#if isVessel}}selected{{/if}}>Vessel</option>
+          </select>
+        </div>
+        <div class="flexcol">
+          <label>Tags</label>
+          <input type="text" name="system.tags" value="{{system.tags}}" placeholder="coastal, trading, etc." />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {{! Sheet Tab Navigation }}
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="details">Details</a>
+    <a class="item" data-tab="links">Links</a>
+    <a class="item" data-tab="actions">Actions</a>
+    <a class="item" data-tab="edges">Travel</a>
+    <a class="item" data-tab="cadence">Events</a>
+
+    {{#if isSettlement}}
+    <a class="item" data-tab="market">Market</a>
+    <a class="item" data-tab="services">Services</a>
+    {{/if}}
+
+    {{#if isLair}}
+    <a class="item" data-tab="lair">Lair</a>
+    {{/if}}
+
+    {{#if isVessel}}
+    <a class="item" data-tab="vessel">Vessel</a>
+    {{/if}}
+
+    <a class="item" data-tab="notes">Notes</a>
+  </nav>
+
+  {{! Sheet Body }}
+  <section class="sheet-body">
+
+    {{! Details Tab }}
+    <div class="tab" data-group="primary" data-tab="details">
+      <div class="flexcol">
+        <div class="form-group">
+          <label>Description</label>
+          <div class="editor resizable-editor" data-editor-size="300">
+            {{editor enrichedDescription target="system.details.description" button=true owner=owner editable=editable}}
+          </div>
+        </div>
+
+        <div class="flexrow">
+          {{#if isSettlement}}
+          <div class="flexcol">
+            <label>Population</label>
+            <input type="number" name="system.details.population" value="{{system.details.population}}" />
+          </div>
+          <div class="flexcol">
+            <label>Ruler</label>
+            <input type="text" name="system.details.ruler" value="{{system.details.ruler}}" />
+          </div>
+          <div class="flexcol">
+            <label>Government</label>
+            <input type="text" name="system.details.government" value="{{system.details.government}}" />
+          </div>
+          {{/if}}
+
+          {{#if isLair}}
+          <div class="flexcol">
+            <label>Faction</label>
+            <input type="text" name="system.details.faction" value="{{system.details.faction}}" />
+          </div>
+          <div class="flexcol">
+            <label>Boss</label>
+            <input type="text" name="system.details.boss" value="{{system.details.boss}}" />
+          </div>
+          <div class="flexcol">
+            <label>Threat</label>
+            <select name="system.details.threat">
+              <option value="Minor" {{#if (eq system.details.threat "Minor")}}selected{{/if}}>Minor</option>
+              <option value="Moderate" {{#if (eq system.details.threat "Moderate")}}selected{{/if}}>Moderate</option>
+              <option value="Major" {{#if (eq system.details.threat "Major")}}selected{{/if}}>Major</option>
+              <option value="Deadly" {{#if (eq system.details.threat "Deadly")}}selected{{/if}}>Deadly</option>
+            </select>
+          </div>
+          {{/if}}
+
+          {{#if isVessel}}
+          <div class="flexcol">
+            <label>Vessel Type</label>
+            <input type="text" name="system.details.type" value="{{system.details.type}}" />
+          </div>
+          <div class="flexcol">
+            <label>Captain</label>
+            <input type="text" name="system.details.captain" value="{{system.details.captain}}" />
+          </div>
+          <div class="flexcol">
+            <label>Home Port</label>
+            <input type="text" name="system.details.home" value="{{system.details.home}}" />
+          </div>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+
+    {{! Links Tab }}
+    <div class="tab" data-group="primary" data-tab="links">
+      <div class="flexcol">
+        <h3>Linked Scenes</h3>
+        <p class="hint">Drag scenes here to link them to this location</p>
+        <ul class="linked-list">
+          {{#each linkedScenes}}
+          <li class="flexrow">
+            <span>{{this.name}}</span>
+            <button type="button" class="unlink-document" data-document-type="scenes" data-document-id="{{this.id}}">
+              <i class="fas fa-unlink"></i>
+            </button>
+          </li>
+          {{/each}}
+        </ul>
+
+        <h3>Linked Journals</h3>
+        <p class="hint">Drag journals here to link them to this location</p>
+        <ul class="linked-list">
+          {{#each linkedJournals}}
+          <li class="flexrow">
+            <span>{{this.name}}</span>
+            <button type="button" class="unlink-document" data-document-type="journals" data-document-id="{{this.id}}">
+              <i class="fas fa-unlink"></i>
+            </button>
+          </li>
+          {{/each}}
+        </ul>
+
+        <h3>Linked Actors</h3>
+        <p class="hint">Drag actors here to link them to this location</p>
+        <ul class="linked-list">
+          {{#each linkedActors}}
+          <li class="flexrow">
+            <span>{{this.name}} ({{this.type}})</span>
+            <button type="button" class="unlink-document" data-document-type="actors" data-document-id="{{this.id}}">
+              <i class="fas fa-unlink"></i>
+            </button>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+
+    {{! Actions Tab }}
+    <div class="tab" data-group="primary" data-tab="actions">
+      <div class="flexcol">
+        {{! P2 - Actor Selection for Actions }}
+        {{#if actorsAtLocation}}
+        <div class="actor-action-section" style="background: #f9f9f9; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+          <h4 style="margin-top: 0;">Execute Actions</h4>
+          <p class="hint">Select an actor at this location to view their available actions</p>
+          <div class="flexrow" style="align-items: center; gap: 10px;">
+            <select id="selected-actor-for-actions" style="flex: 1;">
+              <option value="">-- Select Actor --</option>
+              {{#each actorsAtLocation}}
+              <option value="{{this.id}}">{{this.name}} ({{this.type}})</option>
+              {{/each}}
+            </select>
+            <button type="button" class="view-location-actions" data-actor-id="" onclick="this.dataset.actorId = document.getElementById('selected-actor-for-actions').value">
+              <i class="fas fa-play"></i> View Actions
+            </button>
+          </div>
+        </div>
+        {{else}}
+        <div class="no-actors-here" style="background: #f0f0f0; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+          <p class="hint"><i class="fas fa-info-circle"></i> No actors currently at this location. Use "Enter Location" from a token's context menu to bring actors here.</p>
+        </div>
+        {{/if}}
+
+        <hr style="margin: 20px 0;" />
+
+        <div class="flexrow">
+          <h3>Manage Location Actions</h3>
+          <button type="button" class="action-create">
+            <i class="fas fa-plus"></i> Add Action
+          </button>
+        </div>
+        <p class="hint">Define actions that can be performed at this location</p>
+        <ul class="actions-list">
+          {{#each actions}}
+          <li class="flexrow">
+            <div class="flexcol">
+              <strong>{{this.name}}</strong>
+              <span class="hint">Time: {{this.timeCostLabel}}</span>
+            </div>
+            <div class="flexrow">
+              <button type="button" class="action-edit" data-action-id="{{this.id}}">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button type="button" class="action-delete" data-action-id="{{this.id}}">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+
+    {{! Edges/Travel Tab }}
+    <div class="tab" data-group="primary" data-tab="edges">
+      <div class="flexcol">
+        <div class="flexrow">
+          <h3>Travel Routes</h3>
+          <button type="button" class="edge-create">
+            <i class="fas fa-plus"></i> Add Route
+          </button>
+        </div>
+        <p class="hint">Point-crawl connections to other locations</p>
+        <ul class="edges-list">
+          {{#each edges}}
+          <li class="flexrow">
+            <div class="flexcol">
+              <strong>{{this.name}}</strong>
+              <span class="hint">To: {{this.destinationName}} ({{this.nominalHours}} hours)</span>
+            </div>
+            <div class="flexrow">
+              <button type="button" class="edge-edit" data-edge-id="{{this.id}}">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button type="button" class="edge-delete" data-edge-id="{{this.id}}">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+
+    {{! Cadence/Events Tab }}
+    <div class="tab" data-group="primary" data-tab="cadence">
+      <div class="flexcol">
+        <div class="flexrow">
+          <h3>Cadence Checks</h3>
+          <button type="button" class="cadence-create">
+            <i class="fas fa-plus"></i> Add Check
+          </button>
+        </div>
+        <p class="hint">Time-based events (daily, watch, etc.)</p>
+        <ul class="cadence-list">
+          {{#each cadenceChecks}}
+          <li class="flexrow">
+            <div class="flexcol">
+              <strong>{{this.name}}</strong>
+              <span class="hint">Frequency: {{this.frequencyLabel}}</span>
+            </div>
+            <div class="flexrow">
+              <button type="button" class="cadence-edit" data-check-id="{{this.id}}">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button type="button" class="cadence-delete" data-check-id="{{this.id}}">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+
+    {{! Market Tab (Settlement only) }}
+    {{#if isSettlement}}
+    <div class="tab" data-group="primary" data-tab="market">
+      <div class="flexcol">
+        <h3>Market Profile</h3>
+        <div class="flexrow">
+          <div class="flexcol">
+            <label>Market Class</label>
+            <select name="system.market.class">
+              <option value="1" {{#if (eq system.market.class 1)}}selected{{/if}}>I - Thorp</option>
+              <option value="2" {{#if (eq system.market.class 2)}}selected{{/if}}>II - Hamlet</option>
+              <option value="3" {{#if (eq system.market.class 3)}}selected{{/if}}>III - Village</option>
+              <option value="4" {{#if (eq system.market.class 4)}}selected{{/if}}>IV - Town</option>
+              <option value="5" {{#if (eq system.market.class 5)}}selected{{/if}}>V - City</option>
+              <option value="6" {{#if (eq system.market.class 6)}}selected{{/if}}>VI - Metropolis</option>
+            </select>
+          </div>
+          <div class="flexcol">
+            <label>GP Limit</label>
+            <input type="number" name="system.market.gpLimit" value="{{system.market.gpLimit}}" />
+          </div>
+          <div class="flexcol">
+            <label>Tolls (%)</label>
+            <input type="number" name="system.market.tolls" value="{{system.market.tolls}}" />
+          </div>
+          <div class="flexcol">
+            <label>Tariffs (gp)</label>
+            <input type="number" name="system.market.tariffs" value="{{system.market.tariffs}}" />
+          </div>
+        </div>
+
+        <div class="flexrow">
+          <button type="button" class="generate-stock">
+            <i class="fas fa-dice"></i> Generate Stock
+          </button>
+          <button type="button" class="restock-now">
+            <i class="fas fa-sync"></i> Restock Now
+          </button>
+        </div>
+
+        <p class="hint">Stock generation and market features coming in P3</p>
+      </div>
+    </div>
+    {{/if}}
+
+    {{! Services Tab (Settlement only) }}
+    {{#if isSettlement}}
+    <div class="tab" data-group="primary" data-tab="services">
+      <div class="flexcol">
+        <h3>Available Services</h3>
+
+        <div class="service-section">
+          <h4>Lodging</h4>
+          <div class="flexrow">
+            <label>
+              <input type="checkbox" name="system.services.lodging.available" {{#if system.services.lodging.available}}checked{{/if}} />
+              Available
+            </label>
+            <div class="flexcol">
+              <label>Cost/Day (gp)</label>
+              <input type="number" name="system.services.lodging.costPerDay" value="{{system.services.lodging.costPerDay}}" />
+            </div>
+            <div class="flexcol">
+              <label>Quality</label>
+              <select name="system.services.lodging.quality">
+                <option value="poor" {{#if (eq system.services.lodging.quality "poor")}}selected{{/if}}>Poor</option>
+                <option value="average" {{#if (eq system.services.lodging.quality "average")}}selected{{/if}}>Average</option>
+                <option value="good" {{#if (eq system.services.lodging.quality "good")}}selected{{/if}}>Good</option>
+                <option value="luxury" {{#if (eq system.services.lodging.quality "luxury")}}selected{{/if}}>Luxury</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="service-section">
+          <h4>Healing</h4>
+          <div class="flexrow">
+            <label>
+              <input type="checkbox" name="system.services.healing.available" {{#if system.services.healing.available}}checked{{/if}} />
+              Available
+            </label>
+            <div class="flexcol">
+              <label>Max Spell Level</label>
+              <input type="number" name="system.services.healing.maxLevel" value="{{system.services.healing.maxLevel}}" />
+            </div>
+          </div>
+        </div>
+
+        <p class="hint">Additional service configuration coming in P4</p>
+      </div>
+    </div>
+    {{/if}}
+
+    {{! Lair Tab }}
+    {{#if isLair}}
+    <div class="tab" data-group="primary" data-tab="lair">
+      <div class="flexcol">
+        <h3>Lair Status</h3>
+
+        <div class="flexrow">
+          <div class="flexcol">
+            <label>Exclusivity</label>
+            <select name="system.lair.exclusivity">
+              <option value="none" {{#if (eq system.lair.exclusivity "none")}}selected{{/if}}>None</option>
+              <option value="party" {{#if (eq system.lair.exclusivity "party")}}selected{{/if}}>Party</option>
+              <option value="slot-based" {{#if (eq system.lair.exclusivity "slot-based")}}selected{{/if}}>Slot-based</option>
+            </select>
+          </div>
+          <div class="flexcol">
+            <label>Capacity</label>
+            <input type="number" name="system.lair.capacity" value="{{system.lair.capacity}}" />
+          </div>
+          <div class="flexcol">
+            <label>Reset After (hours)</label>
+            <input type="number" name="system.lair.resetAfter" value="{{system.lair.resetAfter}}" />
+          </div>
+        </div>
+
+        <div class="flexrow">
+          <label>
+            <input type="checkbox" name="system.lair.cleared" {{#if system.lair.cleared}}checked{{/if}} disabled />
+            Cleared
+          </label>
+          {{#if system.lair.cleared}}
+          <span>Cleared at: {{system.lair.clearedAt}}</span>
+          {{/if}}
+        </div>
+
+        <div class="flexrow">
+          <button type="button" class="mark-cleared">
+            <i class="fas fa-check"></i> Mark Cleared
+          </button>
+          <button type="button" class="reset-lair">
+            <i class="fas fa-undo"></i> Reset Lair
+          </button>
+        </div>
+
+        <h4>Current Occupants</h4>
+        <ul class="occupants-list">
+          {{#each occupantActors}}
+          <li class="flexrow">
+            <span>{{this.name}}</span>
+            <button type="button" class="remove-occupant" data-occupant-uuid="{{this.uuid}}">
+              <i class="fas fa-times"></i>
+            </button>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+    {{/if}}
+
+    {{! Vessel Tab }}
+    {{#if isVessel}}
+    <div class="tab" data-group="primary" data-tab="vessel">
+      <div class="flexcol">
+        <h3>Vessel Status</h3>
+
+        <div class="flexrow">
+          <div class="flexcol">
+            <label>Status</label>
+            <select name="system.vessel.status">
+              <option value="docked" {{#if (eq system.vessel.status "docked")}}selected{{/if}}>Docked</option>
+              <option value="underway" {{#if (eq system.vessel.status "underway")}}selected{{/if}}>Underway</option>
+              <option value="damaged" {{#if (eq system.vessel.status "damaged")}}selected{{/if}}>Damaged</option>
+            </select>
+          </div>
+          {{#if (eq system.vessel.status "underway")}}
+          <div class="flexcol">
+            <label>Voyage Progress</label>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: {{voyageProgress.percent}}%;"></div>
+              <span>{{voyageProgress.label}}</span>
+            </div>
+          </div>
+          {{/if}}
+        </div>
+
+        <h4>Crew</h4>
+        <div class="flexrow">
+          <div class="flexcol">
+            <label>Min Crew</label>
+            <input type="number" name="system.vessel.crew.min" value="{{system.vessel.crew.min}}" />
+          </div>
+          <div class="flexcol">
+            <label>Max Crew</label>
+            <input type="number" name="system.vessel.crew.max" value="{{system.vessel.crew.max}}" />
+          </div>
+          <div class="flexcol">
+            <label>Wages (gp/day)</label>
+            <input type="number" name="system.vessel.crew.wages" value="{{system.vessel.crew.wages}}" />
+          </div>
+        </div>
+
+        <ul class="crew-list">
+          {{#each crewActors}}
+          <li class="flexrow">
+            <span>{{this.name}}</span>
+            <button type="button" class="remove-crew" data-crew-uuid="{{this.uuid}}">
+              <i class="fas fa-times"></i>
+            </button>
+          </li>
+          {{/each}}
+        </ul>
+
+        <h4>Cargo</h4>
+        <div class="flexrow">
+          <div class="flexcol">
+            <label>Capacity (stone)</label>
+            <input type="number" name="system.vessel.cargo.stoneCapacity" value="{{system.vessel.cargo.stoneCapacity}}" />
+          </div>
+          <div class="flexcol">
+            <label>Current (stone)</label>
+            <input type="number" name="system.vessel.cargo.currentStone" value="{{system.vessel.cargo.currentStone}}" />
+          </div>
+        </div>
+      </div>
+    </div>
+    {{/if}}
+
+    {{! Notes Tab }}
+    <div class="tab" data-group="primary" data-tab="notes">
+      <div class="flexcol">
+        <div class="form-group">
+          <label>Notes</label>
+          <div class="editor resizable-editor" data-editor-size="400">
+            {{editor enrichedNotes target="system.details.notes" button=true owner=owner editable=editable}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</form>

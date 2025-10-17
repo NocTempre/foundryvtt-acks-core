@@ -63,6 +63,9 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
     data.simpleQuestActive = game.modules.get("simple-quest")?.active || false;
     data.journalEntries = await this._prepareJournalEntries();
 
+    // Current location
+    data.currentLocationName = this.actor.getFlag(SYSTEM_ID, "currentLocationName") || null;
+
     return data;
   }
 

@@ -4,6 +4,7 @@ import { AcksActorSheetCharacter } from "./module/actor/character-sheet.js";
 import { AcksActorSheetCharacterV2 } from "./module/actor/character-sheet-v2.js";
 import { AcksActorSheetMonster } from "./module/actor/monster-sheet.js";
 import { AcksTravelPartySheet } from "./module/actor/travel-party-sheet.js";
+import { AcksActorSheetLocation } from "./module/actor/location-sheet.js";
 import { preloadHandlebarsTemplates } from "./module/preloadTemplates.js";
 import { AcksActor } from "./module/actor/entity.js";
 import { AcksItem } from "./module/documents/item.js";
@@ -33,6 +34,7 @@ import { HexplorerIntegration } from "./module/hexplorer-integration.js";
 import { HexplorerBrushInjection } from "./module/hexplorer-brush-injection.js";
 import { RoadPainter } from "./module/road-painter.js";
 import { initPaperDollIntegration, isPaperDollActive, ACKS_PAPER_DOLL_CONFIG } from "./module/paperdoll-integration.js";
+import { AcksLocationContext } from "./module/location-context.js";
 
 const slugify = (value) => {
   if (typeof value !== "string" || value.trim() === "") return "";
@@ -314,6 +316,11 @@ Hooks.once("init", async function () {
     types: ["travel-party"],
     makeDefault: true,
   });
+  ActorsCollection.registerSheet(SYSTEM_ID, AcksActorSheetLocation, {
+    types: ["location"],
+    makeDefault: true,
+    label: "ACKS Location Sheet",
+  });
   // Unregister default item sheet
   ItemsCollection.unregisterSheet("core", ItemSheetV1);
   if (AcksUtility.isMinVersion(13)) {
@@ -335,6 +342,7 @@ Hooks.once("init", async function () {
 
   AcksTokenHud.init();
   AcksCommands.init();
+  AcksLocationContext.init();
 
   // Initialize module integrations
   ModuleIntegrations.init();

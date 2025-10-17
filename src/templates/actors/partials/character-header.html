@@ -2,6 +2,11 @@
 <section class="header-details flexrow">
   <h1 class="charname">
     <input name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'ACKS.details.name'}}" data-dtype="String" />
+    {{#if currentLocationName}}
+    <span class="current-location" title="Current Location">
+      <i class="fas fa-map-marker-alt"></i> {{currentLocationName}}
+    </span>
+    {{/if}}
   </h1>
   <ul class="summary flexrow">
     <li class="medium-text-field-section">

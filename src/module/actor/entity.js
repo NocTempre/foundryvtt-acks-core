@@ -91,8 +91,8 @@ export class AcksActor extends Actor {
    * Extends data from base Actor class
    */
   computeAdditionnalData() {
-    // Skip derived data computation for travel-party
-    if (this.type === "travel-party") {
+    // Skip derived data computation for travel-party and location
+    if (this.type === "travel-party" || this.type === "location") {
       return;
     }
 
@@ -450,8 +450,8 @@ export class AcksActor extends Actor {
 
   /* -------------------------------------------- */
   async updateImplements() {
-    // Skip for travel-party actors
-    if (this.type === "travel-party") {
+    // Skip for travel-party and location actors
+    if (this.type === "travel-party" || this.type === "location") {
       return;
     }
     if (this.system.saves.implements?.value == -1) {

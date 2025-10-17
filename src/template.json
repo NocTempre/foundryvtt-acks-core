@@ -1,6 +1,6 @@
 {
   "Actor": {
-    "types": ["character", "monster", "travel-party"],
+    "types": ["character", "monster", "travel-party", "location"],
     "templates": {
       "common": {
         "isNew": false,
@@ -247,6 +247,143 @@
         "history": []
       },
       "splitGroups": []
+    },
+    "location": {
+      "kind": "settlement",
+      "details": {
+        "description": "",
+        "population": 0,
+        "ruler": "",
+        "government": "Autocracy",
+        "faction": "",
+        "boss": "",
+        "threat": "Minor",
+        "type": "Galley",
+        "captain": "",
+        "home": "",
+        "founded": "",
+        "notes": ""
+      },
+      "tags": [],
+      "links": {
+        "scenes": [],
+        "journals": [],
+        "actors": [],
+        "playlists": []
+      },
+      "actions": [],
+      "edges": [],
+      "cadence": {
+        "checks": []
+      },
+      "law": {
+        "level": 3,
+        "fees": 0,
+        "curfew": "",
+        "crimes": ""
+      },
+      "market": {
+        "class": 4,
+        "demandModifiers": {},
+        "gpLimit": 0,
+        "tolls": 0,
+        "tariffs": 0,
+        "stockFolders": [],
+        "restockEvery": 7,
+        "lastRestock": 0,
+        "tradeOps": {
+          "arbitrage": {
+            "active": false,
+            "direction": "",
+            "shiftChance": 0.1,
+            "lastRoll": 0
+          },
+          "charter": {
+            "active": false,
+            "target": "",
+            "payout": 0
+          }
+        }
+      },
+      "stockPools": {
+        "equipment": {},
+        "spellSlotsByLevel": {},
+        "hirelings": [],
+        "consignments": [],
+        "passengers": []
+      },
+      "services": {
+        "lodging": {
+          "available": true,
+          "costPerDay": 1,
+          "quality": "poor"
+        },
+        "healing": {
+          "available": false,
+          "maxLevel": 0
+        },
+        "training": {
+          "available": false,
+          "trainers": []
+        },
+        "guilds": [],
+        "temples": [],
+        "shipyard": {
+          "available": false,
+          "dockingFee": 0,
+          "repairRate": 0
+        }
+      },
+      "domain": {
+        "isCapital": false,
+        "recruitment": false,
+        "taxation": 0
+      },
+      "lair": {
+        "exclusivity": "party",
+        "capacity": 8,
+        "currentOccupants": [],
+        "cleared": false,
+        "clearedBy": null,
+        "clearedAt": null,
+        "resetAfter": 168,
+        "respawnPolicy": "full",
+        "keyActors": []
+      },
+      "treasure": {
+        "estimatedValue": 0,
+        "lootTables": []
+      },
+      "vessel": {
+        "crew": {
+          "min": 0,
+          "max": 0,
+          "current": [],
+          "wages": 0
+        },
+        "berths": {
+          "total": 0,
+          "occupied": []
+        },
+        "cargo": {
+          "stoneCapacity": 0,
+          "currentStone": 0,
+          "manifest": []
+        },
+        "upkeep": {
+          "perDay": 0,
+          "lastPaid": 0
+        },
+        "status": "docked",
+        "currentPort": null,
+        "voyage": {
+          "edgeId": null,
+          "destination": null,
+          "progressHours": 0,
+          "totalHours": 0,
+          "departed": null
+        }
+      }
     }
   },
   "Item": {

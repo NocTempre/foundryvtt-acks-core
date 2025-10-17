@@ -8,7 +8,7 @@
 import { RoadPainter } from "../road-painter.js";
 import { HexplorerIntegration } from "../hexplorer-integration.js";
 import { TERRAIN_CONFIG } from "../terrain-config.js";
-import { templatePath } from "../config.js";
+import { templatePath, SYSTEM_ID } from "../config.js";
 
 // Use Foundry v13 compatible ActorSheet
 const BaseActorSheet = foundry.appv1?.sheets?.ActorSheet ?? ActorSheet;
@@ -61,6 +61,9 @@ export class AcksTravelPartySheet extends BaseActorSheet {
 
     // Flags
     context.hexplorerActive = game.modules.get("hexplorer")?.active;
+
+    // Current location
+    context.currentLocationName = this.actor.getFlag(SYSTEM_ID, "currentLocationName") || null;
 
     // Auto-sync token speed when sheet is rendered
     if (context.hexplorerActive && canvas?.tokens) {

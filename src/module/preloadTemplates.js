@@ -5,6 +5,7 @@ export const preloadHandlebarsTemplates = async function () {
     // Character Sheets
     "actors/character-sheet.html",
     "actors/monster-sheet.html",
+    "actors/location-sheet.html",
     // Actor partials
     // Sheet tabs
     "actors/partials/character-header.html",
@@ -32,6 +33,9 @@ export const preloadHandlebarsTemplates = async function () {
     "actors/partials-v2/character-initiative-v2.html",
     "actors/partials-v2/character-adventuring-v2.html",
     "actors/partials-v2/character-weapons-v2.html",
+
+    // Dialog templates
+    "actors/dialogs/location-actions.html",
 
     "items/partials/item-generic-effects-tab.html",
 

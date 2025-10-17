@@ -152,4 +152,14 @@ export const registerMainSettings = async () => {
     config: true,
     requiresReload: true
   });
+
+  // Location System Settings
+  game.settings.register(SYSTEM_ID, "gameTime", {
+    name: "Game Time (hours)",
+    hint: "Tracks elapsed game time in hours for location actions and cadence checks",
+    default: 0,
+    scope: "world",
+    type: Number,
+    config: false
+  });
 };
