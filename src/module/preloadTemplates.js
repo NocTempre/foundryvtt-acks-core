@@ -18,7 +18,6 @@ export const preloadHandlebarsTemplates = async function () {
     "actors/partials/character-journal-tab.html",
     "actors/partials/character-effects-tab.html",
     "actors/partials/character-hirelings-tab.html",
-    "actors/partials/party-journal-tab.html",
     "actors/partials/monster-header.html",
     "actors/partials/monster-attributes-tab.html",
 

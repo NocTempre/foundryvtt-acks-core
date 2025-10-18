@@ -59,6 +59,7 @@ export class AcksJournalEntryEditor extends FormApplication {
     data.typeLabel = typeLabels[this.entryData.type] || "Unknown";
     data.data = this.entryData.data || {};
     data.gameDate = this.entryData.gameDate || "";
+    data.gmOnly = this.entryData.gmOnly || false;
     data.owner = true;
     data.editable = true;
 
@@ -82,6 +83,7 @@ export class AcksJournalEntryEditor extends FormApplication {
       data: {},
       timestamp: this.entryData.timestamp || Date.now(),
       gameDate: formData.gameDate?.trim() || "",
+      gmOnly: formData.gmOnly || false,
     };
 
     // Extract all data fields (including HTML from editors)
@@ -126,6 +128,7 @@ export class AcksJournalEntryEditor extends FormApplication {
       type: entryData.type,
       pageId: pageData.id || pageData._id,
       timestamp: entryData.timestamp,
+      gmOnly: entryData.gmOnly,
     };
 
     if (existingIndex >= 0) {
@@ -199,12 +202,19 @@ export class AcksJournalEntryEditor extends FormApplication {
           entryData: entryData.data,
           timestamp: entryData.timestamp,
           gameDate: entryData.gameDate,
+          gmOnly: entryData.gmOnly,
         },
       },
     };
 
-    // Pages inherit ownership from the parent journal
-    // GMs can control visibility through the journal's ownership settings
+    // Only set custom ownership for GM-only entries
+    // Otherwise, let it inherit from the journal (don't set empty object)
+    if (entryData.gmOnly) {
+      pageData.ownership = {
+        default: CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE,
+        [game.user.id]: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER,
+      };
+    }
 
     if (existingPage) {
       await existingPage.update(pageData);
@@ -244,6 +254,10 @@ export class AcksJournalEntryEditor extends FormApplication {
       name += ` (Session ${data.session})`;
     }
 
+    if (entryData.gmOnly) {
+      name = `[GM] ${name}`;
+    }
+
     return name;
   }
 
@@ -262,6 +276,10 @@ export class AcksJournalEntryEditor extends FormApplication {
     };
 
     let html = `<h1>${typeLabels[entryData.type]}</h1>`;
+
+    if (entryData.gmOnly) {
+      html += `<p><em style="color: #a00;"><strong>[GM ONLY]</strong></em></p>`;
+    }
 
     if (entryData.gameDate) {
       html += `<p><strong>Game Date:</strong> ${entryData.gameDate}</p>`;

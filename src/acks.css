@@ -2033,10 +2033,8 @@
 
 .journal-tab .journal-entry-list-container {
   max-height: 400px;
-  overflow-y: scroll;
-  overflow-x: hidden;
+  overflow-y: auto;
   padding-right: 5px;
-  position: relative;
 }
 
 .journal-tab .journal-entry-list-container::-webkit-scrollbar {
