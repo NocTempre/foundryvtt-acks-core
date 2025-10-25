@@ -313,6 +313,12 @@ export const ACKS = {
     high_encumbrance: 30,
     overburdened: 0,
   },
+  body_weight: {
+    character: 12,        // Average human body weight in stone
+    small_creature: 5,    // Halfling, gnome, etc
+    large_creature: 30,   // Ogre, large humanoids
+    default: 12,
+  },
   mortal_treatment_timing: {
     2: { label: "Treatment within 1 Round (+2)", value: 2 },
     "-3": { label: "Treatment within 1 Turn of Injury (-3)", value: -3 },

@@ -1140,14 +1140,32 @@ export class AcksActor extends Actor {
     this.items.forEach((item) => {
       let itemWeight = 0;
 
-      if (item.type === "item" && item.system.subtype != "clothing") {
-        itemWeight = item.system.weight6 * item.system.quantity.value;
-      } else if (["weapon", "armor"].includes(item.type)) {
-        itemWeight = item.system.weight6;
+      // Skip items that are inside containers
+      const isInContainer = item.getFlag("acks-core", "containedIn");
+      if (isInContainer) {
+        return; // Skip - weight counted in container
       }
 
-      // Convert to stone
-      itemWeight /= 6;
+      if (item.type === "item" && item.system.subtype != "clothing") {
+        // Check if this is a container
+        if (item.system.container?.isContainer) {
+          // Use container weight calculation (includes contents with reduction)
+          const baseWeight = item.system.weight6 || 0;
+          const contentsWeight = item.system.container.currentWeight || 0;
+          const reduction = item.system.container.capacityReduction || 0;
+
+          // Base weight + (contents weight * (1 - reduction))
+          itemWeight = (baseWeight / 6) + (contentsWeight * (1 - reduction));
+        } else {
+          itemWeight = item.system.weight6 * item.system.quantity.value;
+          // Convert to stone
+          itemWeight /= 6;
+        }
+      } else if (["weapon", "armor"].includes(item.type)) {
+        itemWeight = item.system.weight6;
+        // Convert to stone
+        itemWeight /= 6;
+      }
 
       // Check if this item is lent from someone else
       const isLent = item.system.ownership?.isLent &&

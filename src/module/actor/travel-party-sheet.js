@@ -205,8 +205,12 @@ export class AcksTravelPartySheet extends BaseActorSheet {
     return vehicleItems.map((vehicle) => {
       const v = vehicle.system;
 
+      // Calculate actual cargo weight from passengers and cargo items
+      const actualCargo = this._calculateVehicleCargo(vehicle);
+
       // Determine if vehicle is overloaded
-      const isHeavy = v.cargo.current > v.cargo.normal;
+      const isHeavy = actualCargo > v.cargo.normal;
+      const isOverloaded = actualCargo > v.cargo.heavy;
       const currentSpeed = isHeavy ? v.speed.expeditionHeavy : v.speed.expedition;
 
       // Calculate total pulling power from assigned animals (sum of normal loads in stone)
@@ -220,6 +224,9 @@ export class AcksTravelPartySheet extends BaseActorSheet {
       // Check if vehicle has valid animal configuration
       const hasEnoughAnimals = totalPullingPower >= minLoad && assignedAnimals.length >= minCount;
       const tooManyAnimals = assignedAnimals.length > maxCount || totalPullingPower > maxLoad;
+
+      // Check if animals can pull the load
+      const canPullLoad = totalPullingPower >= actualCargo;
 
       return {
         id: vehicle.id,
@@ -241,12 +248,84 @@ export class AcksTravelPartySheet extends BaseActorSheet {
         animalPower: totalPullingPower,
         hasEnoughAnimals: hasEnoughAnimals,
         tooManyAnimals: tooManyAnimals,
-        cargo: v.cargo,
+        cargo: {
+          ...v.cargo,
+          current: actualCargo,  // Override with calculated value
+          actual: actualCargo
+        },
         cargoLoad: isHeavy ? "Heavy" : "Normal",
         speed: currentSpeed,
         isHeavy: isHeavy,
+        isOverloaded: isOverloaded,
+        canPullLoad: canPullLoad,
       };
     });
+  }
+
+  /**
+   * Calculate total cargo weight for a vehicle
+   * Includes passengers (with body weight) and cargo items transferred to vehicle
+   */
+  _calculateVehicleCargo(vehicle) {
+    const v = vehicle.system;
+    let totalWeight = 0;
+
+    // Add passenger body weight
+    const passengers = v.slots.passengers || [];
+    passengers.forEach(passenger => {
+      const actor = game.actors.get(passenger.actorId);
+      if (actor) {
+        // Use body weight constant + their encumbrance
+        const bodyWeight = this._getBodyWeight(actor);
+        const gear = actor.system.encumbrance?.value || 0;
+        totalWeight += bodyWeight + gear;
+      }
+    });
+
+    // Add crew body weight (crew members carry minimal gear)
+    const crew = v.slots.crew || [];
+    crew.forEach(crewMember => {
+      const actor = game.actors.get(crewMember.actorId);
+      if (actor) {
+        const bodyWeight = this._getBodyWeight(actor);
+        // Crew only carries personal weapons/armor (estimate 2 stone max)
+        const gear = Math.min(actor.system.encumbrance?.value || 0, 2);
+        totalWeight += bodyWeight + gear;
+      }
+    });
+
+    // Add items transferred to vehicle
+    const receivedItems = vehicle.items.filter(item => {
+      const ownership = item.system.ownership;
+      return ownership?.isLent && ownership?.currentCarrier === vehicle.id;
+    });
+
+    receivedItems.forEach(item => {
+      totalWeight += ItemTransfer.getItemWeight(item);
+    });
+
+    // Add static cargo from vehicle.cargo.current if manually set
+    // (for items not tracked individually)
+    if (v.cargo.current > 0) {
+      totalWeight += v.cargo.current;
+    }
+
+    return Math.round(totalWeight);
+  }
+
+  /**
+   * Get body weight for an actor
+   */
+  _getBodyWeight(actor) {
+    if (actor.type === "character") {
+      // Could check for size categories here (small, large, etc)
+      return CONFIG.ACKS.body_weight?.character || 12;
+    } else if (actor.type === "monster") {
+      // For monsters, could use HD or size to estimate
+      // For now, use default
+      return CONFIG.ACKS.body_weight?.default || 12;
+    }
+    return CONFIG.ACKS.body_weight?.default || 12;
   }
 
   /**

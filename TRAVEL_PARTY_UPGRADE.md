@@ -280,27 +280,120 @@ await ItemTransferDialog.showRetrieveDialog(ownerActor);
 - [ ] Move tokens to same hex
 - [ ] Try to retrieve (should succeed)
 
+### Container Items
+
+- [ ] Create a backpack container (10 stone capacity, no reduction)
+- [ ] Add items to container via API
+- [ ] Verify container weight = base weight + contents weight
+- [ ] Create bag of holding (100 stone capacity, 90% reduction)
+- [ ] Add 50 stone of items to bag of holding
+- [ ] Verify character encumbrance = bag weight (1 stone) + effective contents (5 stone) = 6 stone
+- [ ] Try to create saddlebag with requiresMount=true on character without mount (should fail)
+- [ ] Add mount to party, try again (should succeed)
+- [ ] View container contents dialog
+- [ ] Remove items from container
+
+### Vehicle Cargo
+
+- [ ] Create vehicle with 2 passengers
+- [ ] Verify cargo shows passenger body weight (12 stone each) + their gear
+- [ ] Add crew member, verify crew weight is minimal (body + max 2 stone gear)
+- [ ] Transfer items to vehicle, verify cargo updates
+- [ ] Overload vehicle beyond normal capacity, verify orange "Heavy" warning
+- [ ] Overload beyond maximum, verify red "OVERLOADED!" warning
+- [ ] Assign insufficient draft animals, verify "CANNOT MOVE!" warning
+- [ ] Add enough animals, verify warnings clear
+
+## Phase 2: Containers & Enhanced Vehicles (IMPLEMENTED)
+
+### Container Items ✅
+
+**Implemented Features:**
+- Bags, chests, saddlebags support
+- Weight reduction (bag of holding: 90% reduction)
+- Items flagged as "contained in" to track nesting
+- Containers can require mounts (saddlebags must be on mount/vehicle)
+- Automatic encumbrance calculation includes container weight reduction
+
+**API:**
+```javascript
+// Create a container
+const bag = await game.acks.ContainerManager.createContainer(actor, {
+  name: "Backpack",
+  capacity: 10,          // 10 stone capacity
+  capacityReduction: 0,  // 0 = normal bag (full weight)
+  requiresMount: false,
+  baseWeight: 0.5,      // Bag itself weighs 0.5 stone
+  img: "icons/containers/bags/pack-leather-brown-tan.webp"
+});
+
+// Bag of Holding example
+const magicBag = await game.acks.ContainerManager.createContainer(actor, {
+  name: "Bag of Holding",
+  capacity: 100,
+  capacityReduction: 0.9,  // 90% weight reduction!
+  baseWeight: 1
+});
+
+// Add item to container
+await game.acks.ContainerManager.addToContainer(item, container, carrier);
+
+// Remove item from container
+await game.acks.ContainerManager.removeFromContainer(itemId, container, carrier);
+
+// Show container contents dialog
+await game.acks.ContainerManager.showContainerDialog(container, carrier);
+```
+
+### Enhanced Vehicle System ✅
+
+**Implemented Features:**
+- Automatic cargo calculation from passengers + crew + items
+- Body weight constants (configurable per actor type)
+- Vehicle cargo displays: current/normal (max: heavy)
+- Overload warnings (red) and cannot-move warnings (orange)
+- Draft animal pulling power vs cargo weight validation
+- Heavy load penalties (reduced speed)
+
+**Body Weight Configuration:**
+```javascript
+CONFIG.ACKS.body_weight = {
+  character: 12,        // Average human
+  small_creature: 5,    // Halfling, gnome
+  large_creature: 30,   // Ogre, etc
+  default: 12
+};
+```
+
+**Vehicle Cargo Display:**
+- Shows actual cargo (passengers + crew + items)
+- Color-coded: normal (black), heavy (orange), overloaded (red)
+- Warnings if draft animals can't pull the load
+- Warnings if exceeds maximum capacity
+
 ## Future Enhancements
 
-### Phase 2: Containers & Mount Equipment
+### Phase 3: Mount Equipment (Structure Ready, Not Implemented)
 
-1. **Container Items**
-   - Bags, chests, saddlebags
-   - Weight reduction (bag of holding)
-   - Drag items into containers
-   - Containers require mounts (saddlebags)
+Data structures are in place for:
 
-2. **Mount Equipment**
+1. **Mount Equipment**
    - Saddles (increase capacity, allow riding)
    - Harnesses (increase draft capacity)
    - Barding (armor for mounts)
    - Equipment compatibility checks
 
-3. **Enhanced Vehicle System**
-   - Calculate cargo from assigned passengers + items
-   - Body weight for passengers (configurable, default 12 stone)
-   - Vehicle speed based on cargo vs animal pulling power
-   - Overloaded vehicle warnings
+Already in template.json:
+```javascript
+system.mountEquipment: {
+  equipmentType: "saddle" | "harness" | "barding",
+  capacityBonus: 5,        // +5 stone capacity
+  speedModifier: 2,        // +2 miles/day
+  mountTypes: ["riding-horse", "mule"]  // Compatibility
+}
+```
+
+Ready for implementation when needed!
 
 ### Phase 3: Advanced Features
 
