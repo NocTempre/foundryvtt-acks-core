@@ -35,6 +35,7 @@ import { HexplorerBrushInjection } from "./module/hexplorer-brush-injection.js";
 import { RoadPainter } from "./module/road-painter.js";
 import { initPaperDollIntegration, isPaperDollActive, ACKS_PAPER_DOLL_CONFIG } from "./module/paperdoll-integration.js";
 import { AcksLocationContext } from "./module/location-context.js";
+import { ItemTransfer } from "./module/item-transfer.js";
 
 const slugify = (value) => {
   if (typeof value !== "string" || value.trim() === "") return "";
@@ -277,6 +278,7 @@ Hooks.once("init", async function () {
   game.acks = {
     rollItemMacro: macros.rollItemMacro,
     brushes: HexplorerBrushInjection,
+    ItemTransfer: ItemTransfer,
   };
 
   // Custom Handlebars helpers

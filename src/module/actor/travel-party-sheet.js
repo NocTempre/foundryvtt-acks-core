@@ -9,6 +9,7 @@ import { RoadPainter } from "../road-painter.js";
 import { HexplorerIntegration } from "../hexplorer-integration.js";
 import { TERRAIN_CONFIG } from "../terrain-config.js";
 import { templatePath, SYSTEM_ID } from "../config.js";
+import { ItemTransfer } from "../item-transfer.js";
 
 // Use Foundry v13 compatible ActorSheet
 const BaseActorSheet = foundry.appv1?.sheets?.ActorSheet ?? ActorSheet;
@@ -75,7 +76,7 @@ export class AcksTravelPartySheet extends BaseActorSheet {
 
   /**
    * Prepare member data with actor references
-   * Groups by name and counts duplicates, tracks vehicle assignments
+   * Groups by name and counts duplicates, tracks vehicle assignments and encumbrance
    */
   _prepareMembers(includeAssignments = true) {
     const members = this.actor.system.members || [];
@@ -91,7 +92,8 @@ export class AcksTravelPartySheet extends BaseActorSheet {
           if (c.memberIndex !== undefined) {
             assignmentMap.set(c.memberIndex, {
               type: "crew",
-              vehicleName: vehicle.name
+              vehicleName: vehicle.name,
+              vehicleId: vehicle.id
             });
           }
         });
@@ -100,7 +102,8 @@ export class AcksTravelPartySheet extends BaseActorSheet {
           if (p.memberIndex !== undefined) {
             assignmentMap.set(p.memberIndex, {
               type: "passenger",
-              vehicleName: vehicle.name
+              vehicleName: vehicle.name,
+              vehicleId: vehicle.id
             });
           }
         });
@@ -109,7 +112,8 @@ export class AcksTravelPartySheet extends BaseActorSheet {
           if (a.sourceMemberIndex !== undefined) {
             assignmentMap.set(a.sourceMemberIndex, {
               type: "animal",
-              vehicleName: vehicle.name
+              vehicleName: vehicle.name,
+              vehicleId: vehicle.id
             });
           }
         });
@@ -124,10 +128,24 @@ export class AcksTravelPartySheet extends BaseActorSheet {
 
       const name = actor.name;
       if (!grouped.has(name)) {
+        // Get encumbrance info
+        const encumbrance = actor.system.encumbrance || {};
+        const delegatedItems = actor.system.delegatedItems || [];
+
         grouped.set(name, {
           name: name,
           img: actor.img,
+          type: actor.type,
           expeditionSpeed: actor.system.movementacks?.expedition || 24,
+          encumbrance: {
+            current: encumbrance.value || 0,
+            max: encumbrance.max || 20,
+            ownItems: encumbrance.ownItems || 0,
+            receivedItems: encumbrance.receivedItems || 0,
+            delegatedCount: delegatedItems.length
+          },
+          isDraftAnimal: actor.type === "monster" && actor.system.draftAnimal?.enabled,
+          canBeRidden: actor.type === "monster" && actor.system.mountStats?.canBeRidden,
           memberIndices: [], // Track which member array indices
           actorId: member.actorId, // All in group share same actorId
           assigned: [],
@@ -157,6 +175,8 @@ export class AcksTravelPartySheet extends BaseActorSheet {
       displayName: group.count > 1 ? `${group.name} (${group.count})` : group.name,
       hasAssignments: group.assigned.length > 0,
       assignmentSummary: group.assigned.map(a => `${a.type}: ${a.vehicleName}`).join(", "),
+      encumbranceDisplay: `${group.encumbrance.current}/${group.encumbrance.max} st`,
+      isOverloaded: group.encumbrance.current > group.encumbrance.max,
     }));
   }
 
@@ -447,6 +467,7 @@ export class AcksTravelPartySheet extends BaseActorSheet {
     // Member management
     html.find(".add-member").click(this._onAddMember.bind(this));
     html.find(".remove-member").click(this._onRemoveMember.bind(this));
+    html.find(".open-actor-sheet").click(this._onOpenActorSheet.bind(this));
 
     // Vehicle management
     html.find(".create-vehicle").click(this._onCreateVehicle.bind(this));
@@ -608,6 +629,19 @@ export class AcksTravelPartySheet extends BaseActorSheet {
 
     await this.actor.update({ "system.members": updatedMembers });
     await this._syncTokenSpeed();
+  }
+
+  /**
+   * Open actor sheet for a party member
+   */
+  async _onOpenActorSheet(event) {
+    event.preventDefault();
+    const actorId = event.currentTarget.dataset.actorId;
+    const actor = game.actors.get(actorId);
+
+    if (actor) {
+      actor.sheet.render(true);
+    }
   }
 
   /**

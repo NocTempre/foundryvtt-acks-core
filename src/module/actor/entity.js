@@ -1128,26 +1128,63 @@ export class AcksActor extends Actor {
 
   /* -------------------------------------------- */
   computeEncumbrance() {
-    if (this.type !== "character") {
+    if (this.type !== "character" && this.type !== "monster") {
       return;
     }
 
     let totalEncumbrance = 0;
+    let ownItemsWeight = 0;
+    let receivedWeight = 0;
 
+    // Calculate weight of own items
     this.items.forEach((item) => {
-      if (item.type === "item" && item.system.subtype != "clothing") {
-        totalEncumbrance += item.system.weight6 * item.system.quantity.value;
-      } else if (["weapon", "armor"].includes(item.type)) {
-        totalEncumbrance += item.system.weight6;
-      }
-    });
-    totalEncumbrance /= 6; // Get the weight in stones
-    totalEncumbrance += this.getTotalMoneyEncumbrance().stone;
+      let itemWeight = 0;
 
-    // Select the max encumbrance value
-    let maxEncumbrance =
-      this.system.encumbrance.forcemax > 0 ? this.system.encumbrance.forcemax : 20 + this.system.scores.str.mod;
-    if (this.system.encumbrance.max != maxEncumbrance && this._id) {
+      if (item.type === "item" && item.system.subtype != "clothing") {
+        itemWeight = item.system.weight6 * item.system.quantity.value;
+      } else if (["weapon", "armor"].includes(item.type)) {
+        itemWeight = item.system.weight6;
+      }
+
+      // Convert to stone
+      itemWeight /= 6;
+
+      // Check if this item is lent from someone else
+      const isLent = item.system.ownership?.isLent &&
+                     item.system.ownership?.currentCarrier === this.id;
+
+      if (isLent) {
+        receivedWeight += itemWeight;
+      } else {
+        ownItemsWeight += itemWeight;
+      }
+
+      totalEncumbrance += itemWeight;
+    });
+
+    // Add money encumbrance (only for characters)
+    if (this.type === "character") {
+      totalEncumbrance += this.getTotalMoneyEncumbrance().stone;
+    }
+
+    // Calculate max encumbrance
+    let maxEncumbrance;
+    if (this.type === "character") {
+      maxEncumbrance = this.system.encumbrance.forcemax > 0
+        ? this.system.encumbrance.forcemax
+        : 20 + this.system.scores.str.mod;
+    } else if (this.type === "monster") {
+      // For monsters/animals, use draft capacity or base value
+      if (this.system.draftAnimal?.enabled) {
+        maxEncumbrance = this.system.draftAnimal.normalLoad || 20;
+      } else if (this.system.mountStats?.effectiveCapacity > 0) {
+        maxEncumbrance = this.system.mountStats.effectiveCapacity;
+      } else {
+        maxEncumbrance = 20; // Default for monsters
+      }
+    }
+
+    if (this.system.encumbrance?.max != maxEncumbrance && this._id) {
       this.update({ "system.encumbrance.max": maxEncumbrance });
     }
 
@@ -1156,9 +1193,21 @@ export class AcksActor extends Actor {
       max: maxEncumbrance,
       encumbered: totalEncumbrance > maxEncumbrance,
       value: Math.round(totalEncumbrance),
+      ownItems: Math.round(ownItemsWeight),
+      receivedItems: Math.round(receivedWeight),
     };
 
-    if (this.system.config.movementAuto) {
+    // Update mount stats if applicable
+    if (this.type === "monster" && this.system.mountStats) {
+      if (this.system.mountStats.currentLoad !== Math.round(totalEncumbrance)) {
+        this.update({ "system.mountStats.currentLoad": Math.round(totalEncumbrance) });
+      }
+    }
+
+    if (this.type === "character" && this.system.config.movementAuto) {
+      this._calculateMovement();
+    } else if (this.type === "monster" && this.system.draftAnimal?.enabled) {
+      // Calculate movement for draft animals based on encumbrance
       this._calculateMovement();
     }
   }

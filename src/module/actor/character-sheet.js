@@ -2,6 +2,7 @@ import { AcksActorSheet } from "./actor-sheet.js";
 import { AcksCharacterModifiers } from "../dialog/character-modifiers.js";
 import { AcksCharacterCreator } from "../dialog/character-creation.js";
 import { AcksJournalEntryEditor } from "../dialog/journal-entry-editor.js";
+import { ItemTransferDialog } from "../dialog/item-transfer-dialog.js";
 import { templatePath, SYSTEM_ID, renderTemplate } from "../config.js";
 
 /**
@@ -653,6 +654,63 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
       this._onJournalFilter(html, "all");
       this._onJournalSort(html, "newest");
     });
+
+    // Item transfer listeners
+    html.find(".item-transfer").click(async (ev) => {
+      ev.preventDefault();
+      const li = $(ev.currentTarget).parents(".item");
+      const item = this.actor.items.get(li.data("itemId"));
+      if (item) {
+        await ItemTransferDialog.show(item, this.actor);
+      }
+    });
+
+    html.find(".retrieve-delegated-items").click(async (ev) => {
+      ev.preventDefault();
+      await ItemTransferDialog.showRetrieveDialog(this.actor);
+    });
+
+    // Context menu for items (right-click)
+    this._contextMenu(html);
+  }
+
+  /* -------------------------------------------- */
+  /**
+   * Setup context menu for items
+   */
+  _contextMenu(html) {
+    new ContextMenu(html, ".item", [
+      {
+        name: "Edit",
+        icon: '<i class="fas fa-edit"></i>',
+        callback: (li) => {
+          const item = this.actor.items.get(li.data("itemId"));
+          item.sheet.render(true);
+        }
+      },
+      {
+        name: "Transfer to Party Member",
+        icon: '<i class="fas fa-exchange-alt"></i>',
+        condition: (li) => {
+          const item = this.actor.items.get(li.data("itemId"));
+          return item && !["spell", "ability", "language", "money"].includes(item.type);
+        },
+        callback: (li) => {
+          const item = this.actor.items.get(li.data("itemId"));
+          if (item) {
+            ItemTransferDialog.show(item, this.actor);
+          }
+        }
+      },
+      {
+        name: "Delete",
+        icon: '<i class="fas fa-trash"></i>',
+        callback: (li) => {
+          this.actor.deleteEmbeddedDocuments("Item", [li.data("itemId")]);
+          li.slideUp(200, () => this.render(false));
+        }
+      }
+    ]);
   }
 
   /* -------------------------------------------- */

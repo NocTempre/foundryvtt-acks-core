@@ -191,6 +191,7 @@
         "max": 20,
         "forcemax": -1
       },
+      "delegatedItems": [],
       "journal": {
         "journalId": "",
         "entries": []
@@ -216,7 +217,17 @@
       "draftAnimal": {
         "enabled": false,
         "normalLoad": 0
-      }
+      },
+      "mountStats": {
+        "canBeRidden": false,
+        "canBeDraft": false,
+        "baseCapacity": 0,
+        "equippedSaddle": null,
+        "equippedHarness": null,
+        "effectiveCapacity": 0,
+        "currentLoad": 0
+      },
+      "delegatedItems": []
     },
     "travel-party": {
       "details": {
@@ -388,14 +399,50 @@
   },
   "Item": {
     "types": ["item", "weapon", "armor", "spell", "ability", "language", "money", "vehicle"],
+    "templates": {
+      "ownable": {
+        "ownership": {
+          "originalOwner": "",
+          "currentCarrier": "",
+          "transferredAt": 0,
+          "isLent": false,
+          "retrievalRestriction": "same-party"
+        }
+      },
+      "container": {
+        "container": {
+          "isContainer": false,
+          "capacityStone": 0,
+          "capacityReduction": 0,
+          "requiresMount": false,
+          "containedItems": [],
+          "currentWeight": 0
+        }
+      },
+      "mountEquipment": {
+        "mountEquipment": {
+          "equipmentType": "none",
+          "capacityBonus": 0,
+          "speedModifier": 0,
+          "mountTypes": []
+        }
+      }
+    },
     "money": {},
     "language": {},
-    "item": {},
-    "weapon": {},
-    "armor": {},
+    "item": {
+      "templates": ["ownable", "container", "mountEquipment"]
+    },
+    "weapon": {
+      "templates": ["ownable"]
+    },
+    "armor": {
+      "templates": ["ownable"]
+    },
     "spell": {},
     "ability": {},
     "vehicle": {
+      "templates": ["ownable"],
       "description": "",
       "vehicleType": "cart",
       "crew": {
