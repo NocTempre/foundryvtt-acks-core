@@ -679,12 +679,15 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
    * Setup context menu for items
    */
   _contextMenu(html) {
-    new ContextMenu(html, ".item", [
+    const contextMenuClass = foundry.applications?.ux?.ContextMenu?.implementation || ContextMenu;
+    new contextMenuClass(html[0], ".item", [
       {
         name: "Edit",
         icon: '<i class="fas fa-edit"></i>',
         callback: (li) => {
-          const item = this.actor.items.get(li.data("itemId"));
+          const element = li instanceof HTMLElement ? li : li[0];
+          const itemId = element.dataset.itemId;
+          const item = this.actor.items.get(itemId);
           item.sheet.render(true);
         }
       },
@@ -692,11 +695,15 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
         name: "Transfer to Party Member",
         icon: '<i class="fas fa-exchange-alt"></i>',
         condition: (li) => {
-          const item = this.actor.items.get(li.data("itemId"));
+          const element = li instanceof HTMLElement ? li : li[0];
+          const itemId = element.dataset.itemId;
+          const item = this.actor.items.get(itemId);
           return item && !["spell", "ability", "language", "money"].includes(item.type);
         },
         callback: (li) => {
-          const item = this.actor.items.get(li.data("itemId"));
+          const element = li instanceof HTMLElement ? li : li[0];
+          const itemId = element.dataset.itemId;
+          const item = this.actor.items.get(itemId);
           if (item) {
             ItemTransferDialog.show(item, this.actor);
           }
@@ -706,11 +713,16 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
         name: "Delete",
         icon: '<i class="fas fa-trash"></i>',
         callback: (li) => {
-          this.actor.deleteEmbeddedDocuments("Item", [li.data("itemId")]);
-          li.slideUp(200, () => this.render(false));
+          const element = li instanceof HTMLElement ? li : li[0];
+          const itemId = element.dataset.itemId;
+          this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+          element.style.transition = 'all 0.2s';
+          element.style.opacity = '0';
+          element.style.height = '0';
+          setTimeout(() => this.render(false), 200);
         }
       }
-    ]);
+    ], { jQuery: false });
   }
 
   /* -------------------------------------------- */

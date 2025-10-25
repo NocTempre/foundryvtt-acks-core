@@ -98,83 +98,24 @@
       </ol>
     </div>
 
-    {{! Vehicles Tab }}
+    {{! Vehicles & Mounts Tab (Inventory Style) }}
     <div class="tab" data-group="primary" data-tab="vehicles">
-      <div class="flexrow" style="margin-bottom: 10px;">
+      <div class="flexrow" style="margin-bottom: 10px; gap: 5px;">
         <button type="button" class="create-vehicle">
-          <i class="fas fa-plus"></i> Create Vehicle
+          <i class="fas fa-cart-flatbed"></i> Create Vehicle
         </button>
       </div>
 
-      <ol class="items-list">
-        {{#each vehicles as |vehicle|}}
-        <li class="item flexrow" data-item-id="{{vehicle.id}}">
-          <div class="item-image">
-            <img src="{{vehicle.item.img}}" title="{{vehicle.name}}" width="32" height="32"/>
-          </div>
-          <h4 class="item-name rollable" data-item-id="{{vehicle.id}}">
-            {{vehicle.name}}
-          </h4>
-          <div class="item-details" style="flex: 2; font-size: 0.9em;">
-            <div>
-              Draft Animals: {{vehicle.animalPower}} stone ({{vehicle.animalMinLoad}}-{{vehicle.animalMaxLoad}} required, {{vehicle.animalCount}}/{{vehicle.animalMinCount}}-{{vehicle.animalMaxCount}} animals)
-              {{#unless vehicle.hasEnoughAnimals}}
-                <span style="color: #cc0000;" title="Insufficient pulling power or too few animals!">(!))</span>
-              {{/unless}}
-              {{#if vehicle.tooManyAnimals}}
-                <span style="color: #ff6600;" title="Too many animals or too much pulling power!">(!))</span>
-              {{/if}}
-              {{#unless (gte vehicle.animalCount vehicle.animalMaxCount)}}
-                <a class="inline-link add-animal" data-vehicle-id="{{vehicle.id}}" title="Add animal"><i class="fas fa-plus"></i></a>
-              {{/unless}}
-              {{#if vehicle.animals.length}}
-                <div style="margin-left: 10px; font-size: 0.9em;" data-vehicle-id="{{vehicle.id}}">
-                  {{#each vehicle.animals as |animal|}}
-                    <span>{{animal.name}} ({{animal.normalLoad}} st) <a class="inline-link remove-animal" data-animal-index="{{@index}}" title="Remove"><i class="fas fa-times"></i></a></span>{{#unless @last}}, {{/unless}}
-                  {{/each}}
-                </div>
-              {{/if}}
-            </div>
-            <div>Speed: <strong>{{vehicle.speed}}</strong> mi/day ({{vehicle.cargoLoad}})
-              {{#if vehicle.isOverloaded}}
-                <span style="color: #cc0000;" title="Exceeds maximum cargo capacity!">(OVERLOADED!)</span>
-              {{/if}}
-              {{#unless vehicle.canPullLoad}}
-                <span style="color: #ff6600;" title="Draft animals cannot pull this load!">(CANNOT MOVE!)</span>
-              {{/unless}}
-            </div>
-            <div>
-              Cargo: <strong style="{{#if vehicle.isOverloaded}}color: #cc0000;{{else if vehicle.isHeavy}}color: #ff6600;{{/if}}">{{vehicle.cargo.actual}}</strong>/{{vehicle.cargo.normal}} stone (max: {{vehicle.cargo.heavy}})
-              {{#if vehicle.isHeavy}}
-                <span style="color: #ff6600; font-size: 0.85em;">(Heavy load - reduced speed)</span>
-              {{/if}}
-            </div>
-            <div>
-              Crew: {{vehicle.crewCount}}/{{vehicle.crewRequired}}
-              {{#if (lt vehicle.crewCount vehicle.crewRequired)}}
-                <a class="inline-link add-crew" data-vehicle-id="{{vehicle.id}}" title="Add crew"><i class="fas fa-plus"></i></a>
-              {{/if}}
-              {{#if vehicle.crew.length}}
-                <div style="margin-left: 10px; font-size: 0.9em;">
-                  {{#each vehicle.crew as |crewMember|}}
-                    <span>{{crewMember.name}} <a class="inline-link remove-crew" data-vehicle-id="{{../vehicle.id}}" data-crew-index="{{@index}}" title="Remove"><i class="fas fa-times"></i></a></span>{{#unless @last}}, {{/unless}}
-                  {{/each}}
-                </div>
-              {{/if}}
-            </div>
-            <div>
-              Passengers: {{vehicle.passengerCount}}/{{vehicle.passengerCapacity}}
-              {{#if (lt vehicle.passengerCount vehicle.passengerCapacity)}}
-                <a class="inline-link add-passenger" data-vehicle-id="{{vehicle.id}}" title="Add passenger"><i class="fas fa-plus"></i></a>
-              {{/if}}
-              {{#if vehicle.passengers.length}}
-                <div style="margin-left: 10px; font-size: 0.9em;">
-                  {{#each vehicle.passengers as |passenger index|}}
-                    <span>{{passenger.name}} <a class="inline-link remove-passenger" data-vehicle-id="{{../vehicle.id}}" data-passenger-index="{{@index}}" title="Remove"><i class="fas fa-times"></i></a></span>{{#unless @last}}, {{/unless}}
-                  {{/each}}
-                </div>
-              {{/if}}
-            </div>
+      {{! Vehicles Section }}
+      {{#if vehicles.length}}
+      <h3 style="margin: 10px 0 5px 0; border-bottom: 2px solid #999;">Vehicles</h3>
+      {{#each vehicles as |vehicle|}}
+      <div class="vehicle-mount-container" style="background: #f9f9f9; border: 1px solid #ccc; border-radius: 5px; padding: 10px; margin-bottom: 10px;">
+        <div class="flexrow" style="align-items: center; margin-bottom: 8px;">
+          <img src="{{vehicle.item.img}}" title="{{vehicle.name}}" width="40" height="40" style="border: 2px solid #999; border-radius: 3px; margin-right: 10px;"/>
+          <div style="flex: 1;">
+            <h3 style="margin: 0; font-size: 1.1em;">{{vehicle.name}}</h3>
+            <div style="font-size: 0.85em; color: #666;">{{vehicle.type}} | Speed: {{vehicle.speed}} mi/day</div>
           </div>
           <div class="item-controls">
             <a class="item-control edit-vehicle" data-item-id="{{vehicle.id}}" title="Edit Vehicle">
@@ -184,14 +125,196 @@
               <i class="fas fa-trash"></i>
             </a>
           </div>
-        </li>
-        {{/each}}
-      </ol>
+        </div>
+
+        {{! Cargo Summary }}
+        <div style="background: #fff; padding: 8px; border-radius: 3px; margin-bottom: 8px;">
+          <strong>Cargo:</strong>
+          <span style="{{#if vehicle.isOverloaded}}color: #cc0000; font-weight: bold;{{else if vehicle.isHeavy}}color: #ff6600;{{/if}}">
+            {{vehicle.cargo.actual}}/{{vehicle.cargo.normal}} stone
+          </span>
+          (max: {{vehicle.cargo.heavy}})
+          {{#if vehicle.isOverloaded}}
+            <span style="color: #cc0000; font-size: 0.85em;">(OVERLOADED!)</span>
+          {{else if vehicle.isHeavy}}
+            <span style="color: #ff6600; font-size: 0.85em;">(Heavy - reduced speed)</span>
+          {{/if}}
+        </div>
+
+        {{! Draft Animals }}
+        <div style="background: #fff; padding: 8px; border-radius: 3px; margin-bottom: 8px;">
+          <div class="flexrow" style="align-items: center;">
+            <strong style="flex: 0 0 auto;">Draft Animals:</strong>
+            <span style="flex: 1; margin-left: 10px;">
+              {{vehicle.animalPower}} stone pulling power (need {{vehicle.animalMinLoad}}-{{vehicle.animalMaxLoad}}, {{vehicle.animalCount}}/{{vehicle.animalMinCount}}-{{vehicle.animalMaxCount}} animals)
+            </span>
+            {{#unless (gte vehicle.animalCount vehicle.animalMaxCount)}}
+              <a class="inline-link add-animal" data-vehicle-id="{{vehicle.id}}" title="Add draft animal"><i class="fas fa-plus"></i></a>
+            {{/unless}}
+          </div>
+          {{#unless vehicle.canPullLoad}}
+            <div style="color: #cc0000; font-size: 0.85em; margin-top: 5px;">Cannot pull this load!</div>
+          {{/unless}}
+          {{#if vehicle.animals.length}}
+            <div style="margin-top: 5px; padding-left: 10px;">
+              {{#each vehicle.animals as |animal|}}
+                <div style="padding: 3px 0; border-bottom: 1px solid #eee;">
+                  <i class="fas fa-horse-head" style="color: #8b4513;"></i>
+                  {{animal.name}} ({{animal.normalLoad}} st)
+                  <a class="inline-link remove-animal" data-animal-index="{{@index}}" data-vehicle-id="{{../vehicle.id}}" title="Remove">
+                    <i class="fas fa-times"></i>
+                  </a>
+                </div>
+              {{/each}}
+            </div>
+          {{/if}}
+        </div>
+
+        {{! Crew & Passengers }}
+        <div style="background: #fff; padding: 8px; border-radius: 3px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            {{! Crew }}
+            <div>
+              <div class="flexrow" style="align-items: center; margin-bottom: 5px;">
+                <strong>Crew: {{vehicle.crewCount}}/{{vehicle.crewRequired}}</strong>
+                {{#if (lt vehicle.crewCount vehicle.crewRequired)}}
+                  <a class="inline-link add-crew" data-vehicle-id="{{vehicle.id}}" title="Add crew" style="margin-left: auto;">
+                    <i class="fas fa-plus"></i>
+                  </a>
+                {{/if}}
+              </div>
+              {{#each vehicle.crew as |crewMember|}}
+                <div style="font-size: 0.85em; padding: 2px 0; padding-left: 10px;">
+                  <i class="fas fa-user"></i> {{crewMember.name}}
+                  <a class="inline-link remove-crew" data-vehicle-id="{{../vehicle.id}}" data-crew-index="{{@index}}" title="Remove">
+                    <i class="fas fa-times"></i>
+                  </a>
+                </div>
+              {{/each}}
+            </div>
+
+            {{! Passengers }}
+            <div>
+              <div class="flexrow" style="align-items: center; margin-bottom: 5px;">
+                <strong>Passengers: {{vehicle.passengerCount}}/{{vehicle.passengerCapacity}}</strong>
+                {{#if (lt vehicle.passengerCount vehicle.passengerCapacity)}}
+                  <a class="inline-link add-passenger" data-vehicle-id="{{vehicle.id}}" title="Add passenger" style="margin-left: auto;">
+                    <i class="fas fa-plus"></i>
+                  </a>
+                {{/if}}
+              </div>
+              {{#each vehicle.passengers as |passenger|}}
+                <div style="font-size: 0.85em; padding: 2px 0; padding-left: 10px;">
+                  <i class="fas fa-user"></i> {{passenger.name}}
+                  <a class="inline-link remove-passenger" data-vehicle-id="{{../vehicle.id}}" data-passenger-index="{{@index}}" title="Remove">
+                    <i class="fas fa-times"></i>
+                  </a>
+                </div>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+      </div>
+      {{/each}}
+      {{/if}}
+
+      {{! Mounts Section }}
+      {{#if mounts.length}}
+      <h3 style="margin: 20px 0 5px 0; border-bottom: 2px solid #999;">Mounts & Pack Animals</h3>
+      {{#each mounts as |mount|}}
+      <div class="vehicle-mount-container" style="background: #f9f9f9; border: 1px solid #ccc; border-radius: 5px; padding: 10px; margin-bottom: 10px;">
+        <div class="flexrow" style="align-items: center; margin-bottom: 8px;">
+          <img src="{{mount.img}}" title="{{mount.name}}" width="40" height="40" style="border: 2px solid #8b4513; border-radius: 3px; margin-right: 10px;"/>
+          <div style="flex: 1;">
+            <h3 style="margin: 0; font-size: 1.1em;">
+              {{mount.name}}
+              {{#if mount.isDraftAnimal}}
+                <i class="fas fa-horse-head" style="color: #8b4513;" title="Draft Animal"></i>
+              {{/if}}
+              {{#if mount.canBeRidden}}
+                <i class="fas fa-horse" style="color: #4682b4;" title="Rideable Mount"></i>
+              {{/if}}
+            </h3>
+            <div style="font-size: 0.85em; color: #666;">
+              Capacity: {{mount.encumbrance.current}}/{{mount.encumbrance.max}} stone | Speed: {{mount.speed}} mi/day
+            </div>
+          </div>
+          <div class="item-controls">
+            <a class="item-control open-actor-sheet" data-actor-id="{{mount.actorId}}" title="Open Sheet">
+              <i class="fas fa-user"></i>
+            </a>
+          </div>
+        </div>
+
+        {{! Encumbrance Bar }}
+        <div style="background: #fff; padding: 8px; border-radius: 3px; margin-bottom: 8px;">
+          <div style="font-size: 0.85em; margin-bottom: 3px;">
+            <strong>Load:</strong>
+            <span style="{{#if mount.isOverloaded}}color: #cc0000; font-weight: bold;{{/if}}">
+              {{mount.encumbrance.current}}/{{mount.encumbrance.max}} stone
+            </span>
+            {{#if mount.isOverloaded}}
+              <span style="color: #cc0000;">(OVERLOADED!)</span>
+            {{/if}}
+          </div>
+          <div style="background: #ddd; height: 8px; border-radius: 4px; overflow: hidden;">
+            <div style="background: {{#if mount.isOverloaded}}#cc0000{{else if (gt mount.encumbrance.pct 75)}}#ff6600{{else}}#00cc00{{/if}}; height: 100%; width: {{mount.encumbrance.pct}}%;"></div>
+          </div>
+        </div>
+
+        {{! Rider (if canBeRidden) }}
+        {{#if mount.canBeRidden}}
+        <div style="background: #fff; padding: 8px; border-radius: 3px; margin-bottom: 8px;">
+          <div class="flexrow" style="align-items: center;">
+            <strong>Rider:</strong>
+            {{#if mount.rider}}
+              <span style="flex: 1; margin-left: 10px;">
+                <i class="fas fa-user"></i> {{mount.rider.name}} ({{mount.rider.weight}} st)
+              </span>
+              <a class="inline-link remove-rider" data-mount-id="{{mount.actorId}}" title="Dismount">
+                <i class="fas fa-times"></i>
+              </a>
+            {{else}}
+              <span style="flex: 1; margin-left: 10px; color: #999; font-style: italic;">No rider</span>
+              <a class="inline-link add-rider" data-mount-id="{{mount.actorId}}" title="Add rider">
+                <i class="fas fa-plus"></i>
+              </a>
+            {{/if}}
+          </div>
+        </div>
+        {{/if}}
+
+        {{! Cargo Items }}
+        <div style="background: #fff; padding: 8px; border-radius: 3px;">
+          <div class="flexrow" style="align-items: center; margin-bottom: 5px;">
+            <strong>Cargo Items:</strong>
+            <span style="flex: 1; margin-left: 10px; font-size: 0.85em; color: #666;">
+              {{#if mount.cargoItems.length}}
+                {{mount.cargoItems.length}} items ({{mount.cargoWeight}} st)
+              {{else}}
+                <em>None</em>
+              {{/if}}
+            </span>
+          </div>
+          {{#each mount.cargoItems as |item|}}
+            <div style="font-size: 0.85em; padding: 3px 0; padding-left: 10px; border-bottom: 1px solid #eee;">
+              <i class="fas fa-box"></i> {{item.itemName}} ({{item.weight}} st)
+              <a class="inline-link remove-cargo-item" data-mount-id="{{../mount.actorId}}" data-item-id="{{item.itemId}}" title="Remove">
+                <i class="fas fa-times"></i>
+              </a>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+      {{/each}}
+      {{/if}}
 
       {{#unless vehicles.length}}
-      <p style="text-align: center; color: #999; padding: 20px;">
-        <em>No vehicles. Click "Create Vehicle" to add one.</em>
-      </p>
+        {{#unless mounts.length}}
+          <p style="text-align: center; color: #999; padding: 20px;">
+            <em>No vehicles or mounts. Add party members (animals/monsters) or create vehicles.</em>
+          </p>
+        {{/unless}}
       {{/unless}}
     </div>
 

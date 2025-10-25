@@ -10,20 +10,29 @@ import { SYSTEM_ID } from "./config.js";
 export class ItemTransfer {
 
   /**
-   * Transfer an item from one actor to another
+   * Transfer an item from one actor to another (or to a vehicle)
    * @param {Item} item - The item to transfer
    * @param {Actor} fromActor - Source actor
-   * @param {Actor} toActor - Destination actor
+   * @param {Actor|Item} toActorOrVehicle - Destination actor or vehicle item
    * @param {Object} options - Transfer options
    * @param {boolean} options.clearOwnership - Clear ownership tracking (for returns)
    * @param {string} options.restriction - Retrieval restriction level
-   * @returns {Promise<Item>} The newly created item on the destination actor
+   * @returns {Promise<Item>} The newly created item on the destination actor (or null for vehicle)
    */
-  static async transferItem(item, fromActor, toActor, options = {}) {
-    if (!item || !fromActor || !toActor) {
+  static async transferItem(item, fromActor, toActorOrVehicle, options = {}) {
+    if (!item || !fromActor || !toActorOrVehicle) {
       ui.notifications.error("Invalid transfer parameters");
       return null;
     }
+
+    // Check if transferring to a vehicle (item) instead of an actor
+    const isVehicle = toActorOrVehicle.documentName === "Item" && toActorOrVehicle.type === "vehicle";
+
+    if (isVehicle) {
+      return await this._transferToVehicle(item, fromActor, toActorOrVehicle, options);
+    }
+
+    const toActor = toActorOrVehicle;
 
     // Validate transfer is allowed
     if (!this.canTransfer(item, fromActor, toActor)) {
@@ -334,5 +343,51 @@ export class ItemTransfer {
       received: receivedWeight,
       effective: baseEnc - delegatedWeight + receivedWeight
     };
+  }
+
+  /**
+   * Transfer item to a vehicle (stores reference in vehicle's cargoItems)
+   * @private
+   */
+  static async _transferToVehicle(item, fromActor, vehicle, options = {}) {
+    const weight = this.getItemWeight(item);
+    const cargoItems = vehicle.system.cargoItems || [];
+
+    // Add item reference to vehicle's cargo
+    cargoItems.push({
+      itemId: item.id,
+      itemUuid: item.uuid,
+      itemName: item.name,
+      itemType: item.type,
+      itemImg: item.img,
+      weight: weight,
+      originalOwner: fromActor.id,
+      ownerName: fromActor.name,
+      transferredAt: Date.now()
+    });
+
+    // Update vehicle
+    await vehicle.update({
+      "system.cargoItems": cargoItems
+    });
+
+    // Delete item from actor
+    await item.delete();
+
+    // Track as delegated on original owner
+    await this._addDelegatedItem(fromActor, {
+      uuid: `vehicle-cargo-${vehicle.id}-${item.id}`,
+      ...item
+    }, {
+      id: vehicle.id,
+      name: vehicle.name
+    });
+
+    ui.notifications.info(`Transferred ${item.name} from ${fromActor.name} to ${vehicle.name}`);
+
+    // Recalculate encumbrance
+    if (fromActor.computeEncumbrance) fromActor.computeEncumbrance();
+
+    return null; // No new item created on vehicle
   }
 }

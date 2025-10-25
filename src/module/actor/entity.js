@@ -1141,7 +1141,7 @@ export class AcksActor extends Actor {
       let itemWeight = 0;
 
       // Skip items that are inside containers
-      const isInContainer = item.getFlag("acks-core", "containedIn");
+      const isInContainer = item.getFlag(SYSTEM_ID, "containedIn");
       if (isInContainer) {
         return; // Skip - weight counted in container
       }
@@ -1188,7 +1188,7 @@ export class AcksActor extends Actor {
     // Calculate max encumbrance
     let maxEncumbrance;
     if (this.type === "character") {
-      maxEncumbrance = this.system.encumbrance.forcemax > 0
+      maxEncumbrance = this.system.encumbrance?.forcemax > 0
         ? this.system.encumbrance.forcemax
         : 20 + this.system.scores.str.mod;
     } else if (this.type === "monster") {
@@ -1202,7 +1202,12 @@ export class AcksActor extends Actor {
       }
     }
 
-    if (this.system.encumbrance?.max != maxEncumbrance && this._id) {
+    // Initialize encumbrance if it doesn't exist (for monsters)
+    if (!this.system.encumbrance) {
+      this.system.encumbrance = {};
+    }
+
+    if (this.system.encumbrance.max != maxEncumbrance && this._id) {
       this.update({ "system.encumbrance.max": maxEncumbrance });
     }
 
@@ -1224,14 +1229,16 @@ export class AcksActor extends Actor {
 
     if (this.type === "character" && this.system.config.movementAuto) {
       this._calculateMovement();
-    } else if (this.type === "monster" && this.system.draftAnimal?.enabled) {
-      // Calculate movement for draft animals based on encumbrance
-      this._calculateMovement();
     }
   }
 
   /* -------------------------------------------- */
   _calculateMovement() {
+    // Only calculate movement for characters (monsters use fixed movement from template)
+    if (this.type !== "character") {
+      return;
+    }
+
     let baseSpeed;
     if (this.system.encumbrance.value > this.system.encumbrance.max) {
       baseSpeed = CONFIG.ACKS.base_speed.overburdened; // 0

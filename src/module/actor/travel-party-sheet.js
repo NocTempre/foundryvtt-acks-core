@@ -48,6 +48,9 @@ export class AcksTravelPartySheet extends BaseActorSheet {
     // Prepare vehicles data
     context.vehicles = this._prepareVehicles();
 
+    // Prepare mounts data
+    context.mounts = this._prepareMounts();
+
     // Movement calculation
     context.movement = this._calculateMovement();
 
@@ -294,21 +297,11 @@ export class AcksTravelPartySheet extends BaseActorSheet {
       }
     });
 
-    // Add items transferred to vehicle
-    const receivedItems = vehicle.items.filter(item => {
-      const ownership = item.system.ownership;
-      return ownership?.isLent && ownership?.currentCarrier === vehicle.id;
+    // Add cargo items transferred to vehicle
+    const cargoItems = v.cargoItems || [];
+    cargoItems.forEach(cargoItem => {
+      totalWeight += cargoItem.weight || 0;
     });
-
-    receivedItems.forEach(item => {
-      totalWeight += ItemTransfer.getItemWeight(item);
-    });
-
-    // Add static cargo from vehicle.cargo.current if manually set
-    // (for items not tracked individually)
-    if (v.cargo.current > 0) {
-      totalWeight += v.cargo.current;
-    }
 
     return Math.round(totalWeight);
   }
@@ -326,6 +319,89 @@ export class AcksTravelPartySheet extends BaseActorSheet {
       return CONFIG.ACKS.body_weight?.default || 12;
     }
     return CONFIG.ACKS.body_weight?.default || 12;
+  }
+
+  /**
+   * Prepare mounts (animals/monsters) for display in vehicles tab
+   */
+  _prepareMounts() {
+    const members = this.actor.system.members || [];
+    const mounts = [];
+
+    // Get unique actors that are monsters
+    const uniqueMonsters = new Map();
+    members.forEach(member => {
+      const actor = game.actors.get(member.actorId);
+      if (actor && actor.type === "monster") {
+        if (!uniqueMonsters.has(actor.id)) {
+          uniqueMonsters.set(actor.id, actor);
+        }
+      }
+    });
+
+    // Process each unique monster
+    uniqueMonsters.forEach(actor => {
+      const isDraftAnimal = actor.system.draftAnimal?.enabled || false;
+      const canBeRidden = actor.system.mountStats?.canBeRidden || false;
+
+      // Skip if not a draft animal or rideable mount
+      if (!isDraftAnimal && !canBeRidden) {
+        return;
+      }
+
+      const encumbrance = actor.system.encumbrance || {};
+      const delegatedItems = actor.system.delegatedItems || [];
+
+      // Get cargo items (items transferred to this mount)
+      const cargoItems = [];
+      let cargoWeight = 0;
+      delegatedItems.forEach(d => {
+        if (d.itemName) {
+          cargoItems.push(d);
+          // Try to get weight from item if available
+          const weight = d.itemWeight || 0;
+          cargoWeight += weight;
+        }
+      });
+
+      // Check for rider (look for characters assigned to this mount)
+      let rider = null;
+      members.forEach(member => {
+        const charActor = game.actors.get(member.actorId);
+        if (charActor && charActor.type === "character") {
+          // Check if this character is assigned as rider of this mount
+          const riderAssignment = member.mount;
+          if (riderAssignment === actor.id) {
+            const riderWeight = this._getBodyWeight(charActor) + (charActor.system.encumbrance?.value || 0);
+            rider = {
+              name: charActor.name,
+              actorId: charActor.id,
+              weight: riderWeight
+            };
+          }
+        }
+      });
+
+      mounts.push({
+        actorId: actor.id,
+        name: actor.name,
+        img: actor.img,
+        isDraftAnimal: isDraftAnimal,
+        canBeRidden: canBeRidden,
+        speed: actor.system.movementacks?.expedition || actor.system.movement?.base || 24,
+        encumbrance: {
+          current: encumbrance.value || 0,
+          max: encumbrance.max || 20,
+          pct: encumbrance.pct || 0
+        },
+        isOverloaded: encumbrance.encumbered || false,
+        cargoItems: cargoItems,
+        cargoWeight: Math.round(cargoWeight),
+        rider: rider
+      });
+    });
+
+    return mounts;
   }
 
   /**
@@ -561,6 +637,11 @@ export class AcksTravelPartySheet extends BaseActorSheet {
     html.on("click", ".remove-passenger", this._onRemovePassenger.bind(this));
     html.on("click", ".add-animal", this._onAddAnimal.bind(this));
     html.on("click", ".remove-animal", this._onRemoveAnimal.bind(this));
+
+    // Mount rider management
+    html.on("click", ".add-rider", this._onAddRider.bind(this));
+    html.on("click", ".remove-rider", this._onRemoveRider.bind(this));
+    html.on("click", ".remove-cargo-item", this._onRemoveCargoItem.bind(this));
 
     // Travel controls
     html.find(".toggle-travel").click(this._onToggleTravel.bind(this));
@@ -1260,6 +1341,103 @@ export class AcksTravelPartySheet extends BaseActorSheet {
 
       ui.notifications.info("Travel stopped.");
     }
+  }
+
+  /**
+   * Add a rider to a mount
+   */
+  async _onAddRider(event) {
+    event.preventDefault();
+    const mountId = event.currentTarget.dataset.mountId;
+    const mount = game.actors.get(mountId);
+
+    if (!mount) return;
+
+    // Get available characters (not already riding)
+    const members = this.actor.system.members || [];
+    const availableRiders = [];
+
+    members.forEach((member, idx) => {
+      const actor = game.actors.get(member.actorId);
+      if (actor && actor.type === "character" && !member.mount) {
+        availableRiders.push({
+          memberIndex: idx,
+          actorId: actor.id,
+          name: actor.name
+        });
+      }
+    });
+
+    if (availableRiders.length === 0) {
+      ui.notifications.warn("No available characters to ride this mount");
+      return;
+    }
+
+    const options = availableRiders.map(r =>
+      `<option value="${r.memberIndex}">${r.name}</option>`
+    ).join("");
+
+    const content = `
+      <form>
+        <div class="form-group">
+          <label>Select Rider:</label>
+          <select name="riderIndex" style="width: 100%;">
+            ${options}
+          </select>
+        </div>
+      </form>
+    `;
+
+    const result = await Dialog.prompt({
+      title: "Add Rider",
+      content: content,
+      callback: (html) => parseInt(html.find('[name="riderIndex"]').val()),
+    });
+
+    if (result === undefined) return;
+
+    // Update member to set mount
+    const updatedMembers = [...members];
+    updatedMembers[result].mount = mountId;
+
+    await this.actor.update({ "system.members": updatedMembers });
+  }
+
+  /**
+   * Remove a rider from a mount
+   */
+  async _onRemoveRider(event) {
+    event.preventDefault();
+    const mountId = event.currentTarget.dataset.mountId;
+
+    const members = this.actor.system.members || [];
+    const riderIndex = members.findIndex(m => m.mount === mountId);
+
+    if (riderIndex === -1) return;
+
+    const updatedMembers = [...members];
+    updatedMembers[riderIndex].mount = null;
+
+    await this.actor.update({ "system.members": updatedMembers });
+  }
+
+  /**
+   * Remove a cargo item from a mount
+   */
+  async _onRemoveCargoItem(event) {
+    event.preventDefault();
+    const mountId = event.currentTarget.dataset.mountId;
+    const itemId = event.currentTarget.dataset.itemId;
+
+    const mount = game.actors.get(mountId);
+    if (!mount) return;
+
+    // Find and remove from delegated items
+    const delegatedItems = mount.system.delegatedItems || [];
+    const updated = delegatedItems.filter(d => d.itemId !== itemId);
+
+    await mount.update({ "system.delegatedItems": updated });
+    this.render();
   }
 
   /**

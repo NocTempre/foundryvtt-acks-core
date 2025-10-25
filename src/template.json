@@ -227,6 +227,10 @@
         "effectiveCapacity": 0,
         "currentLoad": 0
       },
+      "encumbrance": {
+        "max": 20,
+        "value": 0
+      },
       "delegatedItems": []
     },
     "travel-party": {
@@ -479,7 +483,8 @@
         "passengers": [],
         "animals": [],
         "cargo": []
-      }
+      },
+      "cargoItems": []
     }
   }
 }
