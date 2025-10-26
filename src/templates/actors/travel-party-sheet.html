@@ -295,10 +295,13 @@
                 <em>None</em>
               {{/if}}
             </span>
+            <a class="inline-link add-cargo" data-mount-id="{{mount.actorId}}" title="Add cargo">
+              <i class="fas fa-plus"></i>
+            </a>
           </div>
           {{#each mount.cargoItems as |item|}}
             <div style="font-size: 0.85em; padding: 3px 0; padding-left: 10px; border-bottom: 1px solid #eee;">
-              <i class="fas fa-box"></i> {{item.itemName}} ({{item.weight}} st)
+              <i class="fas fa-box"></i> {{item.itemName}} ({{item.itemWeight}} st)
               <a class="inline-link remove-cargo-item" data-mount-id="{{../mount.actorId}}" data-item-id="{{item.itemId}}" title="Remove">
                 <i class="fas fa-times"></i>
               </a>

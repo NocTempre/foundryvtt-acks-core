@@ -2067,3 +2067,22 @@
   margin-bottom: 10px;
 }
 
+/* ----------------------------------------- */
+/* Inline Link Styles                        */
+/* ----------------------------------------- */
+.inline-link {
+  color: #4b4a44;
+  cursor: pointer;
+  padding: 2px 4px;
+  transition: all 0.2s ease;
+}
+
+.inline-link:hover {
+  color: #620630;
+  text-shadow: 0 0 4px rgba(98, 6, 48, 0.3);
+}
+
+.inline-link i {
+  font-size: 0.9em;
+}
+

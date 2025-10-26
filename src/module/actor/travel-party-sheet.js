@@ -638,9 +638,10 @@ export class AcksTravelPartySheet extends BaseActorSheet {
     html.on("click", ".add-animal", this._onAddAnimal.bind(this));
     html.on("click", ".remove-animal", this._onRemoveAnimal.bind(this));
 
-    // Mount rider management
+    // Mount rider and cargo management
     html.on("click", ".add-rider", this._onAddRider.bind(this));
     html.on("click", ".remove-rider", this._onRemoveRider.bind(this));
+    html.on("click", ".add-cargo", this._onAddCargo.bind(this));
     html.on("click", ".remove-cargo-item", this._onRemoveCargoItem.bind(this));
 
     // Travel controls
@@ -1422,6 +1423,131 @@ export class AcksTravelPartySheet extends BaseActorSheet {
   }
 
   /**
+   * Add cargo to a mount
+   */
+  async _onAddCargo(event) {
+    event.preventDefault();
+    const mountId = event.currentTarget.dataset.mountId;
+    const mount = game.actors.get(mountId);
+
+    if (!mount) return;
+
+    // Get all party members who have items
+    const members = this.actor.system.members || [];
+    const availableItems = [];
+
+    for (const member of members) {
+      const actor = game.actors.get(member.actorId);
+      if (actor && actor.type === "character") {
+        const items = actor.items.filter(i =>
+          i.type !== "class" &&
+          i.type !== "ability" &&
+          i.type !== "spell" &&
+          i.type !== "proficiency"
+        );
+
+        items.forEach(item => {
+          const weight = ItemTransfer.getItemWeight(item);
+          availableItems.push({
+            itemId: item.id,
+            itemUuid: item.uuid,
+            ownerActorId: actor.id,
+            ownerName: actor.name,
+            itemName: item.name,
+            weight: weight
+          });
+        });
+      }
+    }
+
+    if (availableItems.length === 0) {
+      ui.notifications.warn("No items available to add as cargo");
+      return;
+    }
+
+    // Create dropdown options grouped by owner
+    const optionsByOwner = {};
+    availableItems.forEach(item => {
+      if (!optionsByOwner[item.ownerName]) {
+        optionsByOwner[item.ownerName] = [];
+      }
+      optionsByOwner[item.ownerName].push(item);
+    });
+
+    let optionsHtml = "";
+    Object.keys(optionsByOwner).sort().forEach(ownerName => {
+      optionsHtml += `<optgroup label="${ownerName}">`;
+      optionsByOwner[ownerName].forEach(item => {
+        optionsHtml += `<option value="${item.itemUuid}">${item.itemName} (${item.weight.toFixed(1)} st)</option>`;
+      });
+      optionsHtml += `</optgroup>`;
+    });
+
+    const content = `
+      <form>
+        <div class="form-group">
+          <label>Select Item to Add:</label>
+          <select name="itemUuid" style="width: 100%;">
+            ${optionsHtml}
+          </select>
+        </div>
+        <div class="form-group">
+          <p style="font-size: 0.9em; color: #666;">
+            Current mount load: <strong>${mount.system.encumbrance?.value || 0}/${mount.system.encumbrance?.max || 20} st</strong>
+          </p>
+        </div>
+      </form>
+    `;
+
+    const result = await Dialog.prompt({
+      title: `Add Cargo to ${mount.name}`,
+      content: content,
+      callback: (html) => html.find('[name="itemUuid"]').val(),
+    });
+
+    if (!result) return;
+
+    // Get the item and add it to mount's cargo
+    const item = await fromUuid(result);
+    if (!item) {
+      ui.notifications.error("Item not found");
+      return;
+    }
+
+    const fromActor = item.parent;
+    const weight = ItemTransfer.getItemWeight(item);
+
+    // Store complete item data for later retrieval
+    const itemData = item.toObject();
+
+    // Add to mount's delegated items array
+    const delegatedItems = mount.system.delegatedItems || [];
+    delegatedItems.push({
+      itemId: item.id,
+      itemUuid: item.uuid,
+      itemName: item.name,
+      itemType: item.type,
+      itemImg: item.img,
+      itemWeight: weight,
+      itemData: itemData, // Store full item data
+      originalOwner: fromActor.id,
+      ownerName: fromActor.name,
+      transferredAt: Date.now()
+    });
+
+    // Delete item from original owner first (before updating mount)
+    await item.delete();
+
+    // Update mount with new delegated items
+    await mount.update({ "system.delegatedItems": delegatedItems });
+
+    ui.notifications.info(`Transferred ${item.name} from ${fromActor.name} to ${mount.name}`);
+
+    // Re-render the sheet to show updated cargo
+    this.render(false);
+  }
+
+  /**
    * Remove a cargo item from a mount
    */
   async _onRemoveCargoItem(event) {
@@ -1432,12 +1558,45 @@ export class AcksTravelPartySheet extends BaseActorSheet {
     const mount = game.actors.get(mountId);
     if (!mount) return;
 
-    // Find and remove from delegated items
+    // Find the cargo item
     const delegatedItems = mount.system.delegatedItems || [];
-    const updated = delegatedItems.filter(d => d.itemId !== itemId);
+    const cargoItem = delegatedItems.find(d => d.itemId === itemId);
 
+    if (!cargoItem) {
+      ui.notifications.warn("Cargo item not found");
+      return;
+    }
+
+    // Get the original owner
+    const originalOwner = game.actors.get(cargoItem.originalOwner);
+    if (!originalOwner) {
+      ui.notifications.warn("Original owner not found");
+      return;
+    }
+
+    // Get stored item data or create basic data
+    let itemData = cargoItem.itemData;
+
+    if (!itemData) {
+      // Fallback if itemData wasn't stored
+      itemData = {
+        name: cargoItem.itemName,
+        type: cargoItem.itemType || "item",
+        img: cargoItem.itemImg,
+        system: {}
+      };
+    }
+
+    // Create item on original owner
+    await originalOwner.createEmbeddedDocuments("Item", [itemData]);
+
+    // Remove from delegated items
+    const updated = delegatedItems.filter(d => d.itemId !== itemId);
     await mount.update({ "system.delegatedItems": updated });
-    this.render();
+
+    ui.notifications.info(`Returned ${cargoItem.itemName} to ${originalOwner.name}`);
+
+    this.render(false);
   }
 
   /**

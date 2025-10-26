@@ -498,7 +498,7 @@ export class AcksActorSheetLocation extends BaseActorSheet {
   /* -------------------------------------------- */
 
   async _onDrop(event) {
-    const data = TextEditor.getDragEventData(event);
+    const data = TextEditorRef.getDragEventData(event);
 
     // Handle different document types
     if (data.type === "Scene") {

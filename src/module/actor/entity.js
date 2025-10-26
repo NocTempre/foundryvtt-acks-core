@@ -1207,10 +1207,7 @@ export class AcksActor extends Actor {
       this.system.encumbrance = {};
     }
 
-    if (this.system.encumbrance.max != maxEncumbrance && this._id) {
-      this.update({ "system.encumbrance.max": maxEncumbrance });
-    }
-
+    // Set encumbrance values (don't call update() to avoid infinite loop)
     this.system.encumbrance = {
       pct: Math.clamp((totalEncumbrance / maxEncumbrance) * 100, 0, 100),
       max: maxEncumbrance,
@@ -1220,11 +1217,9 @@ export class AcksActor extends Actor {
       receivedItems: Math.round(receivedWeight),
     };
 
-    // Update mount stats if applicable
+    // Update mount stats if applicable (directly set, don't call update())
     if (this.type === "monster" && this.system.mountStats) {
-      if (this.system.mountStats.currentLoad !== Math.round(totalEncumbrance)) {
-        this.update({ "system.mountStats.currentLoad": Math.round(totalEncumbrance) });
-      }
+      this.system.mountStats.currentLoad = Math.round(totalEncumbrance);
     }
 
     if (this.type === "character" && this.system.config.movementAuto) {
@@ -1535,10 +1530,10 @@ export class AcksActor extends Actor {
     if (!newBHR) {
       newBHR = "1d2";
     }
+    // Set BHR directly (don't call update() to avoid infinite loop)
     if (newBHR != data.hp.bhr) {
       data.hp.bhr = newBHR;
-      this.update({ "system.hp.bhr": newBHR });
-      this.update({ "system.fight.healingrate": newBHR });
+      data.fight.healingrate = newBHR;
     }
   }
 

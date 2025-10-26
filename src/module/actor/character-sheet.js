@@ -3,7 +3,7 @@ import { AcksCharacterModifiers } from "../dialog/character-modifiers.js";
 import { AcksCharacterCreator } from "../dialog/character-creation.js";
 import { AcksJournalEntryEditor } from "../dialog/journal-entry-editor.js";
 import { ItemTransferDialog } from "../dialog/item-transfer-dialog.js";
-import { templatePath, SYSTEM_ID, renderTemplate } from "../config.js";
+import { templatePath, SYSTEM_ID, renderTemplate, TextEditorRef } from "../config.js";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -204,7 +204,7 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
         for (const [key, value] of Object.entries(entryData)) {
           if (typeof value === 'string' && value.trim()) {
             // Enrich HTML to convert entity links (@UUID) to clickable links
-            enrichedData[key] = await TextEditor.enrichHTML(value, {
+            enrichedData[key] = await TextEditorRef.enrichHTML(value, {
               async: true,
               relativeTo: this.actor,
             });
