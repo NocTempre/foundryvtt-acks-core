@@ -40,6 +40,12 @@
   "ACKS.name": "Name",
   "ACKS.Hireling": "Hireling",
 
+  "ACKS.mounts.title": "Mounts & Draft Animals",
+  "ACKS.mounts.rideable": "Rideable",
+  "ACKS.mounts.draft": "Draft",
+  "ACKS.mounts.capacity": "Capacity",
+  "ACKS.mounts.load": "Load",
+
   "ACKS.dialog.tweaks": "Tweaks",
   "ACKS.dialog.partysheet": "Party Overview",
   "ACKS.dialog.selectActors": "Select PCs",

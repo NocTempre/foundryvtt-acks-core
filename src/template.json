@@ -104,6 +104,7 @@
         "movementAuto": true
       },
       "henchmenList": [],
+      "mountsList": [],
       "details": {
         "biography": "",
         "morale": 0,

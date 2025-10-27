@@ -84,7 +84,7 @@ async function loadClassDefinitions() {
       try {
         const result = await FilePickerClass.browse("data", current);
         for (const file of result.files ?? []) {
-          if (typeof file === "string" && file.toLowerCase().endsWith(".json")) {
+          if (typeof file === "string" && file.toLowerCase().endsWith(".json") && !file.toLowerCase().includes("class-packages-")) {
             files.push(file);
           }
         }
@@ -232,6 +232,62 @@ async function loadClassDefinitions() {
   CONFIG.ACKS.classSources = Array.from(sources.values()).sort((a, b) => a.label.localeCompare(b.label, locale));
 }
 
+async function loadClassPackages() {
+  const fetchJson = foundry.utils?.fetchJsonWithTimeout ?? fetchJsonFallback;
+  const FilePickerClass =
+    foundry?.applications?.apps?.FilePicker?.implementation ??
+    foundry?.app?.applications?.FilePicker?.implementation ??
+    foundry?.applications?.apps?.FilePicker ??
+    globalThis.FilePicker;
+
+  const collectPackageFiles = async (rootDirectory) => {
+    if (!FilePickerClass?.browse) return [];
+
+    try {
+      const result = await FilePickerClass.browse("data", rootDirectory);
+      return (result.files ?? []).filter(
+        (file) => typeof file === "string" && file.toLowerCase().includes("class-packages-") && file.toLowerCase().endsWith(".json")
+      );
+    } catch (error) {
+      console.warn(`ACKS | Unable to browse package directory ${rootDirectory}`, error);
+      return [];
+    }
+  };
+
+  const rulesRoot = assetPath("rules");
+  let packageFiles = [];
+
+  try {
+    packageFiles = await collectPackageFiles(rulesRoot);
+  } catch (error) {
+    console.warn("ACKS | Failed to enumerate package files", error);
+  }
+
+  const packages = {};
+
+  for (const filePath of packageFiles) {
+    let raw;
+    try {
+      raw = await fetchJson(filePath);
+    } catch (error) {
+      console.error(`ACKS | Failed to load class packages from ${filePath}`, error);
+      continue;
+    }
+
+    if (!Array.isArray(raw)) continue;
+
+    // Extract class name from filename (e.g., "class-packages-fighter.json" -> "fighter")
+    const fileName = filePath.split("/").pop() ?? "";
+    const match = fileName.match(/class-packages-(.+?)\.json$/i);
+    if (!match) continue;
+
+    const classSlug = match[1].toLowerCase();
+    packages[classSlug] = raw;
+  }
+
+  CONFIG.ACKS.classPackages = packages;
+}
+
 async function fetchJsonFallback(path, options = {}) {
   const response = await fetch(path, options);
   if (!response.ok) {
@@ -275,6 +331,7 @@ Hooks.once("init", async function () {
   CONFIG.ACKS = ACKS;
 
   await loadClassDefinitions();
+  await loadClassPackages();
 
   game.acks = {
     rollItemMacro: macros.rollItemMacro,

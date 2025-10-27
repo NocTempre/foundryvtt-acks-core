@@ -1,0 +1,175 @@
+[
+  {
+    "minRoll": 3,
+    "maxRoll": 4,
+    "name": "Thug",
+    "proficiencies": ["Combat Ferocity", "Intimidation"],
+    "equipment": [
+      "Short bow",
+      "Quiver with 20 arrows",
+      "Morning star",
+      "Scarred leather armor",
+      "Wool tunic and pants",
+      "Embossed belt",
+      "Low boots",
+      "Backpack",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "encumbrance": "4 4/6 st"
+  },
+  {
+    "minRoll": 5,
+    "maxRoll": 6,
+    "name": "Ravager",
+    "proficiencies": ["Berserkergang", "Endurance"],
+    "equipment": [
+      "Long bearded axe",
+      "Francisca",
+      "Chain mail armor",
+      "Thick wool cloak",
+      "Wool tunic and pants",
+      "Leather belt",
+      "Low boots",
+      "Belt pouch",
+      "Small sack",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "encumbrance": "6 4/6 st"
+  },
+  {
+    "minRoll": 7,
+    "maxRoll": 8,
+    "name": "Corsair",
+    "proficiencies": ["Swashbuckling", "Seafaring"],
+    "equipment": [
+      "Short bow",
+      "Quiver with 20 arrows",
+      "Scimitar",
+      "2 well-balanced daggers with boot-sheathes",
+      "Leather armor",
+      "Colorful tunic and pants",
+      "Silk girdle",
+      "Leather duelist's gloves",
+      "High boots",
+      "Small sack",
+      "50' rope",
+      "Grappling hook",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "gold": 4,
+    "encumbrance": "5 3/6 st"
+  },
+  {
+    "minRoll": 9,
+    "maxRoll": 10,
+    "name": "Auxiliary",
+    "proficiencies": ["Skirmishing", "Labor (construction)"],
+    "equipment": [
+      "3 javelins",
+      "Short sword",
+      "Wooden shield",
+      "Chain mail armor",
+      "Armiger's tunic and pants",
+      "Embossed belt",
+      "High boots",
+      "Backpack",
+      "Laborer's tools",
+      "Mess kit",
+      "Flask of military oil",
+      "Tinderbox",
+      "1 week's iron rations"
+    ],
+    "gold": 10,
+    "encumbrance": "8 3/6 st"
+  },
+  {
+    "minRoll": 11,
+    "maxRoll": 12,
+    "name": "Legionary",
+    "proficiencies": ["Fighting Style Spec. (weapon & shield)", "Siege Engineering"],
+    "equipment": [
+      "Military-issue spear",
+      "Short sword",
+      "Steel shield re-painted many times",
+      "Slightly battered banded plate armor",
+      "Armiger's tunic and pants",
+      "Embossed belt",
+      "High boots",
+      "Backpack",
+      "Laborer's tools",
+      "Mess kit",
+      "Flask of military oil",
+      "Tinderbox",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "gold": 20,
+    "encumbrance": "10 st"
+  },
+  {
+    "minRoll": 13,
+    "maxRoll": 14,
+    "name": "Gladiator",
+    "proficiencies": ["Weapon Focus (swords and daggers)", "Seduction"],
+    "equipment": [
+      "2 swords",
+      "Heavy arena armor",
+      "Plumed heavy helmet with visor and crest",
+      "Armiger's tunic and pants",
+      "Sandals",
+      "Small sack",
+      "Amphora of oil (for polishing body)",
+      "1 week's iron rations"
+    ],
+    "gold": 38,
+    "encumbrance": "6 st"
+  },
+  {
+    "minRoll": 15,
+    "maxRoll": 16,
+    "name": "Signifer",
+    "proficiencies": ["Command", "Manual of Arms 2"],
+    "equipment": [
+      "Military-issue spear",
+      "Sword",
+      "Steel shield bearing Imperial eagle",
+      "Banded plate armor",
+      "Banner flag bearing winged sun",
+      "Armiger's tunic and pants",
+      "Low boots",
+      "Short gloves",
+      "Backpack",
+      "Mess kit",
+      "Tinderbox",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "gold": 57,
+    "encumbrance": "9 5/6 st (or 8 5/6 st without banner)"
+  },
+  {
+    "minRoll": 17,
+    "maxRoll": 18,
+    "name": "Cataphract",
+    "proficiencies": ["Mounted Combat", "Military Strategy"],
+    "equipment": [
+      "Composite bow",
+      "Quiver with 20 arrows",
+      "Polished sword",
+      "Steel shield bearing noble house's crest",
+      "Lamellar armor",
+      "Armiger's tunic and pants",
+      "High boots",
+      "Riding saddle and tack",
+      "Saddlebag",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "mounts": ["Medium riding horse"],
+    "gold": 2,
+    "encumbrance": "7 2/6 st (with rations on horse)"
+  }
+]

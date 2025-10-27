@@ -23,6 +23,10 @@
     <div class="item-name">{{localize 'ACKS.category.abilities'}}</div>
     <div class="item-controls">
       {{#if owner}}
+      {{#if system.details.classKey}}
+      <a class="item-control" title="Roll for Class Package" data-action="roll-class-package"><i
+          class="fas fa-dice-d6"></i></a>
+      {{/if}}
       <a class="item-control item-create" title='{{localize "ACKS.Add"}}' data-type="ability"><i
           class="fas fa-plus"></i></a>
       {{/if}}

@@ -3,6 +3,7 @@ import { AcksCharacterModifiers } from "../dialog/character-modifiers.js";
 import { AcksCharacterCreator } from "../dialog/character-creation.js";
 import { AcksJournalEntryEditor } from "../dialog/journal-entry-editor.js";
 import { ItemTransferDialog } from "../dialog/item-transfer-dialog.js";
+import { AcksClassPackageDialog } from "../dialog/class-package-selection.js";
 import { templatePath, SYSTEM_ID, renderTemplate, TextEditorRef } from "../config.js";
 
 /**
@@ -485,6 +486,7 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
 
     if (this.options.editable) {
       html.find("[data-action='select-class']").click((ev) => this._onSelectClass(ev));
+      html.find("[data-action='roll-class-package']").click((ev) => this._onRollClassPackage(ev));
     }
 
     // Everything below here is only needed if the sheet is editable
@@ -523,6 +525,22 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
     html.find(".henchman-delete").click((ev) => {
       const li = $(ev.currentTarget).parents(".item");
       this.actor.delHenchman(li.data("henchmanId"));
+      li.slideUp(200, () => this.render(false));
+    });
+
+    // Mounts handlers
+    html.find(".open-mount").click((ev) => {
+      const li = $(ev.currentTarget);
+      const mountId = li.data("mountId");
+      const mount = game.actors.get(mountId);
+      if (mount) {
+        mount.sheet.render(true);
+      }
+    });
+
+    html.find(".mount-delete").click((ev) => {
+      const li = $(ev.currentTarget).parents(".item");
+      this.actor.delMount(li.data("mountId"));
       li.slideUp(200, () => this.render(false));
     });
 
@@ -817,5 +835,32 @@ export class AcksActorSheetCharacter extends AcksActorSheet {
     };
 
     await this.actor.update(updateData);
+
+    // Prompt for package selection if packages are available
+    const classDef = CONFIG.ACKS?.classes?.[classKey];
+    if (classDef) {
+      const className = classDef.name.toLowerCase();
+      const classSlug = classKey.split('-')[0];
+      const packages = CONFIG.ACKS?.classPackages?.[className] || CONFIG.ACKS?.classPackages?.[classSlug];
+
+      if (packages && packages.length > 0) {
+        // Ask if they want to roll for a package
+        const shouldRoll = await Dialog.confirm({
+          title: "Class Package",
+          content: `<p>Would you like to roll for a ${classDef.name} starting package?</p><p>This will roll 3d6 and let you select proficiencies and starting equipment.</p>`,
+          yes: () => true,
+          no: () => false,
+        });
+
+        if (shouldRoll) {
+          await AcksClassPackageDialog.handlePackageSelection(this.actor);
+        }
+      }
+    }
+  }
+
+  async _onRollClassPackage(event) {
+    event.preventDefault();
+    await AcksClassPackageDialog.handlePackageSelection(this.actor);
   }
 }

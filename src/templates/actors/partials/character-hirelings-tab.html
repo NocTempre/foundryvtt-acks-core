@@ -6,7 +6,7 @@
   </div>
 </section>
 
-<section class="inventory resizable" data-base-size="349">
+<section class="inventory resizable" data-base-size="250">
   <div>
     <div class="item-titles flexrow">
       <div class="item-caret"><i class="fas fa-caret-down"></i></div>
@@ -65,6 +65,71 @@
           <div class="item-controls">
             {{#if ../owner}}
             <a class="item-control henchman-delete" title='{{localize "ACKS.Delete"}}'><i class="fas fa-trash"></i></a>
+            {{/if}}
+          </div>
+        </div>
+      </li>
+      {{/each}}
+    </ol>
+  </div>
+</section>
+
+<section class="inventory mounts-section resizable" data-base-size="200">
+  <div>
+    <div class="item-titles flexrow">
+      <div class="item-caret"><i class="fas fa-horse-head"></i></div>
+      <div class="item-name">{{localize "ACKS.mounts.title"}}</div>
+      <div class="field-short">{{localize "ACKS.mounts.rideable"}}</div>
+      <div class="field-short">{{localize "ACKS.mounts.draft"}}</div>
+      <div class="field-short">{{localize "ACKS.mounts.capacity"}}</div>
+      <div class="field-short">{{localize "ACKS.mounts.load"}}</div>
+      <div class="item-controls">
+        &nbsp;
+      </div>
+    </div>
+    <ol class="item-list">
+      {{#each mounts as |mount idx|}}
+      <li class="item-entry">
+        <div class="item flexrow" data-mount-id="{{mount._id}}">
+          <div class="item-name flexrow">
+            <div class="item-image" style="background-image: url({{mount.img}})"></div>
+            <a class="open-mount" data-mount-id="{{mount._id}}">
+              <h4>{{mount.name~}}</h4>
+            </a>
+          </div>
+          <div class="field-short">
+            {{#if mount.system.mountStats.canBeRidden}}
+            <i class="fas fa-check" title="Can be ridden"></i>
+            {{else}}
+            <i class="fas fa-times" style="opacity: 0.3;"></i>
+            {{/if}}
+          </div>
+          <div class="field-short">
+            {{#if mount.system.draftAnimal.enabled}}
+            <i class="fas fa-check" title="Can be used as draft animal"></i>
+            {{else}}
+            <i class="fas fa-times" style="opacity: 0.3;"></i>
+            {{/if}}
+          </div>
+          <div class="field-short">
+            {{#if mount.system.draftAnimal.enabled}}
+            {{mount.system.draftAnimal.normalLoad}} st
+            {{else if mount.system.mountStats.effectiveCapacity}}
+            {{mount.system.mountStats.effectiveCapacity}} st
+            {{else}}
+            -
+            {{/if}}
+          </div>
+          <div class="field-short">
+            {{#if mount.system.encumbrance.value}}
+            {{mount.system.encumbrance.value}} st
+            {{else}}
+            0 st
+            {{/if}}
+          </div>
+          <div class="item-controls">
+            {{#if ../owner}}
+            <a class="item-control mount-delete" title='{{localize "ACKS.Delete"}}'><i class="fas fa-trash"></i></a>
             {{/if}}
           </div>
         </div>

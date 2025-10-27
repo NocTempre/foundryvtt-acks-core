@@ -21,6 +21,7 @@ export class AcksActorSheet extends BaseActorSheet {
     // Prepare owned items
     this._prepareItems(data);
     data.henchmen = this.actor.getHenchmen();
+    data.mounts = this.actor.getMounts();
     data.languages = this.actor.getLanguages();
     data.description = await TextEditorRef.enrichHTML(this.object.system.details.description, { async: true });
     data.notes = await TextEditorRef.enrichHTML(this.object.system.details.notes, { async: true });
@@ -49,7 +50,16 @@ export class AcksActorSheet extends BaseActorSheet {
       let dataItem = JSON.parse(data);
       let actorId = dataItem.uuid.split(".")[1];
       if (dataItem.uuid.includes("Actor") && !dataItem.uuid.includes("Item") && actorId && actorId != this.actor.id) {
-        this.actor.addHenchman(actorId);
+        // Get the actor to check its type
+        const droppedActor = game.actors.get(actorId);
+        if (droppedActor) {
+          // If it's a monster, add as mount; if character, add as henchman
+          if (droppedActor.type === "monster") {
+            await this.actor.addMount(actorId);
+          } else if (droppedActor.type === "character") {
+            await this.actor.addHenchman(actorId);
+          }
+        }
         return;
       }
     }

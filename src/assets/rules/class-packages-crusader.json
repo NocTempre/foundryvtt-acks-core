@@ -1,0 +1,234 @@
+[
+  {
+    "name": "Hermit",
+    "minRoll": 3,
+    "maxRoll": 4,
+    "template": "Hermit crusader living in the wilderness",
+    "proficiencies": [
+      "Laying on Hands",
+      "Naturalism"
+    ],
+    "spells": [],
+    "equipment": [
+      "Hand-carved wood holy symbol (winged sun of Ammonar)",
+      "Staff",
+      "Hide armor",
+      "Itchy wool tunic and pants",
+      "Sandals",
+      "Small sack",
+      "Waterskin",
+      "2 weeks' iron rations"
+    ],
+    "gold": 0,
+    "silver": 0,
+    "copper": 0,
+    "encumbrance": "4 2/6 st"
+  },
+  {
+    "name": "Prophet",
+    "minRoll": 5,
+    "maxRoll": 6,
+    "template": "Prophet spreading the word through stories",
+    "proficiencies": [
+      "Prophecy",
+      "Performance (storytelling)"
+    ],
+    "spells": [],
+    "equipment": [
+      "Holy symbol (winged sun of Ammonar)",
+      "Sling",
+      "30 sling stones",
+      "Staff",
+      "Leather armor",
+      "Grey wool tunic and pants",
+      "Embossed belt",
+      "Low boots",
+      "Backpack",
+      "1 week's iron rations"
+    ],
+    "gold": 6,
+    "silver": 0,
+    "copper": 0,
+    "encumbrance": "4 5/6 st"
+  },
+  {
+    "name": "Mendicant",
+    "minRoll": 7,
+    "maxRoll": 8,
+    "template": "Wandering crusader with animal companion",
+    "proficiencies": [
+      "Beast Friendship",
+      "Animal Husbandry"
+    ],
+    "spells": [],
+    "equipment": [
+      "Holy symbol (winged sun of Ammonar)",
+      "Wooden walking staff",
+      "Leather-backed scale armor",
+      "Green traveler's cloak",
+      "Green cassock",
+      "Sandals",
+      "Small sack",
+      "Waterskin",
+      "2 weeks' iron rations"
+    ],
+    "mounts": [
+      "Trained hunting dog"
+    ],
+    "gold": 5,
+    "silver": 0,
+    "copper": 0,
+    "encumbrance": "6 4/6 st"
+  },
+  {
+    "name": "Proselytizer",
+    "minRoll": 9,
+    "maxRoll": 10,
+    "template": "Persuasive crusader converting the masses",
+    "proficiencies": [
+      "Divine Health",
+      "Diplomacy"
+    ],
+    "spells": [],
+    "equipment": [
+      "Holy symbol (winged sun of Ammonar)",
+      "Mace",
+      "Wooden shield",
+      "Ring mail armor",
+      "Purple priest's cassock",
+      "Embossed belt",
+      "High boots",
+      "Small sack",
+      "Holy book (The Laws of the Light)",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "gold": 0,
+    "silver": 20,
+    "copper": 0,
+    "encumbrance": "6 1/6 st"
+  },
+  {
+    "name": "Priest",
+    "minRoll": 11,
+    "maxRoll": 12,
+    "template": "Devoted priest of Ammonar",
+    "proficiencies": [
+      "Divine Blessing",
+      "Theology 2"
+    ],
+    "spells": [],
+    "equipment": [
+      "Holy symbol (winged sun of Ammonar)",
+      "Mace",
+      "Wooden shield",
+      "Banded plate armor",
+      "Purple priest's cassock",
+      "Embossed belt",
+      "High boots",
+      "Small sack",
+      "Holy book (The Laws of the Light)",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "gold": 0,
+    "silver": 25,
+    "copper": 0,
+    "encumbrance": "8 1/6 st"
+  },
+  {
+    "name": "Undead Slayer",
+    "minRoll": 13,
+    "maxRoll": 14,
+    "template": "Crusader specialized in destroying undead",
+    "proficiencies": [
+      "Righteous Rebuke",
+      "Healing"
+    ],
+    "spells": [],
+    "equipment": [
+      "Holy symbol (winged sun of Ammonar)",
+      "Warhammer",
+      "Steel shield",
+      "Chain mail armor",
+      "Blue priest's cassock",
+      "Leather belt",
+      "Low boots",
+      "Backpack",
+      "1 flask of holy water",
+      "1 lb garlic",
+      "1 lb wolfsbane",
+      "Mirror",
+      "4 stakes and mallet",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "gold": 8,
+    "silver": 0,
+    "copper": 0,
+    "encumbrance": "7 3/6 st"
+  },
+  {
+    "name": "Exorcist",
+    "minRoll": 15,
+    "maxRoll": 16,
+    "template": "Holy warrior specialized in banishing evil",
+    "proficiencies": [
+      "Sensing Evil",
+      "Intimidation"
+    ],
+    "spells": [],
+    "equipment": [
+      "Holy symbol (winged sun of Ammonar)",
+      "Warhammer",
+      "Steel shield",
+      "Banded plate armor",
+      "Blue priest's cassock",
+      "Leather belt",
+      "Low boots",
+      "Backpack",
+      "Flask of holy water",
+      "6 torches",
+      "Tinderbox",
+      "50' rope",
+      "Manacles",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "gold": 33,
+    "silver": 0,
+    "copper": 0,
+    "encumbrance": "10 1/2 st"
+  },
+  {
+    "name": "Templar",
+    "minRoll": 17,
+    "maxRoll": 18,
+    "template": "Elite holy knight of Ammonar",
+    "proficiencies": [
+      "Martial Training (swords/daggers)",
+      "Riding"
+    ],
+    "spells": [],
+    "equipment": [
+      "Holy symbol (winged sun of Ammonar)",
+      "Polished sword and dagger",
+      "Steel shield bearing symbol of the winged sun",
+      "Banded plate armor",
+      "Purple armiger's tunic and pants",
+      "Embossed belt",
+      "Riding boots",
+      "Riding gloves",
+      "Riding saddle and tack",
+      "Leather saddlebag",
+      "1 week's iron rations"
+    ],
+    "mounts": [
+      "Medium riding horse"
+    ],
+    "gold": 15,
+    "silver": 0,
+    "copper": 0,
+    "encumbrance": "6 3/6 st with rations on horse"
+  }
+]

@@ -1,0 +1,173 @@
+[
+  {
+    "minRoll": 3,
+    "maxRoll": 4,
+    "name": "Hedge Wizard",
+    "proficiencies": ["Mastery of Enchant. & Illusions", "Healing", "Survival"],
+    "spells": ["Beguile Humanoid", "Auditory Illusion"],
+    "equipment": [
+      "Musty old spellbook",
+      "Gnarled oaken staff",
+      "Simple robe",
+      "Leather shoes",
+      "Medicine bag",
+      "1 lb comfrey",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "gold": 1,
+    "silver": 8,
+    "encumbrance": "3 st"
+  },
+  {
+    "minRoll": 5,
+    "maxRoll": 6,
+    "name": "Necromancer",
+    "proficiencies": ["Black Lore of Zahar", "Alchemy", "Healing"],
+    "spells": ["Unliving Puppet", "Faithful Companion"],
+    "equipment": [
+      "Iron-bound snakeskin spellbook",
+      "Curved sacrificial dagger",
+      "Grey robes",
+      "Leather belt",
+      "Leather gloves",
+      "High boots",
+      "Backpack",
+      "Belt pouch",
+      "Quill and ink",
+      "2 weeks' iron rations"
+    ],
+    "gold": 19,
+    "encumbrance": "2 2/6 st"
+  },
+  {
+    "minRoll": 7,
+    "maxRoll": 8,
+    "name": "Occultist",
+    "proficiencies": ["Mastery of Conj. & Summoning", "Knowledge (occult)", "Theology"],
+    "spells": ["Conjure Cacodemon Spawn", "Summon Manes"],
+    "equipment": [
+      "Rolled papyrus spellbook",
+      "Wavy-bladed dagger",
+      "Black and gold robes",
+      "Polished iron skullcap",
+      "Embossed belt",
+      "Low boots",
+      "Backpack",
+      "Quill and ink",
+      "Waterskin",
+      "2 weeks' iron rations"
+    ],
+    "gold": 56,
+    "encumbrance": "3 1/6 st"
+  },
+  {
+    "minRoll": 9,
+    "maxRoll": 10,
+    "name": "Elementalist",
+    "proficiencies": ["Elementalism (fire)*", "Naturalism", "Alchemy"],
+    "spells": ["Fan of Flames", "Blinding Flash"],
+    "equipment": [
+      "Wood-paneled spellbook",
+      "Gnarled oaken staff",
+      "5 darts",
+      "Four-colored cassock with hood",
+      "Embossed belt",
+      "Low boots",
+      "Backpack",
+      "Quill and ink",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "gold": 60,
+    "encumbrance": "3 1/6 st"
+  },
+  {
+    "minRoll": 11,
+    "maxRoll": 12,
+    "name": "Classicist",
+    "proficiencies": ["Loremastery", "Knowledge (history)", "Military Strategy"],
+    "spells": ["Mage Missile", "Illumination"],
+    "equipment": [
+      "Well-kept spellbook",
+      "Rune-etched staff",
+      "Blue mage's cassock",
+      "Embossed belt",
+      "Low boots",
+      "Backpack",
+      "Quill and ink",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "gold": 82,
+    "encumbrance": "3 st"
+  },
+  {
+    "minRoll": 13,
+    "maxRoll": 14,
+    "name": "Warmage",
+    "proficiencies": ["Battle Magic", "Military Strategy", "Siege Engineering"],
+    "spells": ["Earth's Excrescence", "Slicing Blow"],
+    "equipment": [
+      "Academy-issue spellbook",
+      "Iron-shod staff",
+      "Officer's dagger",
+      "Red armiger's tunic and pants",
+      "High boots",
+      "Backpack",
+      "Quill and ink",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "gold": 94,
+    "encumbrance": "3 1/6 st"
+  },
+  {
+    "minRoll": 15,
+    "maxRoll": 16,
+    "name": "Polymath",
+    "proficiencies": ["Expanded Repertoire", "Naturalism", "Language"],
+    "spells": ["Infuriate Humanoid", "Discern Magic"],
+    "spellChoice": 1,
+    "equipment": [
+      "Enameled spellbook",
+      "Smooth-worn staff",
+      "Blue robe with crescents",
+      "Leather belt",
+      "Low boots",
+      "Backpack",
+      "Ornamental crystal ball (20gp value)",
+      "Quill and ink",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "gold": 102,
+    "encumbrance": "3 1/6 st"
+  },
+  {
+    "minRoll": 17,
+    "maxRoll": 18,
+    "name": "Noble Magist",
+    "proficiencies": ["Bright Lore of Aura", "Diplomacy", "Leadership"],
+    "spells": ["Slumber", "Counterspell"],
+    "equipment": [
+      "Bronze-framed spellbook",
+      "Staff tipped with glass gemstone (45gp value)",
+      "5 darts",
+      "White mage's cassock",
+      "Extravagant hat",
+      "Leather belt",
+      "Leather gloves",
+      "High boots",
+      "Backpack",
+      "Quill and ink",
+      "Riding saddle and tack",
+      "Leather saddlebag",
+      "2 weeks' iron rations"
+    ],
+    "mounts": ["Medium riding horse"],
+    "gold": 34,
+    "silver": 5,
+    "encumbrance": "2 st (with rations on horse)"
+  }
+]

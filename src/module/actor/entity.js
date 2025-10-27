@@ -170,16 +170,67 @@ export class AcksActor extends Actor {
   }
 
   /* -------------------------------------------- */
-  manageMoney(name, quantity) {
-    let money = this.items.find((i) => i.name.toLowerCase() == name.toLowerCase());
+  async ensureMoneyItem(name) {
+    let money = this.items.find((i) => i.type === "money" && i.name.toLowerCase() === name.toLowerCase());
+
     if (!money) {
+      console.warn(`ACKS | ensureMoneyItem: "${name}" not found, attempting to create it`);
+      // Try to load from compendium
+      const equipmentCompendium = await AcksUtility.loadCompendium("acks.acks-all-equipment");
+      const moneyTemplate = equipmentCompendium.find(
+        (item) => item.type === "money" && item.name.toLowerCase() === name.toLowerCase()
+      );
+
+      if (moneyTemplate) {
+        const moneyData = moneyTemplate.toObject();
+        moneyData.system.quantity = 0;
+        await this.createEmbeddedDocuments("Item", [moneyData]);
+        console.log(`ACKS | Created ${name} money item from compendium`);
+      } else {
+        // Create a basic money item with correct copper value
+        const copperValues = {
+          "gold": 100,
+          "silver": 10,
+          "copper": 1
+        };
+        const coppervalue = copperValues[name.toLowerCase()] || 1;
+
+        await this.createEmbeddedDocuments("Item", [{
+          name: name,
+          type: "money",
+          system: {
+            quantity: 0,
+            coppervalue: coppervalue,
+            quantitybank: 0,
+            unitweight: 0,
+            totalvalue: 0
+          }
+        }]);
+        console.log(`ACKS | Created basic ${name} money item with coppervalue ${coppervalue}`);
+      }
+    }
+  }
+
+  /* -------------------------------------------- */
+  async manageMoney(name, quantity) {
+    // Ensure the money item exists first
+    await this.ensureMoneyItem(name);
+
+    // Need to check type === "money" to avoid conflicts with regular items
+    let money = this.items.find((i) => i.type === "money" && i.name.toLowerCase() === name.toLowerCase());
+    if (!money) {
+      console.error(`ACKS | manageMoney: Money item "${name}" still not found after creation attempt. Money items:`,
+        this.items.filter(i => i.type === "money").map(i => ({ name: i.name, qty: i.system.quantity })));
       return;
     }
-    let newValue = Number(money.system.quantity) + Number(quantity);
+    const currentQty = Number(money.system.quantity) || 0;
+    let newValue = currentQty + Number(quantity);
     if (newValue < 0) {
       newValue = 0;
     }
-    money.update({ "system.quantity": newValue });
+    console.log(`ACKS | manageMoney: Updating ${name} from ${currentQty} + ${quantity} = ${newValue}`);
+    const result = await money.update({ "system.quantity": newValue });
+    console.log(`ACKS | manageMoney: Update result:`, result);
   }
 
   /* -------------------------------------------- */
@@ -320,6 +371,84 @@ export class AcksActor extends Actor {
     // Set the name of the manager in the henchman data
     await npc.update({ "system.retainer.managerid": this.id });
   }
+  /* -------------------------------------------- */
+  getMounts() {
+    if (this.type != "character") {
+      return [];
+    }
+
+    let mounts = [];
+    for (let id of this.system.mountsList || []) {
+      const mount = game.actors.get(id);
+      if (mount) {
+        mounts.push(mount);
+      }
+    }
+    return mounts;
+  }
+
+  /* -------------------------------------------- */
+  async addMount(mountId) {
+    if (this.type != "character") {
+      return;
+    }
+
+    // Get the mount actor and ensure it has mount stats
+    const mount = game.actors.get(mountId);
+    if (!mount) {
+      ui.notifications?.error("Mount not found");
+      return;
+    }
+
+    // Ensure mount has the necessary properties
+    const updates = {};
+    if (!mount.system.draftAnimal) {
+      updates["system.draftAnimal"] = {
+        enabled: true,
+        normalLoad: 20
+      };
+    } else if (!mount.system.draftAnimal.enabled) {
+      updates["system.draftAnimal.enabled"] = true;
+    }
+
+    if (!mount.system.mountStats) {
+      updates["system.mountStats"] = {
+        canBeRidden: mount.name.toLowerCase().includes("riding") ||
+                     mount.name.toLowerCase().includes("horse"),
+        baseCapacity: 20,
+        equippedSaddle: null,
+        equippedHarness: null,
+        effectiveCapacity: 20,
+        currentLoad: 0
+      };
+    }
+
+    if (Object.keys(updates).length > 0) {
+      await mount.update(updates);
+    }
+
+    // Add to mounts list
+    const currentMounts = Array.from(this.system.mountsList || []);
+    if (!currentMounts.includes(mountId)) {
+      currentMounts.push(mountId);
+      await this.update({ "system.mountsList": currentMounts });
+      ui.notifications?.info(`Added ${mount.name} to mounts`);
+    }
+  }
+
+  /* -------------------------------------------- */
+  async delMount(mountId) {
+    if (this.type != "character") {
+      return;
+    }
+    const currentMounts = Array.from(this.system.mountsList || []);
+    const index = currentMounts.indexOf(mountId);
+    if (index > -1) {
+      currentMounts.splice(index, 1);
+      await this.update({ "system.mountsList": currentMounts });
+    }
+  }
+
   /* -------------------------------------------- */
   async delHenchman(subActorId) {
     let newArray = [];
@@ -537,11 +666,404 @@ export class AcksActor extends Actor {
     };
 
     for (const ability of abilityKeys) {
-      const roll = await new Roll("3d6").evaluate({ async: true });
+      const roll = await new Roll("3d6").evaluate();
       updates[`system.scores.${ability}.value`] = roll.total;
     }
 
     await this.update(updates);
+  }
+
+  /* -------------------------------------------- */
+  async rollClassPackage(manualRoll = null) {
+    if (this.type !== "character") {
+      return null;
+    }
+
+    const classKey = this.system?.details?.classKey;
+    if (!classKey) {
+      ui.notifications?.warn("Please select a class before rolling for a package.");
+      return null;
+    }
+
+    // Get the class name from classKey and find matching packages
+    const classDef = CONFIG.ACKS?.classes?.[classKey];
+    if (!classDef) {
+      return null;
+    }
+
+    // Try to find packages by class name
+    const className = classDef.name.toLowerCase();
+    let packages = CONFIG.ACKS?.classPackages?.[className];
+
+    if (!packages) {
+      // Try by classKey slug
+      const classSlug = classKey.split('-')[0]; // "fighter-acks2-core7-classes" -> "fighter"
+      packages = CONFIG.ACKS?.classPackages?.[classSlug];
+    }
+
+    if (!packages || !packages.length) {
+      ui.notifications?.info(`No packages available for ${classDef.name}.`);
+      return null;
+    }
+
+    // Roll 3d6 or use manual roll
+    let rollTotal;
+    if (manualRoll !== null) {
+      rollTotal = manualRoll;
+      ChatMessage.create({
+        content: `<div class="dice-roll"><div class="dice-result"><h4 class="dice-total">${rollTotal}</h4></div></div>`,
+        speaker: ChatMessage.getSpeaker({ actor: this }),
+        flavor: `Manual roll for ${classDef.name} Package`,
+      });
+    } else {
+      const roll = await new Roll("3d6").evaluate();
+      await roll.toMessage({
+        speaker: ChatMessage.getSpeaker({ actor: this }),
+        flavor: `Rolling for ${classDef.name} Package`,
+      });
+      rollTotal = roll.total;
+    }
+
+    // Find matching packages
+    const eligiblePackages = packages.filter(
+      (pkg) => rollTotal >= pkg.minRoll && rollTotal <= pkg.maxRoll
+    );
+
+    return {
+      roll: rollTotal,
+      eligiblePackages,
+      allPackages: packages.filter((pkg) => pkg.minRoll <= rollTotal),
+    };
+  }
+
+  /* -------------------------------------------- */
+  /**
+   * Parse equipment string to extract quantity and item names
+   * Examples:
+   *   "3 javelins" -> [{ quantity: 3, name: "javelins" }]
+   *   "4 stakes and mallet" -> [{ quantity: 4, name: "stakes" }, { quantity: 1, name: "mallet" }]
+   *   "2 flasks of military oil" -> [{ quantity: 2, name: "flask of military oil" }]
+   *   "1 week's iron rations" -> [{ quantity: 7, name: "Rations (iron)", isRations: true, rationDays: 7 }]
+   *   "2 weeks' iron rations" -> [{ quantity: 14, name: "Rations (iron)", isRations: true, rationDays: 14 }]
+   */
+  _parseEquipmentString(itemString) {
+    const results = [];
+
+    // Check for rations first (special case)
+    const rationsMatch = itemString.match(/(\d+)\s+week'?s?\s+(\w+)\s+rations/i);
+    if (rationsMatch) {
+      const weeks = parseInt(rationsMatch[1], 10);
+      const rationType = rationsMatch[2]; // "iron", "standard", etc.
+      return [{
+        quantity: weeks * 7,
+        name: `Rations (${rationType})`,
+        isRations: true,
+        rationDays: weeks * 7
+      }];
+    }
+
+    // Check for "X and Y" pattern (e.g., "4 stakes and mallet")
+    const andMatch = itemString.match(/^(\d+)\s+(.+?)\s+and\s+(.+)$/i);
+    if (andMatch) {
+      const quantity = parseInt(andMatch[1], 10);
+      const firstItem = andMatch[2].trim();
+      const secondItem = andMatch[3].trim();
+
+      results.push({ quantity: quantity, name: firstItem, isRations: false });
+      results.push({ quantity: 1, name: secondItem, isRations: false });
+      return results;
+    }
+
+    // Check for quantity prefix (e.g., "3 javelins", "2 flasks of military oil")
+    const qtyMatch = itemString.match(/^(\d+)\s+(.+)$/);
+    if (qtyMatch) {
+      const quantity = parseInt(qtyMatch[1], 10);
+      let name = qtyMatch[2].trim();
+
+      // Handle plurals by checking if we need to singularize for compendium lookup
+      // "2 flasks of military oil" -> look for "flask of military oil"
+      // "3 javelins" -> look for "javelin"
+
+      return [{ quantity: quantity, name: name, isRations: false }];
+    }
+
+    // No quantity specified, assume 1
+    return [{ quantity: 1, name: itemString.trim(), isRations: false }];
+  }
+
+  /* -------------------------------------------- */
+  async applyClassPackage(packageData) {
+    if (this.type !== "character") {
+      return;
+    }
+
+    if (!packageData) {
+      return;
+    }
+
+    // Clear existing equipment, proficiencies, and gold (but keep money items structure)
+    const itemsToDelete = this.items.filter(item => {
+      // Keep money items but reset quantity to 0
+      if (item.type === "money") {
+        return false;
+      }
+      // Delete weapons, armor, equipment, abilities
+      return ["weapon", "armor", "item", "ability"].includes(item.type);
+    });
+
+    if (itemsToDelete.length > 0) {
+      await this.deleteEmbeddedDocuments("Item", itemsToDelete.map(i => i.id));
+    }
+
+    // Reset all money to 0
+    const moneyItems = this.items.filter(i => i.type === "money");
+    const moneyUpdates = moneyItems.map(item => ({
+      _id: item.id,
+      "system.quantity": 0
+    }));
+    if (moneyUpdates.length > 0) {
+      await this.updateEmbeddedDocuments("Item", moneyUpdates);
+    }
+
+    const itemsToCreate = [];
+
+    // Add proficiencies
+    if (Array.isArray(packageData.proficiencies) && packageData.proficiencies.length > 0) {
+      const proficiencyCompendium = await AcksUtility.loadCompendium("acks.acks-proficiencies");
+
+      for (const profName of packageData.proficiencies) {
+        const profItem = proficiencyCompendium.find(
+          (item) => item.name.toLowerCase() === profName.toLowerCase()
+        );
+
+        if (profItem) {
+          itemsToCreate.push(profItem.toObject());
+        } else {
+          console.warn(`ACKS | Proficiency not found in compendium: ${profName}`);
+          // Create a basic proficiency item
+          itemsToCreate.push({
+            name: profName,
+            type: "ability",
+            system: {
+              proficiencytype: "class",
+              description: `Package proficiency: ${profName}`,
+            },
+          });
+        }
+      }
+    }
+
+    // Add spells
+    if (Array.isArray(packageData.spells) && packageData.spells.length > 0) {
+      // Try both arcane and divine spell compendiums
+      const arcaneSpells = await AcksUtility.loadCompendium("acks.acks-arcane-spells");
+      const divineSpells = await AcksUtility.loadCompendium("acks.acks-divine-spells");
+      const allSpells = [...arcaneSpells, ...divineSpells];
+
+      for (const spellName of packageData.spells) {
+        const spellItem = allSpells.find(
+          (item) => item.name.toLowerCase() === spellName.toLowerCase()
+        );
+
+        if (spellItem) {
+          itemsToCreate.push(spellItem.toObject());
+        } else {
+          console.warn(`ACKS | Spell not found in compendiums: ${spellName}`);
+          // Create a basic spell item
+          itemsToCreate.push({
+            name: spellName,
+            type: "spell",
+            system: {
+              description: `Package spell: ${spellName}`,
+              lvl: 1,
+              spelltype: "arcane"
+            },
+          });
+        }
+      }
+    }
+
+    // Handle spell choice if package allows additional spell selection
+    if (packageData.spellChoice && packageData.spellChoice > 0) {
+      // TODO: Show dialog for user to select additional spells
+      // For now, just notify the player
+      ui.notifications?.info(`${packageData.name} package grants ${packageData.spellChoice} additional spell choice(s). Please add manually.`);
+    }
+
+    // Add equipment
+    if (Array.isArray(packageData.equipment) && packageData.equipment.length > 0) {
+      const equipmentCompendium = await AcksUtility.loadCompendium("acks.acks-all-equipment");
+
+      for (const itemName of packageData.equipment) {
+        // Parse quantity and item name
+        // Patterns: "3 javelins", "4 stakes and mallet", "2 flasks of military oil", "1 week's iron rations"
+        const parsed = this._parseEquipmentString(itemName);
+
+        for (const parsedItem of parsed) {
+          const { quantity, name, isRations, rationDays } = parsedItem;
+
+          // Handle rations specially
+          if (isRations) {
+            // Add rations via manageMoney-like system if it exists
+            await this.manageMoney(name, rationDays);
+            continue;
+          }
+
+          // Try to find exact match first
+          let equipItem = equipmentCompendium.find(
+            (item) => item.name.toLowerCase() === name.toLowerCase()
+          );
+
+          // Try partial match if exact match not found
+          if (!equipItem) {
+            equipItem = equipmentCompendium.find((item) =>
+              item.name.toLowerCase().includes(name.toLowerCase()) ||
+              name.toLowerCase().includes(item.name.toLowerCase())
+            );
+          }
+
+          if (equipItem) {
+            const itemData = equipItem.toObject();
+            if (itemData.system) {
+              itemData.system.quantity = quantity;
+            }
+            itemsToCreate.push(itemData);
+          } else {
+            console.warn(`ACKS | Equipment not found in compendium: ${name}`);
+            // Create a basic item
+            itemsToCreate.push({
+              name: name,
+              type: "item",
+              system: {
+                quantity: quantity,
+                description: `Package item: ${itemName}`,
+              },
+            });
+          }
+        }
+      }
+    }
+
+    // Create all items at once
+    if (itemsToCreate.length > 0) {
+      await this.createEmbeddedDocuments("Item", itemsToCreate);
+    }
+
+    // Add coins if specified (tracked separately for weight)
+    // Gold = 100 copper value, Silver = 10 copper value, Copper = 1 copper value
+    // But they're stored separately because weight matters (1000 coins = 1 stone)
+    if (packageData.gold && packageData.gold > 0) {
+      await this.manageMoney("Gold", packageData.gold);
+    }
+
+    if (packageData.silver && packageData.silver > 0) {
+      await this.manageMoney("Silver", packageData.silver);
+    }
+
+    if (packageData.copper && packageData.copper > 0) {
+      await this.manageMoney("Copper", packageData.copper);
+    }
+
+    // Add mounts/animals if specified
+    let mountsCreated = 0;
+    if (Array.isArray(packageData.mounts) && packageData.mounts.length > 0) {
+      const monstersCompendium = await AcksUtility.loadCompendium("acks.acks-monsters");
+
+      for (const mountName of packageData.mounts) {
+        // Try to find the mount in the monsters compendium
+        let mountTemplate = monstersCompendium.find(
+          (actor) => actor.name.toLowerCase() === mountName.toLowerCase()
+        );
+
+        // Try partial match if exact match not found
+        if (!mountTemplate) {
+          mountTemplate = monstersCompendium.find((actor) =>
+            actor.name.toLowerCase().includes(mountName.toLowerCase()) ||
+            mountName.toLowerCase().includes(actor.name.toLowerCase())
+          );
+        }
+
+        let mountData;
+        if (mountTemplate) {
+          mountData = mountTemplate.toObject();
+        } else {
+          // Create a basic mount if not found in compendium
+          console.warn(`ACKS | Mount/animal not found in compendium: ${mountName}, creating basic template`);
+          mountData = {
+            name: mountName,
+            type: "monster",
+            system: {
+              details: {
+                alignment: "Neutral",
+                xp: 0
+              },
+              hp: { value: 10, max: 10 },
+              ac: { value: 13 },
+              thac0: { value: 19 },
+              movement: { base: 120 },
+              saves: {
+                death: { value: 14 },
+                wand: { value: 15 },
+                paralysis: { value: 16 },
+                breath: { value: 17 },
+                spell: { value: 18 }
+              },
+              draftAnimal: {
+                enabled: true,
+                normalLoad: 20
+              },
+              mountStats: {
+                canBeRidden: mountName.toLowerCase().includes("riding"),
+                canBeDraft: true,
+                baseCapacity: 20,
+                equippedSaddle: null,
+                equippedHarness: null,
+                effectiveCapacity: 20,
+                currentLoad: 0
+              }
+            }
+          };
+        }
+
+        // Ensure mount/draft stats are set
+        mountData.system = mountData.system || {};
+        mountData.system.draftAnimal = mountData.system.draftAnimal || { enabled: true, normalLoad: 20 };
+        mountData.system.draftAnimal.enabled = true;
+
+        mountData.system.mountStats = mountData.system.mountStats || {};
+        // Set canBeRidden based on mount name if not already set
+        if (mountData.system.mountStats.canBeRidden === undefined) {
+          mountData.system.mountStats.canBeRidden = mountName.toLowerCase().includes("riding") ||
+                                                      mountName.toLowerCase().includes("horse");
+        }
+
+        // Create the mount actor
+        const createdMount = await Actor.create(mountData);
+        if (createdMount) {
+          // Add to this character's mounts list
+          const currentMounts = Array.from(this.system.mountsList || []);
+          currentMounts.push(createdMount.id);
+          await this.update({ "system.mountsList": currentMounts });
+
+          mountsCreated++;
+          ChatMessage.create({
+            content: `Added mount/animal: ${createdMount.name}${mountData.system.mountStats.canBeRidden ? ' (rideable)' : ' (draft only)'}`,
+            speaker: ChatMessage.getSpeaker({ actor: this }),
+          });
+        }
+      }
+    }
+
+    // Send notification
+    const mountText = mountsCreated > 0 ? `, ${mountsCreated} mount(s)` : '';
+    const spellText = packageData.spells?.length > 0 ? `, ${packageData.spells.length} spell(s)` : '';
+    const message = `Applied ${packageData.name} package: ${packageData.proficiencies?.length || 0} proficiencies${spellText}, ${packageData.equipment?.length || 0} items${packageData.gold ? `, ${packageData.gold}gp` : ''}${mountText}.`;
+    ChatMessage.create({
+      content: message,
+      speaker: ChatMessage.getSpeaker({ actor: this }),
+    });
+
+    ui.notifications?.info(message);
   }
 
   /* -------------------------------------------- */

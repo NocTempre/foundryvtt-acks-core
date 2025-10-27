@@ -537,14 +537,15 @@ export class AcksCombat {
 
   /*******************************************************/
   static format(object, html) {
-    let colorEnabled = game.settings.get(SYSTEM_ID, "enable-combatant-color");
+    let colorEnabled = true;
     let colorFriendlies = "#00FF00";
     let colorHostiles = "#FF0000";
     try {
+      colorEnabled = game.settings.get(SYSTEM_ID, "enable-combatant-color");
       colorFriendlies = game.settings.get(SYSTEM_ID, "color-friendlies");
       colorHostiles = game.settings.get(SYSTEM_ID, "color-hostiles");
     } catch (e) {
-      console.log("Color settings not found", e);
+      console.log("Color settings not found, using defaults", e);
     }
 
     const V13 = AcksUtility.isMinVersion(13);

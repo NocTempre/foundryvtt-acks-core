@@ -78,6 +78,15 @@
           </li>
           {{/if}}
 
+          <li class="attribute flexrow">
+              <h4 class="attribute-name box-title" title="Can this animal be ridden as a mount?">
+                  Rideable Mount
+              </h4>
+              <div class="attribute-value">
+                  <input name="system.mountStats.canBeRidden" type="checkbox" {{checked system.mountStats.canBeRidden}} data-dtype="Boolean" />
+              </div>
+          </li>
+
           <li class="attribute flexrow" >
             <h4 class="attribute-name box-title" title="({{localize 'ACKS.bonuses.initiativebonus'}}) {{localize 'ACKS.exploration.ld.long'}}">
               {{ localize "ACKS.bonuses.initiativebonus" }}

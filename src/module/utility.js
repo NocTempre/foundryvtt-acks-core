@@ -15,12 +15,20 @@ export class AcksUtility {
   /* -------------------------------------------- */
   static updateWeightsLanguages() {
     for (let a of game.actors) {
-      a.updateWeight();
-      a.updateLanguages();
-      a.updateImplements();
+      if (typeof a.updateWeight === 'function') {
+        a.updateWeight();
+      }
+      if (typeof a.updateLanguages === 'function') {
+        a.updateLanguages();
+      }
+      if (typeof a.updateImplements === 'function') {
+        a.updateImplements();
+      }
     }
     for (let i of game.items) {
-      i.updateWeight();
+      if (typeof i.updateWeight === 'function') {
+        i.updateWeight();
+      }
     }
   }
 

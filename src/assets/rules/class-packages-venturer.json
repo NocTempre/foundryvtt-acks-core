@@ -1,0 +1,262 @@
+[
+  {
+    "name": "Bankrupt",
+    "minRoll": 3,
+    "maxRoll": 4,
+    "template": "Down-on-luck gambler with nothing left to lose",
+    "proficiencies": [
+      "Running",
+      "Gambling",
+      "Driving"
+    ],
+    "spells": [],
+    "equipment": [
+      "Slightly notched short sword",
+      "Dagger",
+      "Leather armor",
+      "Shabby linen tunic and pants",
+      "Once-fancy embossed belt",
+      "Low boots",
+      "2 belt pouches (one empty!)",
+      "Set of bone dice",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "gold": 4,
+    "silver": 0,
+    "copper": 0,
+    "encumbrance": "3 5/6 st"
+  },
+  {
+    "name": "Factotum",
+    "minRoll": 5,
+    "maxRoll": 6,
+    "template": "Jack-of-all-trades with magical dabbling",
+    "proficiencies": [
+      "Arcane Dabbling",
+      "Bargaining",
+      "Seafaring"
+    ],
+    "spells": [],
+    "equipment": [
+      "Short bow",
+      "Quiver with 20 arrows",
+      "Short sword",
+      "Dagger",
+      "Leather armor",
+      "Wool tunic and pants",
+      "Hooded cloak",
+      "Leather belt",
+      "Low boots",
+      "Backpack",
+      "Tinderbox",
+      "12 torches",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "gold": 18,
+    "silver": 0,
+    "copper": 0,
+    "encumbrance": "6 1/6 st"
+  },
+  {
+    "name": "Merchant Mariner",
+    "minRoll": 7,
+    "maxRoll": 8,
+    "template": "Swashbuckling sailor and trader",
+    "proficiencies": [
+      "Swashbuckling",
+      "Seafaring 2",
+      "Seafaring"
+    ],
+    "spells": [],
+    "equipment": [
+      "Short bow",
+      "Quiver with 20 arrows",
+      "Scimitar",
+      "Leather armor",
+      "Mariner's tunic and pants",
+      "Fancy gold sash",
+      "Polished high boots",
+      "Backpack",
+      "50' rope",
+      "Grappling hook",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "gold": 1,
+    "silver": 0,
+    "copper": 0,
+    "encumbrance": "5 st"
+  },
+  {
+    "name": "Merchant Traveler",
+    "minRoll": 9,
+    "maxRoll": 10,
+    "template": "Alert overland merchant with full expedition gear",
+    "proficiencies": [
+      "Alertness",
+      "Navigation",
+      "Driving"
+    ],
+    "spells": [],
+    "equipment": [
+      "Crossbow",
+      "Case with 20 bolts",
+      "Short sword",
+      "2 throwing daggers",
+      "Sturdy leather armor",
+      "Tanned brown cloak",
+      "Thick tunic and pants",
+      "Leather belt",
+      "High boots",
+      "Backpack",
+      "Large treasure sack",
+      "50' rope",
+      "Tinderbox",
+      "Lantern",
+      "Small hammer",
+      "12 iron spikes",
+      "Flask of common oil",
+      "Flask of military oil",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "gold": 1,
+    "silver": 0,
+    "copper": 0,
+    "encumbrance": "6 3/6 st"
+  },
+  {
+    "name": "Antiquary",
+    "minRoll": 11,
+    "maxRoll": 12,
+    "template": "Scholar-merchant collecting ancient artifacts",
+    "proficiencies": [
+      "Magical Engineering",
+      "Knowledge (history)",
+      "Driving"
+    ],
+    "spells": [],
+    "equipment": [
+      "Crossbow",
+      "Case with 20 bolts",
+      "Short sword",
+      "Dagger",
+      "Well-maintained leather armor",
+      "Traveler's tunic and pants",
+      "Leather belt",
+      "Sturdy low boots",
+      "Backpack",
+      "Collector's journal",
+      "Quill and ink",
+      "Collection of ancient coins (26gp value)",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "gold": 0,
+    "silver": 0,
+    "copper": 0,
+    "encumbrance": "4 3/6 st"
+  },
+  {
+    "name": "Caravaneer",
+    "minRoll": 13,
+    "maxRoll": 14,
+    "template": "Expert caravan master with mule and cart",
+    "proficiencies": [
+      "Precise Shooting",
+      "Animal Husbandry",
+      "Driving"
+    ],
+    "spells": [],
+    "equipment": [
+      "Crossbow",
+      "Case with 20 bolts",
+      "Short sword",
+      "Dagger",
+      "Leather armor under dusty robes",
+      "Embossed belt",
+      "Sturdy low boots",
+      "Backpack",
+      "Tinderbox",
+      "12 torches",
+      "Small cart",
+      "Draft harness and tack",
+      "2 leather saddlebags",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "mounts": [
+      "Mule"
+    ],
+    "gold": 6,
+    "silver": 0,
+    "copper": 0,
+    "encumbrance": "6 1/6 st, or 4 1/6 st with rations and 6 torches on cart"
+  },
+  {
+    "name": "Comprador",
+    "minRoll": 15,
+    "maxRoll": 16,
+    "template": "Well-connected merchant with funds for bribes",
+    "proficiencies": [
+      "Eavesdropping",
+      "Language",
+      "Seafaring"
+    ],
+    "spells": [],
+    "equipment": [
+      "Crossbow",
+      "Case with 20 bolts",
+      "Short sword",
+      "Pair of daggers",
+      "Leather armor",
+      "Embroidered cloak",
+      "Armiger's tunic and pants",
+      "Leather gloves",
+      "Polished high boots",
+      "Backpack",
+      "Waterskin",
+      "1 week's iron rations"
+    ],
+    "gold": 70,
+    "silver": 0,
+    "copper": 0,
+    "encumbrance": "4 2/6 st"
+  },
+  {
+    "name": "Magnate",
+    "minRoll": 17,
+    "maxRoll": 18,
+    "template": "Wealthy merchant lord with command presence",
+    "proficiencies": [
+      "Command",
+      "Riding",
+      "Seafaring"
+    ],
+    "spells": [],
+    "equipment": [
+      "Crossbow",
+      "Case with 20 bolts",
+      "Short sword",
+      "Dagger",
+      "Leather armor",
+      "Embroidered cloak",
+      "Armiger's tunic and pants",
+      "Gaudy silver rings (20gp value)",
+      "Riding boots",
+      "Riding saddle and tack",
+      "Leather saddlebag",
+      "Waterskin",
+      "2 weeks' iron rations"
+    ],
+    "mounts": [
+      "Medium riding horse"
+    ],
+    "gold": 20,
+    "silver": 0,
+    "copper": 0,
+    "encumbrance": "2 5/6 st with rations on horse"
+  }
+]
