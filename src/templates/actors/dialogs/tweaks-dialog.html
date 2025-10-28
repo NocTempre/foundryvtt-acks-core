@@ -6,6 +6,15 @@
           system.spells.enabled}} data-dtype="Boolean" />
     </div>
   </div>
+  {{#if (eq this.type 'character')}}
+  <div class="form-group">
+    <label for="thiefskills">{{localize "ACKS.ShowThiefSkills"}}</label>
+    <div class="form-fields">
+      <input type="checkbox" name="system.thiefSkills.enabled" id="thiefskills" {{checked
+          system.thiefSkills.enabled}} data-dtype="Boolean" />
+    </div>
+  </div>
+  {{/if}}
   <div class="form-group">
     <label for="retainer">{{localize "ACKS.Hireling"}}</label>
     <div class="form-fields">

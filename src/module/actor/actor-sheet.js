@@ -88,6 +88,37 @@ export class AcksActorSheet extends BaseActorSheet {
       [[], [], [], [], [], [], []],
     );
 
+    // Prepare thief skills from character data
+    const thiefSkills = [];
+    if (data.system?.thiefSkills) {
+      const skillNames = {
+        climbing: "ACKS.thiefSkills.climbing",
+        hiding: "ACKS.thiefSkills.hiding",
+        listening: "ACKS.thiefSkills.listening",
+        lockpicking: "ACKS.thiefSkills.lockpicking",
+        pickpocketing: "ACKS.thiefSkills.pickpocketing",
+        searching: "ACKS.thiefSkills.searching",
+        sneaking: "ACKS.thiefSkills.sneaking",
+        trapbreaking: "ACKS.thiefSkills.trapbreaking",
+        deciphering: "ACKS.thiefSkills.deciphering",
+        scrollreading: "ACKS.thiefSkills.scrollreading",
+        shadowysenses: "ACKS.thiefSkills.shadowySenses",
+        jackofalltrades: "ACKS.thiefSkills.jackOfAllTrades"
+      };
+
+      for (const [key, locKey] of Object.entries(skillNames)) {
+        const skillData = data.system.thiefSkills[key];
+        if (skillData?.acquired) {
+          thiefSkills.push({
+            key: key,
+            name: game.i18n.localize(locKey),
+            target: skillData.target,
+            hasTarget: skillData.target !== undefined && skillData.target !== null
+          });
+        }
+      }
+    }
+
     // Sort spells by level
     let sortedSpells = {};
     let slots = {};
@@ -123,6 +154,7 @@ export class AcksActorSheet extends BaseActorSheet {
     data.abilities = abilities;
     data.spells = sortedSpells;
     data.languages = languages;
+    data.thiefSkills = thiefSkills;
 
     data.favorites = this.actor.getFavorites();
   }
@@ -212,6 +244,24 @@ export class AcksActorSheet extends BaseActorSheet {
       let element = ev.currentTarget;
       let save = element.parentElement.parentElement.dataset.save;
       actorObject.rollSave(save, { event: ev });
+    });
+
+    html.find(".thief-skill-roll").click(async (ev) => {
+      ev.preventDefault();
+      const target = parseInt(ev.currentTarget.dataset.target);
+      const skillName = ev.currentTarget.dataset.skillName;
+
+      if (!Number.isFinite(target)) return;
+
+      const roll = await new Roll("1d20").evaluate();
+      const success = roll.total >= target;
+
+      const flavor = `<h2>${skillName}</h2><p>Target: ${target}+ | Roll: ${roll.total} | ${success ? '<span style="color: green;">Success!</span>' : '<span style="color: red;">Failure!</span>'}</p>`;
+
+      roll.toMessage({
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        flavor: flavor
+      });
     });
 
     html.find(".item .item-rollable .item-image").click(async (ev) => {

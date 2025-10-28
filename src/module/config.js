@@ -383,4 +383,55 @@ export const ACKS = {
     "-14": { label: "7 (-14)", value: -14 },
     "-16": { label: "8 (-16)", value: -16 },
   },
+  thiefSkills: {
+    1: { backstab: "+1d", climbing: 6, hiding: 19, listening: 14, lockpicking: 18, pickpocketing: 17, searching: 18, sneaking: 17, trapbreaking: 18 },
+    2: { backstab: "+1d", climbing: 5, hiding: 18, listening: 13, lockpicking: 17, pickpocketing: 16, searching: 17, sneaking: 16, trapbreaking: 17 },
+    3: { backstab: "+1d", climbing: 4, hiding: 17, listening: 12, lockpicking: 16, pickpocketing: 15, searching: 16, sneaking: 15, trapbreaking: 16 },
+    4: { backstab: "+1d", climbing: 3, hiding: 16, listening: 11, lockpicking: 15, pickpocketing: 14, searching: 15, sneaking: 14, trapbreaking: 15 },
+    5: { backstab: "+2d", climbing: 2, hiding: 15, listening: 10, lockpicking: 14, pickpocketing: 13, searching: 14, sneaking: 13, trapbreaking: 14 },
+    6: { backstab: "+2d", climbing: 1, hiding: 14, listening: 9, lockpicking: 13, pickpocketing: 12, searching: 13, sneaking: 12, trapbreaking: 13 },
+    7: { backstab: "+2d", climbing: 0, hiding: 12, listening: 8, lockpicking: 11, pickpocketing: 10, searching: 11, sneaking: 10, trapbreaking: 11 },
+    8: { backstab: "+2d", climbing: -1, hiding: 10, listening: 7, lockpicking: 9, pickpocketing: 8, searching: 9, sneaking: 8, trapbreaking: 9 },
+    9: { backstab: "+3d", climbing: -2, hiding: 8, listening: 6, lockpicking: 7, pickpocketing: 6, searching: 7, sneaking: 6, trapbreaking: 7 },
+    10: { backstab: "+3d", climbing: -3, hiding: 6, listening: 5, lockpicking: 5, pickpocketing: 4, searching: 5, sneaking: 4, trapbreaking: 5 },
+    11: { backstab: "+3d", climbing: -4, hiding: 4, listening: 4, lockpicking: 3, pickpocketing: 2, searching: 3, sneaking: 2, trapbreaking: 3 },
+    12: { backstab: "+3d", climbing: -5, hiding: 2, listening: 3, lockpicking: 1, pickpocketing: 0, searching: 1, sneaking: 0, trapbreaking: 2 },
+    13: { backstab: "+4d", climbing: -6, hiding: 0, listening: 2, lockpicking: -1, pickpocketing: -2, searching: -1, sneaking: -2, trapbreaking: 2 },
+    14: { backstab: "+4d", climbing: -7, hiding: -2, listening: 1, lockpicking: -3, pickpocketing: -4, searching: -3, sneaking: -4, trapbreaking: 1 }
+  },
+  // Special thief skills that can be acquired
+  specialThiefSkills: {
+    backstabbing: {
+      name: "Backstabbing",
+      type: "power",
+      description: "Add your Backstab bonus to damage when attacking from behind. Counts as two skills when selecting thief abilities.",
+      hasTarget: false
+    },
+    deciphering: {
+      name: "Deciphering",
+      type: "rollable",
+      description: "Decipher coded messages, treasure maps, obscure languages, and incomplete arcane instructions.",
+      hasTarget: true,
+      targetProgression: 4  // Available from level 4+
+    },
+    scrollreading: {
+      name: "Scroll Reading",
+      type: "rollable",
+      description: "Read arcane or divine scrolls without being a spellcaster.",
+      hasTarget: true,
+      targetProgression: 4  // Available from level 4+
+    },
+    shadowysenses: {
+      name: "Shadowy Senses",
+      type: "power",
+      description: "Enhanced perception in darkness and shadows, allowing superior awareness in low-light conditions.",
+      hasTarget: false
+    },
+    jackofalltrades: {
+      name: "Jack of All Trades",
+      type: "power",
+      description: "Learn one thief skill not normally available to your class from a limited list. This skill represents your versatility.",
+      hasTarget: false
+    }
+  },
 };

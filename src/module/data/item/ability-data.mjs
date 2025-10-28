@@ -35,6 +35,8 @@ export default class AbilityData extends foundry.abstract.TypeDataModel {
       blindroll: new BooleanField({ initial: false }),
       // saving throw
       save: new StringField({ blank: true, initial: "" }),
+      // Thief skill target number (if this is a thief skill)
+      thiefSkillTarget: new NumberField({ required: false, nullable: true, initial: null }),
     };
   }
 }

@@ -1,0 +1,142 @@
+<div class="thief-skills-container">
+  {{#if system.thiefSkills.backstab}}
+  <div class="thief-backstab-section" style="margin-bottom: 1em; padding: 0.5em; background: #f0f0f0;">
+    <h3 class="box-title">{{localize "ACKS.thiefSkills.backstab"}}</h3>
+    <div class="backstab-value">
+      <span style="font-weight: bold; font-size: 1.2em;">{{system.thiefSkills.backstab}}</span>
+    </div>
+  </div>
+  {{/if}}
+
+  <section class="inventory thiefskills-section resizable" data-base-size="400">
+    <div>
+      {{#if thiefSkills.length}}
+      <h3>{{localize "ACKS.thiefSkills.title"}}</h3>
+      <div class="item-titles flexrow">
+        <div class="item-caret"><i class="fas fa-mask"></i></div>
+        <div class="item-name">{{localize "ACKS.thiefSkills.skill"}}</div>
+        <div class="field-short">{{localize "ACKS.thiefSkills.target"}}</div>
+        <div class="field-short">{{localize "ACKS.Roll"}}</div>
+      </div>
+      <ol class="item-list">
+        {{#each thiefSkills as |skill idx|}}
+        <li class="item-entry">
+          <div class="item flexrow" data-skill-key="{{skill.key}}">
+            <div class="item-name flexrow">
+              <div class="item-caret"><i class="fas fa-user-secret"></i></div>
+              <h4>{{skill.name}}</h4>
+            </div>
+            <div class="field-short">
+              {{#if skill.hasTarget}}
+              {{skill.target}}+
+              {{else}}
+              -
+              {{/if}}
+            </div>
+            <div class="field-short">
+              {{#if skill.hasTarget}}
+              <a class="item-control thief-skill-roll" data-skill-key="{{skill.key}}" data-skill-name="{{skill.name}}" data-target="{{skill.target}}" title="{{localize 'ACKS.Roll'}}">
+                <i class="fas fa-dice-d20"></i>
+              </a>
+              {{else}}
+              -
+              {{/if}}
+            </div>
+          </div>
+        </li>
+        {{/each}}
+      </ol>
+      {{/if}}
+
+      {{#if system.thiefSkills.enabled}}
+      <h3 style="margin-top: 1em;">{{localize "ACKS.thiefSkills.specialSkills"}}</h3>
+      <p style="font-style: italic; margin-bottom: 0.5em; font-size: 0.9em;">Check to acquire additional thief skills:</p>
+      <div class="item-titles flexrow">
+        <div class="item-caret"><i class="fas fa-star"></i></div>
+        <div class="item-name">{{localize "ACKS.thiefSkills.skill"}}</div>
+        <div class="field-short">{{localize "ACKS.thiefSkills.target"}}</div>
+        <div class="field-short">{{localize "ACKS.Roll"}}</div>
+        <div class="item-controls">{{localize "ACKS.thiefSkills.acquired"}}</div>
+      </div>
+      <ol class="item-list">
+        <li class="item-entry">
+          <div class="item flexrow">
+            <div class="item-name flexrow">
+              <div class="item-caret"><i class="fas fa-scroll"></i></div>
+              <h4>{{localize "ACKS.thiefSkills.deciphering"}}</h4>
+            </div>
+            <div class="field-short">4+</div>
+            <div class="field-short">
+              {{#if system.thiefSkills.deciphering.acquired}}
+              <a class="item-control thief-skill-roll" data-skill-key="deciphering" data-skill-name="{{localize 'ACKS.thiefSkills.deciphering'}}" data-target="4" title="{{localize 'ACKS.Roll'}}">
+                <i class="fas fa-dice-d20"></i>
+              </a>
+              {{else}}
+              -
+              {{/if}}
+            </div>
+            <div class="item-controls">
+              {{#if owner}}
+              <input type="checkbox" name="system.thiefSkills.deciphering.acquired" {{checked system.thiefSkills.deciphering.acquired}} data-dtype="Boolean" />
+              {{/if}}
+            </div>
+          </div>
+        </li>
+        <li class="item-entry">
+          <div class="item flexrow">
+            <div class="item-name flexrow">
+              <div class="item-caret"><i class="fas fa-scroll"></i></div>
+              <h4>{{localize "ACKS.thiefSkills.scrollreading"}}</h4>
+            </div>
+            <div class="field-short">4+</div>
+            <div class="field-short">
+              {{#if system.thiefSkills.scrollreading.acquired}}
+              <a class="item-control thief-skill-roll" data-skill-key="scrollreading" data-skill-name="{{localize 'ACKS.thiefSkills.scrollreading'}}" data-target="4" title="{{localize 'ACKS.Roll'}}">
+                <i class="fas fa-dice-d20"></i>
+              </a>
+              {{else}}
+              -
+              {{/if}}
+            </div>
+            <div class="item-controls">
+              {{#if owner}}
+              <input type="checkbox" name="system.thiefSkills.scrollreading.acquired" {{checked system.thiefSkills.scrollreading.acquired}} data-dtype="Boolean" />
+              {{/if}}
+            </div>
+          </div>
+        </li>
+        <li class="item-entry">
+          <div class="item flexrow">
+            <div class="item-name flexrow">
+              <div class="item-caret"><i class="fas fa-eye"></i></div>
+              <h4>{{localize "ACKS.thiefSkills.shadowySenses"}}</h4>
+            </div>
+            <div class="field-short">-</div>
+            <div class="field-short">-</div>
+            <div class="item-controls">
+              {{#if owner}}
+              <input type="checkbox" name="system.thiefSkills.shadowysenses.acquired" {{checked system.thiefSkills.shadowysenses.acquired}} data-dtype="Boolean" />
+              {{/if}}
+            </div>
+          </div>
+        </li>
+        <li class="item-entry">
+          <div class="item flexrow">
+            <div class="item-name flexrow">
+              <div class="item-caret"><i class="fas fa-toolbox"></i></div>
+              <h4>{{localize "ACKS.thiefSkills.jackOfAllTrades"}}</h4>
+            </div>
+            <div class="field-short">-</div>
+            <div class="field-short">-</div>
+            <div class="item-controls">
+              {{#if owner}}
+              <input type="checkbox" name="system.thiefSkills.jackofalltrades.acquired" {{checked system.thiefSkills.jackofalltrades.acquired}} data-dtype="Boolean" />
+              {{/if}}
+            </div>
+          </div>
+        </li>
+      </ol>
+      {{/if}}
+    </div>
+  </section>
+</div>

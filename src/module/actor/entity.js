@@ -84,6 +84,28 @@ export class AcksActor extends Actor {
         this.update({ "system.isNew": false });
       }, 200);
     }
+
+    // Update thief skills when level changes
+    if (this.type === "character" && changed.system?.details?.level !== undefined) {
+      // Check if character has any acquired thief skills
+      const thiefSkills = this.system?.thiefSkills;
+      const hasAcquiredSkills = thiefSkills && (
+        thiefSkills.climbing?.acquired ||
+        thiefSkills.hiding?.acquired ||
+        thiefSkills.listening?.acquired ||
+        thiefSkills.lockpicking?.acquired ||
+        thiefSkills.pickpocketing?.acquired ||
+        thiefSkills.searching?.acquired ||
+        thiefSkills.sneaking?.acquired ||
+        thiefSkills.trapbreaking?.acquired
+      );
+
+      if (hasAcquiredSkills) {
+        const newLevel = changed.system.details.level;
+        await this._updateThiefSkillsForLevel(newLevel, false);
+      }
+    }
+
     await super._onUpdate(changed, options, userId);
   }
 
@@ -825,6 +847,34 @@ export class AcksActor extends Actor {
       await this.updateEmbeddedDocuments("Item", moneyUpdates);
     }
 
+    // Reset thief skills
+    const thiefSkillsReset = {
+      "system.thiefSkills.enabled": false,
+      "system.thiefSkills.backstab": "+0d",
+      "system.thiefSkills.climbing.acquired": false,
+      "system.thiefSkills.climbing.target": 18,
+      "system.thiefSkills.hiding.acquired": false,
+      "system.thiefSkills.hiding.target": 18,
+      "system.thiefSkills.listening.acquired": false,
+      "system.thiefSkills.listening.target": 18,
+      "system.thiefSkills.lockpicking.acquired": false,
+      "system.thiefSkills.lockpicking.target": 18,
+      "system.thiefSkills.pickpocketing.acquired": false,
+      "system.thiefSkills.pickpocketing.target": 18,
+      "system.thiefSkills.searching.acquired": false,
+      "system.thiefSkills.searching.target": 18,
+      "system.thiefSkills.sneaking.acquired": false,
+      "system.thiefSkills.sneaking.target": 18,
+      "system.thiefSkills.trapbreaking.acquired": false,
+      "system.thiefSkills.trapbreaking.target": 18,
+      "system.thiefSkills.deciphering.acquired": false,
+      "system.thiefSkills.scrollreading.acquired": false,
+      "system.thiefSkills.shadowysenses.acquired": false,
+      "system.thiefSkills.jackofalltrades.acquired": false,
+      "system.mountsList": []
+    };
+    await this.update(thiefSkillsReset);
+
     const itemsToCreate = [];
 
     // Add proficiencies
@@ -881,6 +931,9 @@ export class AcksActor extends Actor {
           });
         }
       }
+
+      // Enable spellcaster flag if character has spells
+      await this.update({ "system.spells.enabled": true });
     }
 
     // Handle spell choice if package allows additional spell selection
@@ -888,6 +941,9 @@ export class AcksActor extends Actor {
       // TODO: Show dialog for user to select additional spells
       // For now, just notify the player
       ui.notifications?.info(`${packageData.name} package grants ${packageData.spellChoice} additional spell choice(s). Please add manually.`);
+
+      // Also enable spellcaster flag for spell choice packages
+      await this.update({ "system.spells.enabled": true });
     }
 
     // Add equipment
@@ -1051,6 +1107,18 @@ export class AcksActor extends Actor {
             speaker: ChatMessage.getSpeaker({ actor: this }),
           });
         }
+      }
+    }
+
+    // Grant thief skills if character is a thief class
+    const classKey = this.system?.details?.classKey || "";
+    const classDef = CONFIG.ACKS?.classes?.[classKey];
+    if (classDef) {
+      const className = classDef.name.toLowerCase();
+      if (className.includes("thief")) {
+        // Get thief skills for character level
+        const level = this.system?.details?.level || 1;
+        await this._updateThiefSkillsForLevel(level, true);
       }
     }
 
@@ -2305,6 +2373,51 @@ export class AcksActor extends Actor {
     };
 
     await this.update(updateData, { skipClassHpAuto: true });
+  }
+
+  /**
+   * Update thief skill target numbers based on character level
+   * @param {number} level - Character level
+   * @param {boolean} grantSkills - If true, mark core thief skills as acquired
+   * @private
+   */
+  async _updateThiefSkillsForLevel(level, grantSkills = false) {
+    const thiefSkillsForLevel = CONFIG.ACKS?.thiefSkills?.[level];
+    if (!thiefSkillsForLevel) return;
+
+    const updateData = {
+      "system.thiefSkills.backstab": thiefSkillsForLevel.backstab,
+      "system.thiefSkills.enabled": true
+    };
+
+    // Update target numbers for core thief skills
+    const coreSkills = ["climbing", "hiding", "listening", "lockpicking", "pickpocketing", "searching", "sneaking", "trapbreaking"];
+
+    for (const skill of coreSkills) {
+      updateData[`system.thiefSkills.${skill}.target`] = thiefSkillsForLevel[skill];
+
+      // If granting skills (during class package), mark as acquired
+      if (grantSkills) {
+        updateData[`system.thiefSkills.${skill}.acquired`] = true;
+      }
+    }
+
+    // For skills that overlap with adventuring proficiencies, update those too
+    const overlappingSkills = {
+      climbing: "climb",
+      listening: "listening",
+      searching: "searching",
+      trapbreaking: "trapbreaking"
+    };
+
+    for (const [thiefSkill, advSkill] of Object.entries(overlappingSkills)) {
+      // Only update adventuring skill if thief skill is acquired
+      if (this.system?.thiefSkills?.[thiefSkill]?.acquired || grantSkills) {
+        updateData[`system.adventuring.${advSkill}`] = thiefSkillsForLevel[thiefSkill];
+      }
+    }
+
+    await this.update(updateData);
   }
 
   _rollClassHitPointProgression(classDef, targetLevel) {

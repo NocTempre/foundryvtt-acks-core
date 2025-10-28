@@ -144,6 +144,22 @@
         "searching": 18,
         "trapbreaking": 18
       },
+      "thiefSkills": {
+        "enabled": false,
+        "backstab": "+0d",
+        "climbing": { "acquired": false, "target": 18 },
+        "hiding": { "acquired": false, "target": 18 },
+        "listening": { "acquired": false, "target": 18 },
+        "lockpicking": { "acquired": false, "target": 18 },
+        "pickpocketing": { "acquired": false, "target": 18 },
+        "searching": { "acquired": false, "target": 18 },
+        "sneaking": { "acquired": false, "target": 18 },
+        "trapbreaking": { "acquired": false, "target": 18 },
+        "deciphering": { "acquired": false, "target": 18 },
+        "scrollreading": { "acquired": false, "target": 18 },
+        "shadowysenses": { "acquired": false },
+        "jackofalltrades": { "acquired": false }
+      },
       "languages": [],
       "fight": {
         "healingrate": "1d3",
