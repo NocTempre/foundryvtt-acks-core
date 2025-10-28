@@ -22,6 +22,11 @@
       {{localize "ACKS.category.thiefskills"}}
     </a>
     {{/if}}
+    {{#if system.rebuking.enabled}}
+    <a class="item" data-tab="rebuking">
+      {{localize "ACKS.category.rebuking"}}
+    </a>
+    {{/if}}
     <a class="item" data-tab="inventory">
       {{localize "ACKS.category.inventory"}}
     </a>
@@ -55,6 +60,11 @@
     {{#if (or system.thiefSkills.enabled thiefSkills.length)}}
     <div class="tab" data-group="primary" data-tab="thiefskills">
       {{> (acksPartial "actors/partials/character-thiefskills-tab.html")}}
+    </div>
+    {{/if}}
+    {{#if system.rebuking.enabled}}
+    <div class="tab" data-group="primary" data-tab="rebuking">
+      {{> (acksPartial "actors/partials/character-rebuking-tab.html")}}
     </div>
     {{/if}}
     <div class="tab" data-group="primary" data-tab="inventory">

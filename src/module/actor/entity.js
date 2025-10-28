@@ -871,6 +871,7 @@ export class AcksActor extends Actor {
       "system.thiefSkills.scrollreading.acquired": false,
       "system.thiefSkills.shadowysenses.acquired": false,
       "system.thiefSkills.jackofalltrades.acquired": false,
+      "system.rebuking.enabled": false,
       "system.mountsList": []
     };
     await this.update(thiefSkillsReset);
@@ -1119,6 +1120,11 @@ export class AcksActor extends Actor {
         // Get thief skills for character level
         const level = this.system?.details?.level || 1;
         await this._updateThiefSkillsForLevel(level, true);
+      }
+
+      // Grant rebuking ability if character is a crusader
+      if (className.includes("crusader")) {
+        await this.update({ "system.rebuking.enabled": true });
       }
     }
 

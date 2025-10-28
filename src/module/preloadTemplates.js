@@ -13,6 +13,7 @@ export const preloadHandlebarsTemplates = async function () {
     "actors/partials/character-abilities-tab.html",
     "actors/partials/character-spells-tab.html",
     "actors/partials/character-thiefskills-tab.html",
+    "actors/partials/character-rebuking-tab.html",
     "actors/partials/character-inventory-tab.html",
     "actors/partials/character-bonuses-tab.html",
     "actors/partials/character-notes-tab.html",

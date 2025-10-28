@@ -1,0 +1,199 @@
+<div class="rebuking-container">
+  <h2>{{localize "ACKS.rebuking.title"}}</h2>
+  <p style="font-style: italic; margin-bottom: 1em; font-size: 0.9em;">{{localize "ACKS.rebuking.description"}}</p>
+
+  <section class="rebuking-table-section">
+    <table class="rebuking-table" style="width: 100%; border-collapse: collapse; text-align: center;">
+      <thead>
+        <tr style="background: #620630; color: white;">
+          <th style="padding: 8px; border: 1px solid #333; text-align: left;">{{localize "ACKS.rebuking.undeadType"}}</th>
+          <th style="padding: 8px; border: 1px solid #333;">{{localize "ACKS.rebuking.target"}}</th>
+          <th style="padding: 8px; border: 1px solid #333;">{{localize "ACKS.rebuking.roll"}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding: 6px; border: 1px solid #999; text-align: left; font-weight: bold;">{{localize "ACKS.rebuking.skeleton"}}</td>
+          <td style="padding: 6px; border: 1px solid #999;" data-undead="skeleton">
+            {{#if rebukingTargets.skeleton}}
+            {{rebukingTargets.skeleton}}
+            {{else}}
+            -
+            {{/if}}
+          </td>
+          <td style="padding: 6px; border: 1px solid #999;">
+            {{#if rebukingTargets.skeleton}}
+            <a class="item-control rebuking-roll" data-undead="skeleton" data-target="{{rebukingTargets.skeleton}}" title="{{localize 'ACKS.rebuking.rollRebuke'}}">
+              <i class="fas fa-dice-d20"></i>
+            </a>
+            {{else}}
+            -
+            {{/if}}
+          </td>
+        </tr>
+        <tr style="background: #f9f9f9;">
+          <td style="padding: 6px; border: 1px solid #999; text-align: left; font-weight: bold;">{{localize "ACKS.rebuking.zombie"}}</td>
+          <td style="padding: 6px; border: 1px solid #999;" data-undead="zombie">
+            {{#if rebukingTargets.zombie}}
+            {{rebukingTargets.zombie}}
+            {{else}}
+            -
+            {{/if}}
+          </td>
+          <td style="padding: 6px; border: 1px solid #999;">
+            {{#if rebukingTargets.zombie}}
+            <a class="item-control rebuking-roll" data-undead="zombie" data-target="{{rebukingTargets.zombie}}" title="{{localize 'ACKS.rebuking.rollRebuke'}}">
+              <i class="fas fa-dice-d20"></i>
+            </a>
+            {{else}}
+            -
+            {{/if}}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 6px; border: 1px solid #999; text-align: left; font-weight: bold;">{{localize "ACKS.rebuking.ghoul"}}</td>
+          <td style="padding: 6px; border: 1px solid #999;" data-undead="ghoul">
+            {{#if rebukingTargets.ghoul}}
+            {{rebukingTargets.ghoul}}
+            {{else}}
+            -
+            {{/if}}
+          </td>
+          <td style="padding: 6px; border: 1px solid #999;">
+            {{#if rebukingTargets.ghoul}}
+            <a class="item-control rebuking-roll" data-undead="ghoul" data-target="{{rebukingTargets.ghoul}}" title="{{localize 'ACKS.rebuking.rollRebuke'}}">
+              <i class="fas fa-dice-d20"></i>
+            </a>
+            {{else}}
+            -
+            {{/if}}
+          </td>
+        </tr>
+        <tr style="background: #f9f9f9;">
+          <td style="padding: 6px; border: 1px solid #999; text-align: left; font-weight: bold;">{{localize "ACKS.rebuking.wight"}}</td>
+          <td style="padding: 6px; border: 1px solid #999;" data-undead="wight">
+            {{#if rebukingTargets.wight}}
+            {{rebukingTargets.wight}}
+            {{else}}
+            -
+            {{/if}}
+          </td>
+          <td style="padding: 6px; border: 1px solid #999;">
+            {{#if rebukingTargets.wight}}
+            <a class="item-control rebuking-roll" data-undead="wight" data-target="{{rebukingTargets.wight}}" title="{{localize 'ACKS.rebuking.rollRebuke'}}">
+              <i class="fas fa-dice-d20"></i>
+            </a>
+            {{else}}
+            -
+            {{/if}}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 6px; border: 1px solid #999; text-align: left; font-weight: bold;">{{localize "ACKS.rebuking.wraith"}}</td>
+          <td style="padding: 6px; border: 1px solid #999;" data-undead="wraith">
+            {{#if rebukingTargets.wraith}}
+            {{rebukingTargets.wraith}}
+            {{else}}
+            -
+            {{/if}}
+          </td>
+          <td style="padding: 6px; border: 1px solid #999;">
+            {{#if rebukingTargets.wraith}}
+            <a class="item-control rebuking-roll" data-undead="wraith" data-target="{{rebukingTargets.wraith}}" title="{{localize 'ACKS.rebuking.rollRebuke'}}">
+              <i class="fas fa-dice-d20"></i>
+            </a>
+            {{else}}
+            -
+            {{/if}}
+          </td>
+        </tr>
+        <tr style="background: #f9f9f9;">
+          <td style="padding: 6px; border: 1px solid #999; text-align: left; font-weight: bold;">{{localize "ACKS.rebuking.mummy"}}</td>
+          <td style="padding: 6px; border: 1px solid #999;" data-undead="mummy">
+            {{#if rebukingTargets.mummy}}
+            {{rebukingTargets.mummy}}
+            {{else}}
+            -
+            {{/if}}
+          </td>
+          <td style="padding: 6px; border: 1px solid #999;">
+            {{#if rebukingTargets.mummy}}
+            <a class="item-control rebuking-roll" data-undead="mummy" data-target="{{rebukingTargets.mummy}}" title="{{localize 'ACKS.rebuking.rollRebuke'}}">
+              <i class="fas fa-dice-d20"></i>
+            </a>
+            {{else}}
+            -
+            {{/if}}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 6px; border: 1px solid #999; text-align: left; font-weight: bold;">{{localize "ACKS.rebuking.specter"}}</td>
+          <td style="padding: 6px; border: 1px solid #999;" data-undead="specter">
+            {{#if rebukingTargets.specter}}
+            {{rebukingTargets.specter}}
+            {{else}}
+            -
+            {{/if}}
+          </td>
+          <td style="padding: 6px; border: 1px solid #999;">
+            {{#if rebukingTargets.specter}}
+            <a class="item-control rebuking-roll" data-undead="specter" data-target="{{rebukingTargets.specter}}" title="{{localize 'ACKS.rebuking.rollRebuke'}}">
+              <i class="fas fa-dice-d20"></i>
+            </a>
+            {{else}}
+            -
+            {{/if}}
+          </td>
+        </tr>
+        <tr style="background: #f9f9f9;">
+          <td style="padding: 6px; border: 1px solid #999; text-align: left; font-weight: bold;">{{localize "ACKS.rebuking.vampire"}}</td>
+          <td style="padding: 6px; border: 1px solid #999;" data-undead="vampire">
+            {{#if rebukingTargets.vampire}}
+            {{rebukingTargets.vampire}}
+            {{else}}
+            -
+            {{/if}}
+          </td>
+          <td style="padding: 6px; border: 1px solid #999;">
+            {{#if rebukingTargets.vampire}}
+            <a class="item-control rebuking-roll" data-undead="vampire" data-target="{{rebukingTargets.vampire}}" title="{{localize 'ACKS.rebuking.rollRebuke'}}">
+              <i class="fas fa-dice-d20"></i>
+            </a>
+            {{else}}
+            -
+            {{/if}}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 6px; border: 1px solid #999; text-align: left; font-weight: bold;">{{localize "ACKS.rebuking.incarnation"}}</td>
+          <td style="padding: 6px; border: 1px solid #999;" data-undead="incarnation">
+            {{#if rebukingTargets.incarnation}}
+            {{rebukingTargets.incarnation}}
+            {{else}}
+            -
+            {{/if}}
+          </td>
+          <td style="padding: 6px; border: 1px solid #999;">
+            {{#if rebukingTargets.incarnation}}
+            <a class="item-control rebuking-roll" data-undead="incarnation" data-target="{{rebukingTargets.incarnation}}" title="{{localize 'ACKS.rebuking.rollRebuke'}}">
+              <i class="fas fa-dice-d20"></i>
+            </a>
+            {{else}}
+            -
+            {{/if}}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top: 1em; padding: 0.5em; background: #f0f0f0; border: 1px solid #999;">
+      <p style="margin: 0; font-size: 0.85em;"><strong>{{localize "ACKS.rebuking.legend"}}</strong></p>
+      <ul style="margin: 0.5em 0 0 1.5em; font-size: 0.85em;">
+        <li><strong>Target #</strong>: Roll d20, meet or exceed this number</li>
+        <li><strong>R</strong>: Automatic Rebuke (success)</li>
+        <li><strong>D</strong>: Automatic Destruction</li>
+        <li><strong>-</strong>: Cannot affect this undead type</li>
+      </ul>
+    </div>
+  </section>
+</div>

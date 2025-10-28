@@ -434,4 +434,18 @@ export const ACKS = {
       hasTarget: false
     }
   },
+  // Rebuking undead progression table for crusaders
+  // Values are target numbers (10+ means roll 10 or higher on d20)
+  // R = automatic success (Rebuke), D = automatic destruction
+  rebukingUndead: {
+    skeleton: [10, 7, 4, "R", "R", "D", "D", "D", "D", "D", "D", "D", "D", "D"],
+    zombie: [13, 10, 7, 4, "R", "R", "D", "D", "D", "D", "D", "D", "D", "D"],
+    ghoul: [16, 13, 10, 7, 4, "R", "R", "D", "D", "D", "D", "D", "D", "D"],
+    wight: [19, 16, 13, 10, 7, 4, "R", "R", "D", "D", "D", "D", "D", "D"],
+    wraith: [null, 19, 16, 13, 10, 7, 4, "R", "R", "D", "D", "D", "D", "D"],
+    mummy: [null, null, 19, 16, 13, 10, 7, 4, "R", "R", "D", "D", "D", "D"],
+    specter: [null, null, null, 19, 16, 13, 10, 7, 4, "R", "R", "D", "D", "D"],
+    vampire: [null, null, null, null, 19, 16, 13, 10, 7, 4, "R", "R", "D", "D"],
+    incarnation: [null, null, null, null, null, 19, 16, 13, 10, 7, 4, "R", "R", "D"]
+  },
 };

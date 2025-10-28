@@ -160,6 +160,9 @@
         "shadowysenses": { "acquired": false },
         "jackofalltrades": { "acquired": false }
       },
+      "rebuking": {
+        "enabled": false
+      },
       "languages": [],
       "fight": {
         "healingrate": "1d3",

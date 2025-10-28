@@ -23,6 +23,12 @@ export class AcksActorSheet extends BaseActorSheet {
     data.henchmen = this.actor.getHenchmen();
     data.mounts = this.actor.getMounts();
     data.languages = this.actor.getLanguages();
+
+    // Prepare rebuking targets based on character level
+    if (data.system?.rebuking?.enabled) {
+      data.rebukingTargets = this._prepareRebukingTargets(data.system.details?.level || 1);
+    }
+
     data.description = await TextEditorRef.enrichHTML(this.object.system.details.description, { async: true });
     data.notes = await TextEditorRef.enrichHTML(this.object.system.details.notes, { async: true });
     data.totalWages = this.actor.getTotalWages();
@@ -160,6 +166,26 @@ export class AcksActorSheet extends BaseActorSheet {
   }
 
   /* -------------------------------------------- */
+  _prepareRebukingTargets(level) {
+    const rebukingTable = CONFIG.ACKS?.rebukingUndead;
+    if (!rebukingTable) return {};
+
+    // Level is 1-indexed, array is 0-indexed, so subtract 1
+    // But cap at index 13 (level 14+)
+    const levelIndex = Math.min(level - 1, 13);
+
+    const targets = {};
+    for (const [undeadType, progression] of Object.entries(rebukingTable)) {
+      const value = progression[levelIndex];
+      if (value !== null) {
+        targets[undeadType] = typeof value === "number" ? `${value}+` : value;
+      }
+    }
+
+    return targets;
+  }
+
+  /* -------------------------------------------- */
   async _onItemSummary(event) {
     event.preventDefault();
     let li = $(event.currentTarget).parents(".item"),
@@ -257,6 +283,46 @@ export class AcksActorSheet extends BaseActorSheet {
       const success = roll.total >= target;
 
       const flavor = `<h2>${skillName}</h2><p>Target: ${target}+ | Roll: ${roll.total} | ${success ? '<span style="color: green;">Success!</span>' : '<span style="color: red;">Failure!</span>'}</p>`;
+
+      roll.toMessage({
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        flavor: flavor
+      });
+    });
+
+    html.find(".rebuking-roll").click(async (ev) => {
+      ev.preventDefault();
+      const targetValue = ev.currentTarget.dataset.target;
+      const undeadType = ev.currentTarget.dataset.undead;
+      const undeadName = game.i18n.localize(`ACKS.rebuking.${undeadType}`);
+
+      // Handle R (automatic rebuke) and D (automatic destruction)
+      if (targetValue === "R") {
+        const flavor = `<h2>Rebuking ${undeadName}</h2><p><strong style="color: green;">Automatic Rebuke!</strong></p><p>The ${undeadName} is rebuked without rolling.</p>`;
+        ChatMessage.create({
+          speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+          content: flavor
+        });
+        return;
+      }
+
+      if (targetValue === "D") {
+        const flavor = `<h2>Rebuking ${undeadName}</h2><p><strong style="color: gold;">Automatic Destruction!</strong></p><p>The ${undeadName} is destroyed without rolling!</p>`;
+        ChatMessage.create({
+          speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+          content: flavor
+        });
+        return;
+      }
+
+      // Parse numeric target (e.g., "10+" -> 10)
+      const target = parseInt(targetValue);
+      if (!Number.isFinite(target)) return;
+
+      const roll = await new Roll("1d20").evaluate();
+      const success = roll.total >= target;
+
+      const flavor = `<h2>Rebuking ${undeadName}</h2><p>Target: ${target}+ | Roll: ${roll.total} | ${success ? '<span style="color: green;">Rebuked!</span>' : '<span style="color: red;">Failed!</span>'}</p>`;
 
       roll.toMessage({
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
