@@ -3,6 +3,8 @@ nul
 .history/
 .vscode/settings.json
 .idea
+*7.5*
+*old_packs*
 ### Node template
 # Logs
 logs
