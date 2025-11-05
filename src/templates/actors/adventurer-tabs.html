@@ -1,0 +1,6 @@
+{{!-- Sheet Tab Navigation --}}
+<nav class="sheet-tabs tabs" data-group="primary">
+  <a class="item {{#if (eq currentTab 'main')}}active{{/if}}" data-tab="main" data-action="changeTab">Main</a>
+  <a class="item {{#if (eq currentTab 'combat')}}active{{/if}}" data-tab="combat" data-action="changeTab">Combat</a>
+  <a class="item {{#if (eq currentTab 'biography')}}active{{/if}}" data-tab="biography" data-action="changeTab">Biography</a>
+</nav>

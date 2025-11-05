@@ -1,0 +1,392 @@
+/* ACKS II Adventurer Sheet Styles - Clean Break from Legacy */
+/* Using .acks-ii namespace to avoid inheriting legacy .acks.sheet.actor styles */
+
+.acks-ii.sheet.actor.adventurer {
+  min-height: 600px;
+  min-width: 600px;
+}
+
+.acks-ii.sheet.actor.adventurer .window-content {
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ApplicationV2 form container */
+.acks-ii.sheet.actor.adventurer form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Single root wrapper */
+.acks-ii.sheet.actor.adventurer .adventurer-sheet-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Header */
+.acks-ii.sheet.actor.adventurer .sheet-header {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.1);
+  border-bottom: 2px solid #000;
+  flex-shrink: 0;
+}
+
+.acks-ii.sheet.actor.adventurer .profile-img {
+  flex: 0 0 100px;
+  height: 100px;
+  border: 2px solid #000;
+  cursor: pointer;
+}
+
+.acks-ii.sheet.actor.adventurer .header-fields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.acks-ii.sheet.actor.adventurer .charname input {
+  font-size: 1.5em;
+  font-weight: bold;
+  border: none;
+  background: transparent;
+}
+
+.acks-ii.sheet.actor.adventurer .resource-row {
+  display: flex;
+  gap: 10px;
+}
+
+.acks-ii.sheet.actor.adventurer .resource {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.acks-ii.sheet.actor.adventurer .resource label {
+  font-weight: bold;
+  font-size: 0.8em;
+  margin-bottom: 2px;
+}
+
+/* Tabs */
+.acks-ii.sheet.actor.adventurer .sheet-tabs {
+  display: flex;
+  border-bottom: 2px solid #000;
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.acks-ii.sheet.actor.adventurer .sheet-tabs .item {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  border-right: 1px solid #000;
+  background: rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+}
+
+.acks-ii.sheet.actor.adventurer .sheet-tabs .item.active {
+  background: #fff;
+  font-weight: bold;
+}
+
+/* Sheet Body - Scrollable Container */
+.acks-ii.sheet.actor.adventurer .sheet-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  padding: 10px;
+}
+
+/* Tab Content */
+.acks-ii.sheet.actor.adventurer .tab-content {
+  display: none;
+}
+
+.acks-ii.sheet.actor.adventurer .tab-content.active {
+  display: block;
+}
+
+/* Main tab uses grid layout */
+.acks-ii.sheet.actor.adventurer .main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+/* Section styling for all tabs */
+.acks-ii.sheet.actor.adventurer .tab-content > div {
+  background: rgba(0, 0, 0, 0.05);
+  padding: 10px;
+  border: 1px solid #000;
+  margin-bottom: 15px;
+}
+
+.acks-ii.sheet.actor.adventurer .main-grid > div {
+  background: rgba(0, 0, 0, 0.05);
+  padding: 10px;
+  border: 1px solid #000;
+  margin-bottom: 0;
+}
+
+.acks-ii.sheet.actor.adventurer h3 {
+  margin: 0 0 10px 0;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #000;
+  font-size: 1.1em;
+}
+
+/* Abilities */
+.acks-ii.sheet.actor.adventurer .abilities-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.acks-ii.sheet.actor.adventurer .ability {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 5px;
+  background: #fff;
+  border: 1px solid #000;
+}
+
+.acks-ii.sheet.actor.adventurer .ability-header {
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+.acks-ii.sheet.actor.adventurer .ability input {
+  width: 60px;
+  text-align: center;
+  font-size: 1.2em;
+}
+
+.acks-ii.sheet.actor.adventurer .ability-mod {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #333;
+}
+
+.acks-ii.sheet.actor.adventurer .ability-check {
+  width: 100%;
+  padding: 3px;
+  font-size: 0.8em;
+}
+
+/* HP Section */
+.acks-ii.sheet.actor.adventurer .hp-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.acks-ii.sheet.actor.adventurer .hp-grid > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.acks-ii.sheet.actor.adventurer .combat-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.acks-ii.sheet.actor.adventurer .stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.acks-ii.sheet.actor.adventurer .stat label {
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+/* AC Section */
+.acks-ii.sheet.actor.adventurer .ac-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.acks-ii.sheet.actor.adventurer .ac-value {
+  display: flex;
+  flex-direction: column;
+}
+
+.acks-ii.sheet.actor.adventurer .ac-value label {
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+/* Movement */
+.acks-ii.sheet.actor.adventurer .movement-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.acks-ii.sheet.actor.adventurer .move-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.acks-ii.sheet.actor.adventurer .move-stat label {
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.acks-ii.sheet.actor.adventurer .move-stat span {
+  font-size: 0.9em;
+}
+
+/* Encumbrance Bar */
+.acks-ii.sheet.actor.adventurer .encumbrance-bar {
+  margin-top: 10px;
+}
+
+.acks-ii.sheet.actor.adventurer .progress-bar {
+  height: 20px;
+  background: #ddd;
+  border: 1px solid #000;
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+.acks-ii.sheet.actor.adventurer .progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, green, yellow, orange, red);
+  transition: width 0.3s ease;
+}
+
+/* XP Section */
+.acks-ii.sheet.actor.adventurer .xp-grid {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr;
+  gap: 10px;
+}
+
+.acks-ii.sheet.actor.adventurer .xp-grid > div {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Tables */
+.acks-ii.sheet.actor.adventurer table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.acks-ii.sheet.actor.adventurer table th {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 5px;
+  border: 1px solid #000;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+.acks-ii.sheet.actor.adventurer table td {
+  padding: 5px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+.acks-ii.sheet.actor.adventurer table input {
+  width: 60px;
+  text-align: center;
+}
+
+.acks-ii.sheet.actor.adventurer table button {
+  padding: 3px 10px;
+  font-size: 0.85em;
+}
+
+/* Attack Table */
+.acks-ii.sheet.actor.adventurer .attack-base {
+  margin-bottom: 10px;
+}
+
+.acks-ii.sheet.actor.adventurer .attack-base input {
+  width: 80px;
+  margin-left: 5px;
+}
+
+.acks-ii.sheet.actor.adventurer .attack-table button {
+  width: 100%;
+  padding: 5px;
+}
+
+/* Biography */
+.acks-ii.sheet.actor.adventurer .bio-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.acks-ii.sheet.actor.adventurer .field {
+  display: flex;
+  flex-direction: column;
+}
+
+.acks-ii.sheet.actor.adventurer .field label {
+  font-weight: bold;
+  font-size: 0.9em;
+  margin-bottom: 3px;
+}
+
+.acks-ii.sheet.actor.adventurer .editor-section {
+  margin-bottom: 20px;
+}
+
+/* Inputs */
+.acks-ii.sheet.actor.adventurer input[type="text"],
+.acks-ii.sheet.actor.adventurer input[type="number"] {
+  border: 1px solid #ccc;
+  padding: 4px;
+  background: #fff;
+}
+
+.acks-ii.sheet.actor.adventurer button {
+  background: #4a4a4a;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.acks-ii.sheet.actor.adventurer button:hover {
+  background: #333;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+  .acks-ii.sheet.actor.adventurer .main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .acks-ii.sheet.actor.adventurer .abilities-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

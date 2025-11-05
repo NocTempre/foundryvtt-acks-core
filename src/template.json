@@ -1,6 +1,6 @@
 {
   "Actor": {
-    "types": ["character", "monster", "travel-party", "location"],
+    "types": ["character", "monster", "travel-party", "location", "acks-ii", "acks-ii-adventurer"],
     "templates": {
       "common": {
         "isNew": false,
@@ -418,6 +418,205 @@
           "totalHours": 0,
           "departed": null
         }
+      }
+    },
+    "acks-ii": {
+      "attributes": {
+        "str": {
+          "value": 10,
+          "bonus": 0,
+          "mod": 0
+        },
+        "int": {
+          "value": 10,
+          "bonus": 0,
+          "mod": 0
+        },
+        "dex": {
+          "value": 10,
+          "bonus": 0,
+          "mod": 0
+        },
+        "wil": {
+          "value": 10,
+          "bonus": 0,
+          "mod": 0
+        },
+        "con": {
+          "value": 10,
+          "bonus": 0,
+          "mod": 0
+        },
+        "cha": {
+          "value": 10,
+          "bonus": 0,
+          "mod": 0
+        }
+      },
+      "character": {
+        "name": "",
+        "birthplace": "",
+        "alignment": "",
+        "age": 18,
+        "size": "Medium",
+        "gender": "",
+        "weight": 0,
+        "biography": "",
+        "notes": ""
+      },
+      "class": {
+        "name": "",
+        "title": "",
+        "level": 1
+      },
+      "hitDie": "1d6",
+      "hp": {
+        "current": 0,
+        "max": 0
+      },
+      "movement": {
+        "exploration": 120,
+        "combat": 40,
+        "chargeRun": 120,
+        "expedition": 24,
+        "stealth": 20,
+        "climb": 20
+      },
+      "encumbrance": {
+        "current": 0,
+        "limit": 20,
+        "level": 0
+      },
+      "initiative": {
+        "mod": 0
+      },
+      "ac": {
+        "noArmor": 10,
+        "noShield": 10,
+        "withShield": 10
+      },
+      "healingRate": 1,
+      "mortalWounds": 0,
+      "cleaves": 0,
+      "adventuring": {
+        "climbing": 18,
+        "dungeonbashing": 18,
+        "listening": 18,
+        "searching": 18,
+        "trapbreaking": 18
+      },
+      "xp": {
+        "current": 0,
+        "bonus": 0,
+        "next": 0
+      },
+      "saves": {
+        "paralysis": {
+          "value": 13,
+          "mod": 0
+        },
+        "death": {
+          "value": 14,
+          "mod": 0
+        },
+        "blast": {
+          "value": 15,
+          "mod": 0
+        },
+        "implements": {
+          "value": 16,
+          "mod": 0
+        },
+        "spells": {
+          "value": 17,
+          "mod": 0
+        }
+      },
+      "surprise": {
+        "others": 0,
+        "avoid": 0
+      },
+      "attack": {
+        "base": 11,
+        "vsAC0": 11,
+        "vsAC1": 12,
+        "vsAC2": 13,
+        "vsAC3": 14,
+        "vsAC4": 15,
+        "vsAC5": 16,
+        "vsAC6": 17,
+        "vsAC7": 18,
+        "vsAC8": 19,
+        "vsAC9": 20,
+        "vsAC10": 21
+      }
+    },
+    "acks-ii-adventurer": {
+      "attributes": {
+        "str": { "value": 10, "bonus": 0, "mod": 0 },
+        "int": { "value": 10, "bonus": 0, "mod": 0 },
+        "dex": { "value": 10, "bonus": 0, "mod": 0 },
+        "wil": { "value": 10, "bonus": 0, "mod": 0 },
+        "con": { "value": 10, "bonus": 0, "mod": 0 },
+        "cha": { "value": 10, "bonus": 0, "mod": 0 }
+      },
+      "character": {
+        "name": "",
+        "birthplace": "",
+        "alignment": "",
+        "age": 18,
+        "size": "Medium",
+        "gender": "",
+        "weight": 15,
+        "biography": "",
+        "notes": ""
+      },
+      "class": { "name": "", "title": "", "level": 1 },
+      "hitDie": "1d6",
+      "hp": { "current": 0, "max": 0 },
+      "movement": {
+        "exploration": 120,
+        "combat": 40,
+        "chargeRun": 120,
+        "expedition": 24,
+        "stealth": 20,
+        "climb": 20
+      },
+      "encumbrance": { "current": 0, "limit": 20, "level": 0 },
+      "initiative": { "mod": 0 },
+      "ac": { "noArmor": 10, "noShield": 10, "withShield": 10 },
+      "healingRate": 1,
+      "mortalWounds": 0,
+      "cleaves": 0,
+      "adventuring": {
+        "climbing": 18,
+        "dungeonbashing": 18,
+        "listening": 18,
+        "searching": 18,
+        "trapbreaking": 18
+      },
+      "xp": { "current": 0, "bonus": 0, "next": 0 },
+      "saves": {
+        "paralysis": { "value": 13, "mod": 0 },
+        "death": { "value": 14, "mod": 0 },
+        "blast": { "value": 15, "mod": 0 },
+        "implements": { "value": 16, "mod": 0 },
+        "spells": { "value": 17, "mod": 0 }
+      },
+      "surprise": { "others": 0, "avoid": 0 },
+      "attack": {
+        "base": 11,
+        "vsAC0": 11,
+        "vsAC1": 12,
+        "vsAC2": 13,
+        "vsAC3": 14,
+        "vsAC4": 15,
+        "vsAC5": 16,
+        "vsAC6": 17,
+        "vsAC7": 18,
+        "vsAC8": 19,
+        "vsAC9": 20,
+        "vsAC10": 21
       }
     }
   },

@@ -1,0 +1,297 @@
+{{!-- ApplicationV2 requires a single root element --}}
+<div class="adventurer-sheet-wrapper">
+
+{{!-- Sheet Header --}}
+<header class="sheet-header">
+  <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100"/>
+
+  <div class="header-fields">
+    <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/></h1>
+
+    <div class="resource-row">
+      <div class="resource">
+        <label>Class</label>
+        <input type="text" name="system.class.name" value="{{system.class.name}}" placeholder="Class"/>
+      </div>
+      <div class="resource">
+        <label>Title</label>
+        <input type="text" name="system.class.title" value="{{system.class.title}}" placeholder="Title"/>
+      </div>
+      <div class="resource">
+        <label>Level</label>
+        <input type="number" name="system.class.level" value="{{system.class.level}}" data-dtype="Number"/>
+      </div>
+    </div>
+  </div>
+</header>
+
+{{!-- Sheet Tab Navigation --}}
+<nav class="sheet-tabs tabs" data-group="primary">
+  <a class="item" data-tab="main" data-action="changeTab">Main</a>
+  <a class="item" data-tab="combat" data-action="changeTab">Combat</a>
+  <a class="item" data-tab="biography" data-action="changeTab">Biography</a>
+</nav>
+
+{{!-- Sheet Body with Tabs --}}
+<section class="sheet-body">
+
+  {{!-- Main Tab --}}
+  <div class="tab-content" data-tab="main">
+    <div class="main-grid">
+
+      {{!-- Ability Scores --}}
+      <div class="abilities-section">
+        <h3>Ability Scores</h3>
+        <div class="abilities-grid">
+          {{#each abilities as |ability key|}}
+          <div class="ability">
+            <div class="ability-header">{{ability.label}}</div>
+            <input type="number" name="system.attributes.{{key}}.value" value="{{lookup (lookup system.attributes key) 'value'}}" data-dtype="Number"/>
+            <div class="ability-mod">
+              {{#if (gt (lookup (lookup system.attributes key) 'mod') 0)}}+{{/if}}{{lookup (lookup system.attributes key) 'mod'}}
+            </div>
+            <button type="button" data-action="abilityCheck" data-ability="{{key}}">Check</button>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+
+      {{!-- Hit Points --}}
+      <div class="hp-section">
+        <h3>Hit Points</h3>
+        <div class="hp-grid">
+          <div class="hp-current">
+            <label>Current</label>
+            <input type="number" name="system.hp.current" value="{{system.hp.current}}" data-dtype="Number"/>
+          </div>
+          <div class="hp-max">
+            <label>Maximum</label>
+            <input type="number" name="system.hp.max" value="{{system.hp.max}}" data-dtype="Number"/>
+          </div>
+          <div class="hit-die">
+            <label>Hit Die</label>
+            <input type="text" name="system.hitDie" value="{{system.hitDie}}" placeholder="1d6"/>
+            <button type="button" data-action="rollHP">Roll</button>
+          </div>
+        </div>
+
+        <div class="combat-stats">
+          <div class="stat">
+            <label>Healing Rate</label>
+            <input type="number" name="system.healingRate" value="{{system.healingRate}}" data-dtype="Number"/>
+          </div>
+          <div class="stat">
+            <label>Mortal Wounds</label>
+            <input type="number" name="system.mortalWounds" value="{{system.mortalWounds}}" data-dtype="Number"/>
+          </div>
+          <div class="stat">
+            <label>Cleaves</label>
+            <input type="number" name="system.cleaves" value="{{system.cleaves}}" data-dtype="Number"/>
+          </div>
+        </div>
+      </div>
+
+      {{!-- Armor Class --}}
+      <div class="ac-section">
+        <h3>Armor Class</h3>
+        <div class="ac-grid">
+          <div class="ac-value">
+            <label>No Armor</label>
+            <input type="number" name="system.ac.noArmor" value="{{system.ac.noArmor}}" data-dtype="Number"/>
+          </div>
+          <div class="ac-value">
+            <label>No Shield</label>
+            <input type="number" name="system.ac.noShield" value="{{system.ac.noShield}}" data-dtype="Number"/>
+          </div>
+          <div class="ac-value">
+            <label>With Shield</label>
+            <input type="number" name="system.ac.withShield" value="{{system.ac.withShield}}" data-dtype="Number"/>
+          </div>
+        </div>
+      </div>
+
+      {{!-- Movement & Encumbrance --}}
+      <div class="movement-section">
+        <h3>Movement & Encumbrance</h3>
+        <div class="movement-grid">
+          <div class="move-stat">
+            <label>Exploration</label>
+            <span>{{system.movement.exploration}} ft/turn</span>
+          </div>
+          <div class="move-stat">
+            <label>Combat</label>
+            <span>{{system.movement.combat}} ft/round</span>
+          </div>
+          <div class="move-stat">
+            <label>Expedition</label>
+            <span>{{system.movement.expedition}} mi/day</span>
+          </div>
+        </div>
+
+        <div class="encumbrance-bar">
+          <label>Encumbrance: {{encumbranceLabel}} ({{system.encumbrance.current}}/{{system.encumbrance.limit}} ST)</label>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: {{system.encumbrance.percentage}}%"></div>
+          </div>
+        </div>
+      </div>
+
+      {{!-- Experience --}}
+      <div class="xp-section">
+        <h3>Experience</h3>
+        <div class="xp-grid">
+          <div class="xp-current">
+            <label>Current XP</label>
+            <input type="number" name="system.xp.current" value="{{system.xp.current}}" data-dtype="Number"/>
+          </div>
+          <div class="xp-next">
+            <label>Next Level</label>
+            <input type="number" name="system.xp.next" value="{{system.xp.next}}" data-dtype="Number"/>
+          </div>
+          <div class="xp-bonus">
+            <label>Bonus</label>
+            <input type="number" name="system.xp.bonus" value="{{system.xp.bonus}}" data-dtype="Number"/>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  {{!-- Combat Tab --}}
+  <div class="tab-content" data-tab="combat">
+
+    {{!-- Saving Throws --}}
+    <div class="saves-section">
+      <h3>Saving Throws</h3>
+      <table class="saves-table">
+        <thead>
+          <tr>
+            <th>Save</th>
+            <th>Base</th>
+            <th>Mod</th>
+            <th>Total</th>
+            <th>Roll</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each system.saves as |save key|}}
+          <tr>
+            <td>{{key}}</td>
+            <td><input type="number" name="system.saves.{{key}}.value" value="{{save.value}}" data-dtype="Number"/></td>
+            <td><input type="number" name="system.saves.{{key}}.mod" value="{{save.mod}}" data-dtype="Number"/></td>
+            <td>{{save.total}}</td>
+            <td><button type="button" data-action="saveRoll" data-save="{{key}}">Roll</button></td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+
+    {{!-- Attack Table --}}
+    <div class="attack-section">
+      <h3>Attack vs AC</h3>
+      <div class="attack-base">
+        <label>Base Attack (vs AC 0):</label>
+        <input type="number" name="system.attack.base" value="{{system.attack.base}}" data-dtype="Number"/>
+      </div>
+      <table class="attack-table">
+        <thead>
+          <tr>
+            <th>AC 0</th>
+            <th>AC 1</th>
+            <th>AC 2</th>
+            <th>AC 3</th>
+            <th>AC 4</th>
+            <th>AC 5</th>
+            <th>AC 6</th>
+            <th>AC 7</th>
+            <th>AC 8</th>
+            <th>AC 9</th>
+            <th>AC 10</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><button type="button" data-action="attackRoll" data-ac="0">{{system.attack.vsAC0}}</button></td>
+            <td><button type="button" data-action="attackRoll" data-ac="1">{{system.attack.vsAC1}}</button></td>
+            <td><button type="button" data-action="attackRoll" data-ac="2">{{system.attack.vsAC2}}</button></td>
+            <td><button type="button" data-action="attackRoll" data-ac="3">{{system.attack.vsAC3}}</button></td>
+            <td><button type="button" data-action="attackRoll" data-ac="4">{{system.attack.vsAC4}}</button></td>
+            <td><button type="button" data-action="attackRoll" data-ac="5">{{system.attack.vsAC5}}</button></td>
+            <td><button type="button" data-action="attackRoll" data-ac="6">{{system.attack.vsAC6}}</button></td>
+            <td><button type="button" data-action="attackRoll" data-ac="7">{{system.attack.vsAC7}}</button></td>
+            <td><button type="button" data-action="attackRoll" data-ac="8">{{system.attack.vsAC8}}</button></td>
+            <td><button type="button" data-action="attackRoll" data-ac="9">{{system.attack.vsAC9}}</button></td>
+            <td><button type="button" data-action="attackRoll" data-ac="10">{{system.attack.vsAC10}}</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    {{!-- Adventuring Proficiencies --}}
+    <div class="adventuring-section">
+      <h3>Adventuring Proficiencies</h3>
+      <table class="proficiencies-table">
+        <thead>
+          <tr>
+            <th>Proficiency</th>
+            <th>Target</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each system.adventuring as |target key|}}
+          <tr>
+            <td>{{key}}</td>
+            <td><input type="number" name="system.adventuring.{{key}}" value="{{target}}" data-dtype="Number"/></td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  {{!-- Biography Tab --}}
+  <div class="tab-content" data-tab="biography">
+    <div class="bio-fields">
+      <div class="field">
+        <label>Birthplace</label>
+        <input type="text" name="system.character.birthplace" value="{{system.character.birthplace}}"/>
+      </div>
+      <div class="field">
+        <label>Alignment</label>
+        <input type="text" name="system.character.alignment" value="{{system.character.alignment}}"/>
+      </div>
+      <div class="field">
+        <label>Age</label>
+        <input type="number" name="system.character.age" value="{{system.character.age}}" data-dtype="Number"/>
+      </div>
+      <div class="field">
+        <label>Size</label>
+        <input type="text" name="system.character.size" value="{{system.character.size}}"/>
+      </div>
+      <div class="field">
+        <label>Gender</label>
+        <input type="text" name="system.character.gender" value="{{system.character.gender}}"/>
+      </div>
+      <div class="field">
+        <label>Weight (ST)</label>
+        <input type="number" name="system.character.weight" value="{{system.character.weight}}" data-dtype="Number"/>
+      </div>
+    </div>
+
+    <div class="editor-section">
+      <h3>Biography</h3>
+      {{editor enrichedBiography target="system.character.biography" button=true owner=owner editable=editable}}
+    </div>
+
+    <div class="editor-section">
+      <h3>Notes</h3>
+      {{editor enrichedNotes target="system.character.notes" button=true owner=owner editable=editable}}
+    </div>
+  </div>
+
+</section>
+
+</div>

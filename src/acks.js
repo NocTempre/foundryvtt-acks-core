@@ -8,6 +8,8 @@ import { AcksActorSheetLocation } from "./module/actor/location-sheet.js";
 import { preloadHandlebarsTemplates } from "./module/preloadTemplates.js";
 import { AcksActor } from "./module/actor/entity.js";
 import { AcksItem } from "./module/documents/item.js";
+import AdventurerData from "./module/data/actor/adventurer-data.mjs";
+import AdventurerSheet from "./module/actor/adventurer-sheet.mjs";
 import { ACKS, SYSTEM_ID, assetPath, normalizeAssetPath } from "./module/config.js";
 import { registerMainSettings } from "./module/settings.js";
 import { registerHelpers } from "./module/helpers.js";
@@ -344,7 +346,17 @@ Hooks.once("init", async function () {
   registerHelpers();
   registerMainSettings();
 
+  // Set default document class to legacy AcksActor
   CONFIG.Actor.documentClass = AcksActor;
+
+  // Register ACKS II data models - this is what makes ACKS II types work with v10+ pattern
+  CONFIG.Actor.dataModels = CONFIG.Actor.dataModels || {};
+  CONFIG.Actor.dataModels["acks-ii-adventurer"] = AdventurerData;
+
+  // Make AdventurerSheet globally accessible for entity.js to use
+  CONFIG.ACKS = CONFIG.ACKS || {};
+  CONFIG.ACKS.AdventurerSheet = AdventurerSheet;
+
   CONFIG.Item.documentClass = AcksItem;
   CONFIG.Item.dataModels = {
     language: LanguageData,
@@ -359,6 +371,11 @@ Hooks.once("init", async function () {
 
   // Register sheet application classes
   ActorsCollection.unregisterSheet("core", ActorSheetV1);
+
+  // ACKS II Adventurer Sheet uses ApplicationV2 via actor.sheet property override
+  // No registration needed - handled in adventurer.mjs
+
+  // Legacy ACKS sheets
   ActorsCollection.registerSheet(SYSTEM_ID, AcksActorSheetCharacter, {
     types: ["character"],
     makeDefault: true,

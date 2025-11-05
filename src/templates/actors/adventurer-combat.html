@@ -1,0 +1,88 @@
+{{!-- Combat Tab --}}
+<div class="combat-content">
+  {{!-- Saving Throws --}}
+  <div class="saves-section">
+    <h3>Saving Throws</h3>
+    <table class="saves-table">
+      <thead>
+        <tr>
+          <th>Save</th>
+          <th>Base</th>
+          <th>Mod</th>
+          <th>Total</th>
+          <th>Roll</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each system.saves as |save key|}}
+        <tr>
+          <td>{{capitalize key}}</td>
+          <td><input type="number" name="system.saves.{{key}}.value" value="{{save.value}}" data-dtype="Number"/></td>
+          <td><input type="number" name="system.saves.{{key}}.mod" value="{{save.mod}}" data-dtype="Number"/></td>
+          <td>{{add save.value save.mod}}</td>
+          <td><button type="button" data-action="saveRoll" data-save="{{key}}">Roll</button></td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+
+  {{!-- Attack Table --}}
+  <div class="attack-section">
+    <h3>Attack vs AC</h3>
+    <div class="attack-base">
+      <label>Base Attack (vs AC 0):</label>
+      <input type="number" name="system.attack.base" value="{{system.attack.base}}" data-dtype="Number"/>
+    </div>
+    <table class="attack-table">
+      <thead>
+        <tr>
+          <th>AC 0</th>
+          <th>AC 1</th>
+          <th>AC 2</th>
+          <th>AC 3</th>
+          <th>AC 4</th>
+          <th>AC 5</th>
+          <th>AC 6</th>
+          <th>AC 7</th>
+          <th>AC 8</th>
+          <th>AC 9</th>
+          <th>AC 10</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          {{#each system.attack as |target key|}}
+          {{#unless (eq key "base")}}
+          <td>
+            <button type="button" data-action="attackRoll" data-ac="{{substring key 4}}">{{target}}</button>
+          </td>
+          {{/unless}}
+          {{/each}}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  {{!-- Adventuring Proficiencies --}}
+  <div class="adventuring-section">
+    <h3>Adventuring Proficiencies</h3>
+    <table class="proficiencies-table">
+      <thead>
+        <tr>
+          <th>Proficiency</th>
+          <th>Target</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each system.adventuring as |target key|}}
+        <tr>
+          <td>{{capitalize key}}</td>
+          <td><input type="number" name="system.adventuring.{{key}}" value="{{target}}" data-dtype="Number"/></td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+
+</div>
