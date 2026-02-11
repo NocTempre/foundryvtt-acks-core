@@ -1,0 +1,39 @@
+{{!-- Biography Tab --}}
+<div class="biography-content">
+  <div class="bio-fields">
+    <div class="field">
+      <label>Birthplace</label>
+      <input type="text" name="system.character.birthplace" value="{{system.character.birthplace}}"/>
+    </div>
+    <div class="field">
+      <label>Alignment</label>
+      <input type="text" name="system.character.alignment" value="{{system.character.alignment}}"/>
+    </div>
+    <div class="field">
+      <label>Age</label>
+      <input type="number" name="system.character.age" value="{{system.character.age}}" data-dtype="Number"/>
+    </div>
+    <div class="field">
+      <label>Size</label>
+      <input type="text" name="system.character.size" value="{{system.character.size}}"/>
+    </div>
+    <div class="field">
+      <label>Gender</label>
+      <input type="text" name="system.character.gender" value="{{system.character.gender}}"/>
+    </div>
+    <div class="field">
+      <label>Weight (ST)</label>
+      <input type="number" name="system.character.weight" value="{{system.character.weight}}" data-dtype="Number"/>
+    </div>
+  </div>
+
+  <div class="editor-section">
+    <h3>Biography</h3>
+    {{editor enrichedBiography target="system.character.biography" button=true owner=owner editable=editable}}
+  </div>
+
+  <div class="editor-section">
+    <h3>Notes</h3>
+    {{editor enrichedNotes target="system.character.notes" button=true owner=owner editable=editable}}
+  </div>
+</div>

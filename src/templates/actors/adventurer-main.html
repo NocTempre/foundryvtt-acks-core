@@ -1,0 +1,120 @@
+{{!-- Main Tab --}}
+<div class="main-grid">
+
+    {{!-- Ability Scores --}}
+    <div class="abilities-section">
+      <h3>Ability Scores</h3>
+      <div class="abilities-grid">
+        {{#each abilities as |ability key|}}
+        <div class="ability">
+          <div class="ability-header">{{ability.label}}</div>
+          <input type="number" name="system.attributes.{{key}}.value" value="{{lookup (lookup system.attributes key) 'value'}}" data-dtype="Number"/>
+          <div class="ability-mod">
+            {{#if (gt (lookup (lookup system.attributes key) 'mod') 0)}}+{{/if}}{{lookup (lookup system.attributes key) 'mod'}}
+          </div>
+          <button type="button" data-action="abilityCheck" data-ability="{{key}}">Check</button>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Hit Points --}}
+    <div class="hp-section">
+      <h3>Hit Points</h3>
+      <div class="hp-grid">
+        <div class="hp-current">
+          <label>Current</label>
+          <input type="number" name="system.hp.current" value="{{system.hp.current}}" data-dtype="Number"/>
+        </div>
+        <div class="hp-max">
+          <label>Maximum</label>
+          <input type="number" name="system.hp.max" value="{{system.hp.max}}" data-dtype="Number"/>
+        </div>
+        <div class="hit-die">
+          <label>Hit Die</label>
+          <input type="text" name="system.hitDie" value="{{system.hitDie}}" placeholder="1d6"/>
+          <button type="button" data-action="rollHP">Roll</button>
+        </div>
+      </div>
+
+      <div class="combat-stats">
+        <div class="stat">
+          <label>Healing Rate</label>
+          <input type="number" name="system.healingRate" value="{{system.healingRate}}" data-dtype="Number"/>
+        </div>
+        <div class="stat">
+          <label>Mortal Wounds</label>
+          <input type="number" name="system.mortalWounds" value="{{system.mortalWounds}}" data-dtype="Number"/>
+        </div>
+        <div class="stat">
+          <label>Cleaves</label>
+          <input type="number" name="system.cleaves" value="{{system.cleaves}}" data-dtype="Number"/>
+        </div>
+      </div>
+    </div>
+
+    {{!-- Armor Class --}}
+    <div class="ac-section">
+      <h3>Armor Class</h3>
+      <div class="ac-grid">
+        <div class="ac-value">
+          <label>No Armor</label>
+          <input type="number" name="system.ac.noArmor" value="{{system.ac.noArmor}}" data-dtype="Number"/>
+        </div>
+        <div class="ac-value">
+          <label>No Shield</label>
+          <input type="number" name="system.ac.noShield" value="{{system.ac.noShield}}" data-dtype="Number"/>
+        </div>
+        <div class="ac-value">
+          <label>With Shield</label>
+          <input type="number" name="system.ac.withShield" value="{{system.ac.withShield}}" data-dtype="Number"/>
+        </div>
+      </div>
+    </div>
+
+    {{!-- Movement & Encumbrance --}}
+    <div class="movement-section">
+      <h3>Movement & Encumbrance</h3>
+      <div class="movement-grid">
+        <div class="move-stat">
+          <label>Exploration</label>
+          <span>{{system.movement.exploration}} ft/turn</span>
+        </div>
+        <div class="move-stat">
+          <label>Combat</label>
+          <span>{{system.movement.combat}} ft/round</span>
+        </div>
+        <div class="move-stat">
+          <label>Expedition</label>
+          <span>{{system.movement.expedition}} mi/day</span>
+        </div>
+      </div>
+
+      <div class="encumbrance-bar">
+        <label>Encumbrance: {{encumbranceLabel}} ({{system.encumbrance.current}}/{{system.encumbrance.limit}} ST)</label>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: {{multiply (divide system.encumbrance.current system.encumbrance.limit) 100}}%"></div>
+        </div>
+      </div>
+    </div>
+
+    {{!-- Experience --}}
+    <div class="xp-section">
+      <h3>Experience</h3>
+      <div class="xp-grid">
+        <div class="xp-current">
+          <label>Current XP</label>
+          <input type="number" name="system.xp.current" value="{{system.xp.current}}" data-dtype="Number"/>
+        </div>
+        <div class="xp-next">
+          <label>Next Level</label>
+          <input type="number" name="system.xp.next" value="{{system.xp.next}}" data-dtype="Number"/>
+        </div>
+        <div class="xp-bonus">
+          <label>Bonus</label>
+          <input type="number" name="system.xp.bonus" value="{{system.xp.bonus}}" data-dtype="Number"/>
+        </div>
+      </div>
+    </div>
+
+  </div>

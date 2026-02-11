@@ -18,7 +18,116 @@ function parseTargetValue(value) {
   return null;
 }
 
+/**
+ * ACKS Actor (v1 / Legacy)
+ * Used for character, monster, travel-party, and location types
+ */
 export class AcksActor extends Actor {
+  /** @type {ApplicationV2|ActorSheet|null} */
+  #customSheet = null;
+
+  /**
+   * Override sheet getter to return ACKS II ApplicationV2 sheets for ACKS II types
+   * @type {ActorSheet}
+   */
+  get sheet() {
+    // For ACKS II types, delegate to the specific implementation
+    if (this.type?.startsWith("acks-ii-")) {
+      if (!this.#customSheet && this.type === "acks-ii-adventurer") {
+        // Get the sheet class from CONFIG
+        const AdventurerSheet = CONFIG.ACKS?.AdventurerSheet;
+        if (!AdventurerSheet) {
+          console.error("ACKS II: AdventurerSheet not found in CONFIG.ACKS");
+          return super.sheet;
+        }
+        this.#customSheet = new AdventurerSheet({ document: this });
+      }
+      return this.#customSheet || super.sheet;
+    }
+
+    // For legacy types, use the default sheet behavior
+    return super.sheet;
+  }
+
+  /**
+   * Roll an ability check (ACKS II method)
+   */
+  async rollAbilityCheck(ability, options = {}) {
+    if (!this.type?.startsWith("acks-ii-")) {
+      return null;
+    }
+
+    const abilityData = this.system.attributes?.[ability];
+    if (!abilityData) {
+      ui.notifications.warn(`Unknown ability: ${ability}`);
+      return null;
+    }
+
+    const label = ability.toUpperCase();
+    const score = abilityData.value;
+    const modifier = (abilityData.mod ?? 0) + (abilityData.bonus ?? 0);
+
+    const roll = new Roll("1d20 + @mod", { mod: modifier });
+    await roll.evaluate();
+
+    roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: this }),
+      flavor: `${label} Check (Score: ${score})`,
+      ...options,
+    });
+
+    return roll;
+  }
+
+  /**
+   * Roll hit points (ACKS II method)
+   */
+  async rollHitPoints(hitDie = "1d6") {
+    if (!this.type?.startsWith("acks-ii-")) {
+      return null;
+    }
+
+    const conMod = this.system.attributes?.con?.mod ?? 0;
+    const roll = new Roll(`${hitDie} + @mod`, { mod: conMod });
+    await roll.evaluate();
+
+    roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: this }),
+      flavor: `Hit Points Roll (CON Mod: ${conMod >= 0 ? "+" : ""}${conMod})`,
+    });
+
+    return roll;
+  }
+
+  /**
+   * Take a short rest (ACKS II method)
+   */
+  async shortRest() {
+    if (!this.type?.startsWith("acks-ii-")) {
+      return this;
+    }
+
+    ui.notifications.info(`${this.name} takes a short rest.`);
+    return this;
+  }
+
+  /**
+   * Take a long rest (ACKS II method)
+   */
+  async longRest() {
+    if (!this.type?.startsWith("acks-ii-")) {
+      return this;
+    }
+
+    const hp = this.system.hp;
+    await this.update({
+      "system.hp.current": hp.max,
+    });
+
+    ui.notifications.info(`${this.name} takes a long rest and restores all HP.`);
+    return this;
+  }
+
   static async create(data, options) {
     // Case of compendium global import
     if (data instanceof Array) {
@@ -54,6 +163,11 @@ export class AcksActor extends Actor {
   }
 
   async _onUpdate(changed, options, userId) {
+    // Skip ACKS II types - they handle their own updates
+    if (this.type.startsWith("acks-ii")) {
+      return super._onUpdate(changed, options, userId);
+    }
+
     if (options?.skipClassHpAuto) {
       return super._onUpdate(changed, options, userId);
     }
@@ -156,6 +270,10 @@ export class AcksActor extends Actor {
   /* -------------------------------------------- */
   prepareBaseData() {
     super.prepareBaseData();
+    // Skip ACKS II types - they use TypeDataModel for all data preparation
+    if (this.type?.startsWith("acks-ii-")) {
+      return;
+    }
     if (this.type === "character") {
       this.applyClassAutomation();
     }
@@ -164,6 +282,10 @@ export class AcksActor extends Actor {
   /* -------------------------------------------- */
   prepareDerivedData() {
     super.prepareDerivedData();
+    // Skip ACKS II types - they use TypeDataModel for all data preparation
+    if (this.type?.startsWith("acks-ii-")) {
+      return;
+    }
     this.computeAdditionnalData();
   }
 

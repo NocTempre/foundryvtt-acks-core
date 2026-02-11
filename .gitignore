@@ -1,8 +1,13 @@
 nul
+claude_notes*
 .claude/
 .history/
 .vscode/settings.json
 .idea
+7.5/*
+old_packs/*
+package/*.zip
+acks-ii*.md
 ### Node template
 # Logs
 logs

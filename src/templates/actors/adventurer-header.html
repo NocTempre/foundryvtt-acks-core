@@ -1,0 +1,23 @@
+{{!-- Sheet Header --}}
+<header class="sheet-header">
+  <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100"/>
+
+  <div class="header-fields">
+    <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/></h1>
+
+    <div class="resource-row">
+      <div class="resource">
+        <label>Class</label>
+        <input type="text" name="system.class.name" value="{{system.class.name}}" placeholder="Class"/>
+      </div>
+      <div class="resource">
+        <label>Title</label>
+        <input type="text" name="system.class.title" value="{{system.class.title}}" placeholder="Title"/>
+      </div>
+      <div class="resource">
+        <label>Level</label>
+        <input type="number" name="system.class.level" value="{{system.class.level}}" data-dtype="Number"/>
+      </div>
+    </div>
+  </div>
+</header>

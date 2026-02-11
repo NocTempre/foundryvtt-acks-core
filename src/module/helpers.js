@@ -54,6 +54,10 @@ export const registerHelpers = async function () {
     return parseFloat(lh) * parseFloat(rh);
   });
 
+  Handlebars.registerHelper("multiply", function (lh, rh) {
+    return parseFloat(lh) * parseFloat(rh);
+  });
+
   Handlebars.registerHelper("multround", function (lh, rh) {
     return Math.round(parseFloat(lh) * parseFloat(rh) * 100) / 100;
   });
@@ -127,6 +131,19 @@ export const registerHelpers = async function () {
 
   Handlebars.registerHelper("isDefined", function (value) {
     return typeof value !== typeof void 0;
+  });
+
+  Handlebars.registerHelper("capitalize", function (str) {
+    if (typeof str !== "string") return "";
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  });
+
+  Handlebars.registerHelper("substring", function (str, start, length) {
+    if (typeof str !== "string") return "";
+    if (length !== undefined) {
+      return str.substring(start, start + length);
+    }
+    return str.substring(start);
   });
 
   Handlebars.registerHelper("acksPartial", (relativePath) => templatePath(relativePath));
